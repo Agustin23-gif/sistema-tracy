@@ -1610,6 +1610,89 @@
   }
   .inicio-weather-temp i,
   .inicio-weather-temp svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+  /* ── AVATAR ── */
+  .avatar-wrap {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin: 20px 0 8px;
+  }
+  .avatar-wrap--inicio {
+    justify-content: flex-end;
+    padding-right: 8px;
+  }
+  .avatar-wrap--hoy {
+    justify-content: flex-start;
+    padding-left: 4px;
+    margin-bottom: 20px;
+  }
+  .avatar-figure {
+    flex-shrink: 0;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    line-height: 0;
+  }
+  .avatar-bubble {
+    position: relative;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+    font-size: 13px;
+    font-family: 'Geist', sans-serif;
+    font-weight: 400;
+    color: #1A1A1A;
+    line-height: 1.45;
+    max-width: 220px;
+    min-width: 100px;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  }
+  .avatar-bubble.hidden { opacity: 0; pointer-events: none; }
+  .avatar-wrap--inicio .avatar-bubble::after {
+    content: '';
+    position: absolute;
+    right: -7px;
+    bottom: 18px;
+    width: 0; height: 0;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-left: 8px solid #fff;
+  }
+  .avatar-wrap--hoy .avatar-bubble::after {
+    content: '';
+    position: absolute;
+    left: -7px;
+    bottom: 18px;
+    width: 0; height: 0;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-right: 8px solid #fff;
+  }
+  @keyframes av-float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+  @keyframes av-jump   { 0%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
+  @keyframes av-energy { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-3px) rotate(1deg)} }
+  @keyframes av-sleep  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+  @keyframes av-bounce { 0%,100%{transform:scale(1)} 40%{transform:scale(0.88)} 70%{transform:scale(1.08)} }
+  @keyframes av-zzz    { 0%{opacity:0;transform:translateY(0) scale(0.7)} 30%{opacity:1} 100%{opacity:0;transform:translateY(-10px) scale(1)} }
+  @keyframes av-star   { 0%{opacity:0;transform:scale(0.3)} 40%{opacity:1;transform:scale(1.2)} 100%{opacity:0;transform:scale(0.8)} }
+  .avatar-figure[data-state="idle"]       svg { animation: av-float  2s ease-in-out infinite; }
+  .avatar-figure[data-state="happy"]      svg { animation: av-jump   0.4s ease-in-out 3; }
+  .avatar-figure[data-state="motivating"] svg { animation: av-energy 0.5s ease-in-out infinite; }
+  .avatar-figure[data-state="sleeping"]   svg { animation: av-sleep  3s ease-in-out infinite; }
+  .avatar-figure.av-bounce                svg { animation: av-bounce 0.35s ease-out !important; }
+  .av-zzz-1 { animation: av-zzz 2s ease-out 0.2s infinite; }
+  .av-zzz-2 { animation: av-zzz 2s ease-out 0.9s infinite; }
+  .av-zzz-3 { animation: av-zzz 2s ease-out 1.6s infinite; }
+  .av-star-1 { animation: av-star 1.5s ease-out 0s 3; }
+  .av-star-2 { animation: av-star 1.5s ease-out 0.35s 3; }
+  .av-star-3 { animation: av-star 1.5s ease-out 0.7s 3; }
+  @media (max-width: 480px) {
+    .avatar-figure { transform: scale(0.75); transform-origin: bottom center; }
+    .avatar-bubble { font-size: 12px; max-width: 200px; padding: 8px 11px; }
+  }
 </style>
 </head>
 <body>
@@ -1695,6 +1778,12 @@
       <!-- Bloque grande de racha -->
       <div id="rachaBigBlock" class="racha-big-block"></div>
 
+      <!-- Avatar Inicio -->
+      <div class="avatar-wrap avatar-wrap--inicio">
+        <div class="avatar-bubble hidden" id="avatarBubble-inicio"></div>
+        <div class="avatar-figure" id="avatarFigure-inicio"></div>
+      </div>
+
       <!-- Hitos -->
       <div id="rachaHitos" class="racha-hitos-row"></div>
 
@@ -1738,6 +1827,12 @@
         <p id="habitos-fecha"></p>
       </div>
       <button class="btn btn-gold" onclick="openHabitoModal()">+ Nuevo hábito</button>
+    </div>
+
+    <!-- Avatar Hoy -->
+    <div class="avatar-wrap avatar-wrap--hoy">
+      <div class="avatar-figure" id="avatarFigure-hoy"></div>
+      <div class="avatar-bubble hidden" id="avatarBubble-hoy"></div>
     </div>
 
     <div id="habitos-list"></div>
@@ -2002,8 +2097,8 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('sec-' + tab).classList.add('active');
   (event.target.closest('.tab-btn') || event.target).classList.add('active');
-  if (tab === 'inicio')     renderInicio();
-  if (tab === 'hoy')        renderHoy();
+  if (tab === 'inicio')     { renderInicio(); showAvatarBubble('inicio'); }
+  if (tab === 'hoy')        { renderHoy(); showAvatarBubble('hoy'); }
   if (tab === 'metas')      renderMetas();
   if (tab === 'calendario') renderCalendario();
   if (tab === 'tareas')     renderPaginaTareas();
@@ -2092,8 +2187,8 @@ function switchTabProgrammatic(tab) {
   Array.from(document.querySelectorAll('.tab-btn')).find(b =>
     b.getAttribute('onclick').includes(`'${tab}'`)
   )?.classList.add('active');
-  if (tab === 'inicio')     renderInicio();
-  if (tab === 'hoy')        renderHoy();
+  if (tab === 'inicio')     { renderInicio(); showAvatarBubble('inicio'); }
+  if (tab === 'hoy')        { renderHoy(); showAvatarBubble('hoy'); }
   if (tab === 'metas')      renderMetas();
   if (tab === 'calendario') renderCalendario();
   if (tab === 'tareas')     renderPaginaTareas();
@@ -2297,6 +2392,7 @@ function renderInicio() {
     }).join('');
   }
 
+  renderAvatar('inicio');
   if (window.lucide) lucide.createIcons();
 }
 
@@ -2581,6 +2677,7 @@ function saveHabito() {
 function renderHoy() {
   renderHabitos();
   renderMonthStats();
+  renderAvatar('hoy');
 }
 
 // ── RENDER ESTADÍSTICAS DEL MES ──
@@ -3352,6 +3449,105 @@ async function fetchWeather() {
   }
 }
 
+// ── AVATAR ──
+const AVATAR_MSGS = {
+  inicio: {
+    idle:       ['¡Buen día! ¿Listo para conquistar tus hábitos hoy?', '¡Cada día es una nueva oportunidad. Aprovechala!'],
+    happy:      ['¡Lo lograste! Todos tus hábitos completados 🎉', '¡Sos increíble! Día 100% completado 🔥'],
+    motivating: ['¡Vamos! Todavía podés completar tus hábitos de hoy', '¡Un paso a la vez! Podés hacerlo 💪'],
+    sleeping:   ['Shhh... ya es tarde, descansá bien 😴', 'Mañana es un nuevo día. ¡Descansá!'],
+  },
+  hoy: {
+    idle:       ['¡Cada hábito que completás te acerca a tu meta!', '¡No pares ahora, ya casi terminás!', '¡Recordá tu racha, no la rompas!'],
+    happy:      ['¡INCREÍBLE! ¡Día perfecto! 🔥', '¡Tu racha sigue viva, sos un campeón!'],
+    motivating: ['¡Vamos! Todavía podés completar tus hábitos de hoy', '¡Cada check te hace más fuerte!'],
+    sleeping:   ['Ya es tarde, ¡pero aún podés hacerlo! 💪'],
+  },
+};
+
+function getAvatarState() {
+  const hora = new Date().getHours();
+  const checks = state.habitoChecks[todayKey] || {};
+  const totalH = state.habitos.length;
+  const doneH  = Object.values(checks).filter(Boolean).length;
+  if (hora >= 23) return 'sleeping';
+  if (totalH > 0 && doneH === totalH) return 'happy';
+  if (totalH > 0 && doneH < totalH)  return 'motivating';
+  return 'idle';
+}
+
+function getAvatarMsg(section) {
+  const avState = getAvatarState();
+  const pool = (AVATAR_MSGS[section] || {})[avState] || AVATAR_MSGS[section].idle;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function buildAvatarSVG(avState, small) {
+  const w = small ? 40 : 53, h = small ? 60 : 80;
+  let aL, aR;
+  if (avState === 'happy') {
+    aL = `<line x1="16" y1="37" x2="5" y2="25" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
+    aR = `<line x1="44" y1="37" x2="55" y2="25" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
+  } else if (avState === 'motivating') {
+    aL = `<line x1="16" y1="37" x2="7" y2="52" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
+    aR = `<line x1="44" y1="37" x2="56" y2="26" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
+  } else {
+    aL = `<line x1="16" y1="37" x2="7" y2="52" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
+    aR = `<line x1="44" y1="37" x2="53" y2="52" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
+  }
+  const eyes = avState === 'sleeping'
+    ? `<line x1="23" y1="19" x2="27" y2="19" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>
+       <line x1="33" y1="19" x2="37" y2="19" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>`
+    : `<circle cx="25" cy="19" r="2.5" fill="#1A1A1A"/>
+       <circle cx="35" cy="19" r="2.5" fill="#1A1A1A"/>
+       <circle cx="26" cy="18" r="0.8" fill="white"/>
+       <circle cx="36" cy="18" r="0.8" fill="white"/>`;
+  const zzz = avState === 'sleeping'
+    ? `<text class="av-zzz-1" x="44" y="10" font-size="8" font-weight="700" fill="#94a3b8" font-family="sans-serif">z</text>
+       <text class="av-zzz-2" x="50" y="4" font-size="6" font-weight="700" fill="#94a3b8" font-family="sans-serif">z</text>
+       <text class="av-zzz-3" x="55" y="0" font-size="5" font-weight="700" fill="#94a3b8" font-family="sans-serif">z</text>` : '';
+  const stars = avState === 'happy'
+    ? `<path class="av-star-1" d="M6,14 L7.2,10 L8.4,14 L4.5,11.5 L10,11.5 Z" fill="#FFD700"/>
+       <path class="av-star-2" d="M53,20 L54.2,16 L55.4,20 L51.5,17.5 L57,17.5 Z" fill="#FFD700"/>
+       <path class="av-star-3" d="M3,40 L4.2,36 L5.4,40 L1.5,37.5 L7,37.5 Z" fill="#FFD700"/>` : '';
+  return `<svg viewBox="0 0 60 90" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
+    ${stars}${zzz}
+    <ellipse cx="30" cy="11" rx="15" ry="9" fill="#2D1B00"/>
+    <circle cx="30" cy="20" r="14" fill="#FDBCB4"/>
+    ${eyes}
+    <path d="M25,24 Q30,28 35,24" stroke="#C47B6A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <rect x="16" y="34" width="28" height="26" rx="6" fill="#E8450A"/>
+    ${aL}${aR}
+    <rect x="19" y="60" width="9" height="22" rx="4" fill="#1A1A1A"/>
+    <rect x="32" y="60" width="9" height="22" rx="4" fill="#1A1A1A"/>
+    <ellipse cx="23" cy="83" rx="8" ry="5" fill="#333"/>
+    <ellipse cx="37" cy="83" rx="8" ry="5" fill="#333"/>
+  </svg>`;
+}
+
+const _avatarTimers = {};
+function showAvatarBubble(section) {
+  const el = document.getElementById('avatarBubble-' + section);
+  if (!el) return;
+  el.textContent = getAvatarMsg(section);
+  el.classList.remove('hidden');
+  clearTimeout(_avatarTimers[section]);
+  _avatarTimers[section] = setTimeout(() => el.classList.add('hidden'), 4000);
+}
+
+function renderAvatar(section) {
+  const fig = document.getElementById('avatarFigure-' + section);
+  if (!fig) return;
+  const avState = getAvatarState();
+  fig.setAttribute('data-state', avState);
+  fig.innerHTML = buildAvatarSVG(avState, section === 'hoy');
+  fig.onclick = () => {
+    fig.classList.add('av-bounce');
+    setTimeout(() => fig.classList.remove('av-bounce'), 350);
+    showAvatarBubble(section);
+  };
+}
+
 // ── INIT ──
 (function initHeader() {
   const now = new Date();
@@ -3363,6 +3559,7 @@ async function fetchWeather() {
 })();
 
 renderInicio();
+showAvatarBubble('inicio');
 fetchWeather();
 if (window.lucide) lucide.createIcons();
 </script>
