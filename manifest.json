@@ -1,0 +1,18 @@
+{
+  "name": "Sistema Tracy",
+  "short_name": "Tracy",
+  "description": "App de hábitos y metas basada en Brian Tracy",
+  "start_url": "./tracy-system.html",
+  "display": "standalone",
+  "background_color": "#F5F0EB",
+  "theme_color": "#E8450A",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
