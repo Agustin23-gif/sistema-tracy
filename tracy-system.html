@@ -1,0 +1,2904 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sistema Tracy — Metas & Hábitos</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #F5F0EB;
+    --surface:   #FFFFFF;
+    --card:      #FFFFFF;
+    --gold:      #E8450A;
+    --gold-dim:  #C23A08;
+    --text:      #1A1A1A;
+    --muted:     #6B6B6B;
+    --danger:    #D94040;
+    --success:   #2E9B6B;
+    --border:    #E8E0D8;
+    --radius:    12px;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Geist', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .header-cal {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .header-cal-day {
+    font-family: 'Geist Mono', monospace;
+    font-size: 5.5rem;
+    font-weight: 800;
+    line-height: 0.9;
+    color: var(--text);
+    letter-spacing: -3px;
+  }
+  .header-cal-info { display: flex; flex-direction: column; gap: 3px; }
+  .header-cal-month {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+  }
+  .header-cal-weekday {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .header-brand-name {
+    font-family: 'Geist', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .header-brand-sub {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    margin-top: 1px;
+  }
+
+  /* Termómetro de progreso diario */
+  .daily-meter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .daily-meter span {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+  }
+  .meter-bar {
+    width: 100px;
+    height: 6px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .meter-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 99px;
+    transition: width 0.5s ease;
+  }
+  .meter-pct {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gold);
+    min-width: 32px;
+    text-align: right;
+  }
+
+  /* ── TABS ── */
+  nav {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    overflow-x: auto;
+  }
+  .tab-pills {
+    display: flex;
+    gap: 3px;
+    background: rgba(0,0,0,0.06);
+    border-radius: 99px;
+    padding: 3px;
+    width: fit-content;
+  }
+  .tab-btn {
+    padding: 8px 18px;
+    background: none;
+    border: none;
+    border-radius: 99px;
+    color: var(--muted);
+    font-family: 'Geist', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .tab-btn.active { background: var(--gold); color: #FFFFFF; }
+  .tab-btn:hover:not(.active) { color: var(--text); background: rgba(0,0,0,0.04); }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  }
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-family: 'Geist', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .badge {
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    white-space: nowrap;
+  }
+  .badge-active  { background: rgba(232,69,10,0.10); color: var(--gold); }
+  .badge-done    { background: rgba(46,155,107,0.12); color: var(--success); }
+  .badge-pending { background: rgba(0,0,0,0.06); color: var(--muted); }
+
+  .card-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .card-meta strong { color: var(--text); }
+
+  /* Progress bar inside card */
+  .progress-wrap { margin: 10px 0 6px; }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .progress-track {
+    height: 5px;
+    background: rgba(0,0,0,0.07);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+    border-radius: 99px;
+  }
+
+  /* Steps list */
+  .steps-list { list-style: none; margin-top: 10px; }
+  .steps-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+    color: var(--text);
+  }
+  .steps-list li:last-child { border-bottom: none; }
+  .step-check {
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--gold-dim);
+    border-radius: 4px;
+    background: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .step-check.checked {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .step-check.checked::after {
+    content: '✓';
+    font-size: 11px;
+    color: #FFFFFF;
+    font-weight: 700;
+  }
+  .step-text.done { text-decoration: line-through; color: var(--muted); }
+
+  /* Card actions */
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn-gold    { background: var(--gold); color: #FFFFFF; }
+  .btn-ghost   { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+  .btn-danger  { background: rgba(217,64,64,0.10); color: var(--danger); }
+  .btn-sm      { padding: 6px 12px; font-size: 0.72rem; }
+
+  /* ── FORM / MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.14);
+  }
+  .modal h2 {
+    font-family: 'Geist', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Geist', sans-serif;
+    font-size: 0.88rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    border-color: var(--gold);
+  }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+  .form-group select option { background: var(--surface); }
+
+  /* Steps input builder */
+  .steps-builder { display: flex; flex-direction: column; gap: 8px; }
+  .step-row { display: flex; gap: 8px; align-items: center; }
+  .step-row input { flex: 1; }
+  .step-row button {
+    width: 30px; height: 30px;
+    background: rgba(217,64,64,0.10);
+    border: none;
+    border-radius: 6px;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+    justify-content: flex-end;
+  }
+
+  /* ── SECTION HEADER ── */
+  .sec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+  }
+  .sec-header h2 {
+    font-family: 'Geist', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .sec-header p {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── HABITS ── */
+  .habit-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--hcolor, var(--gold));
+    border-radius: var(--radius);
+    padding: 16px 18px 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  }
+  .habit-card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .habit-cat-icon { font-size: 1.15rem; flex-shrink: 0; }
+  .habit-info { flex: 1; min-width: 0; }
+  .habit-name { font-size: 0.9rem; font-weight: 500; }
+  .habit-streak { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+  .habit-card-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .habit-del {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+    line-height: 1;
+  }
+  .habit-del:hover { opacity: 1; color: var(--danger); }
+  .habit-check-big {
+    width: 32px; height: 32px;
+    border: 2px solid var(--hcolor, var(--gold-dim));
+    border-radius: 50%;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .habit-check-big.checked {
+    background: var(--hcolor, var(--gold));
+    border-color: var(--hcolor, var(--gold));
+  }
+  .habit-check-big.checked::after {
+    content: '✓';
+    font-size: 15px;
+    color: #FFFFFF;
+    font-weight: 700;
+  }
+
+  /* Dot grid */
+  .habit-dots-grid {
+    display: grid;
+    grid-template-columns: repeat(23, 1fr);
+    gap: 3px;
+    width: 100%;
+  }
+  .hdot {
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+
+  /* Color swatches in modal */
+  .color-swatches {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .color-swatch {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    transition: outline-color 0.15s, transform 0.15s;
+  }
+  .color-swatch:hover { transform: scale(1.12); }
+  .color-swatch.selected {
+    outline-color: var(--text);
+    transform: scale(1.12);
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .empty h3 { font-size: 1rem; color: var(--text); margin-bottom: 8px; }
+  .empty p { font-size: 0.82rem; line-height: 1.5; }
+
+  /* ── QUOTE BANNER ── */
+  .quote-banner {
+    background: #FFF8F5;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.6;
+  }
+  .quote-banner strong { color: var(--gold); font-style: normal; font-size: 0.72rem; display: block; margin-top: 6px; }
+
+  /* ── HISTORIAL ── */
+  .hist-row {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 13px 18px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .hist-row:hover { border-color: var(--gold); box-shadow: 0 1px 8px rgba(232,69,10,0.08); }
+  .hist-date { min-width: 70px; }
+  .hist-day-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .hist-day-sub {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .hist-dots {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+  }
+  .hist-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.08);
+    flex-shrink: 0;
+  }
+  .hist-dot.done { background: var(--gold); }
+  .hist-stat {
+    min-width: 72px;
+    text-align: right;
+  }
+  .hist-count {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .hist-pct {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+  .hist-bar-wrap {
+    margin-top: 5px;
+    height: 3px;
+    background: rgba(0,0,0,0.07);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .hist-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+  .hist-bar-fill.fill-low  { background: var(--gold-dim); }
+  .hist-bar-fill.fill-mid  { background: var(--gold); }
+  .hist-bar-fill.fill-full { background: var(--success); }
+
+  /* ── MES — estadísticas ── */
+  .month-stats-section {
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+  .month-stat-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .month-stat-name {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text);
+    width: 130px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .month-stat-bar-wrap {
+    flex: 1;
+    height: 8px;
+    background: rgba(0,0,0,0.07);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .month-stat-bar {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    min-width: 2px;
+  }
+  .month-stat-pct {
+    font-family: 'Geist', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    width: 36px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .month-best-label {
+    margin-top: 14px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ── CALENDARIO ── */
+  .cal-nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .cal-month-label {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .cal-nav-btn {
+    width: 36px; height: 36px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    font-size: 1.3rem;
+    color: var(--text);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+    line-height: 1;
+  }
+  .cal-nav-btn:hover { background: var(--border); }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 20px;
+  }
+  .cal-header-cell {
+    text-align: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 6px 0;
+  }
+  .cal-cell {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    position: relative;
+    border: 1.5px solid transparent;
+  }
+  .cal-day-num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1;
+  }
+  .cal-cell.cal-future .cal-day-num { color: #C0B8B0; }
+  .cal-cell.cal-perfect { background: var(--gold); }
+  .cal-cell.cal-perfect .cal-day-num { color: #FFFFFF; font-weight: 700; }
+  .cal-cell.cal-partial { border-color: var(--gold); }
+  .cal-cell.cal-partial .cal-day-num { color: var(--gold); font-weight: 600; }
+  .cal-today-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin-top: 3px;
+  }
+  .cal-cell.cal-perfect .cal-today-dot { background: rgba(255,255,255,0.7); }
+  .cal-summary {
+    display: flex;
+    gap: 0;
+    padding: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .cal-summary span {
+    font-size: 0.78rem;
+    color: var(--muted);
+    flex: 1;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    padding: 0 8px;
+  }
+  .cal-summary span:last-child { border-right: none; }
+  .cal-summary strong { display: block; font-size: 1rem; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+
+  /* ── FAB ── */
+  .fab {
+    position: fixed;
+    bottom: 28px;
+    left: 28px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: #FFFFFF;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 18px rgba(232,69,10,0.38);
+    z-index: 300;
+    transition: transform 0.2s, box-shadow 0.2s;
+    line-height: 1;
+  }
+  .fab:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(232,69,10,0.48); }
+  .fab:active { transform: scale(0.95); }
+
+  /* ── PANEL OVERLAY ── */
+  .panel-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.28);
+    z-index: 400;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .panel-overlay.open { opacity: 1; pointer-events: all; }
+
+  /* ── TASK PANEL ── */
+  .task-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 100vh;
+    background: #FFFFFF;
+    box-shadow: 4px 0 32px rgba(0,0,0,0.13);
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+  }
+  .task-panel.open { transform: translateX(0); }
+
+  .panel-header {
+    padding: 22px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .panel-title { font-size: 1.15rem; font-weight: 800; color: var(--text); line-height: 1; }
+  .panel-subtitle { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+  .panel-close {
+    width: 28px; height: 28px;
+    background: rgba(0,0,0,0.06);
+    border: none; border-radius: 50%;
+    font-size: 0.9rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .panel-close:hover { background: rgba(0,0,0,0.12); color: var(--text); }
+
+  .panel-input-area {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .panel-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .panel-input-row input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .panel-input-row input:focus { border-color: var(--gold); }
+  .panel-add-btn {
+    width: 36px; height: 36px;
+    background: var(--gold); color: #FFFFFF;
+    border: none; border-radius: 8px;
+    font-size: 1.4rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; line-height: 1;
+    transition: opacity 0.2s;
+  }
+  .panel-add-btn:hover { opacity: 0.85; }
+
+  .tag-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag-pill {
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    opacity: 0.5;
+    transition: border-color 0.15s, opacity 0.15s;
+  }
+  .tag-pill.selected { opacity: 1; border-color: currentColor; }
+  .tag-personal { background: #FFF0EB; color: #E8450A; }
+  .tag-diseno   { background: #EBF0FF; color: #5B8CFF; }
+  .tag-trabajo  { background: #F0EBFF; color: #A64CC9; }
+  .tag-iglesia  { background: #EBFFF5; color: #4CAF87; }
+  .tag-urgente  { background: #FFE8E8; color: #C94C4C; }
+
+  .panel-tasks { flex: 1; overflow-y: auto; padding: 8px 20px 20px; }
+  .tasks-group-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin: 14px 0 8px;
+  }
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    transition: opacity 0.2s;
+  }
+  .task-item:last-child { border-bottom: none; }
+  .task-item.done { opacity: 0.42; }
+  .task-check {
+    width: 20px; height: 20px;
+    border: 2px solid #D4D4D4;
+    border-radius: 50%;
+    cursor: pointer; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .task-check.en-curso  { background: #5B8CFF; border-color: #5B8CFF; }
+  .task-check.en-curso::after  { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #FFFFFF; }
+  .task-check.completada { background: #4CAF87; border-color: #4CAF87; }
+  .task-check.completada::after { content: ''; }
+  .estado-pill {
+    padding: 2px 7px;
+    border-radius: 99px;
+    font-size: 0.62rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .estado-en-curso   { background: #EBF0FF; color: #5B8CFF; }
+  .estado-completada { background: #EBFFF5; color: #4CAF87; }
+  .completadas-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 8px 0;
+    margin-top: 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    user-select: none;
+  }
+  .task-text {
+    flex: 1; font-size: 0.85rem; color: var(--text);
+    line-height: 1.4; min-width: 0;
+  }
+  .task-item.done .task-text { text-decoration: line-through; }
+  .task-tag {
+    padding: 2px 8px; border-radius: 99px;
+    font-size: 0.65rem; font-weight: 600; flex-shrink: 0;
+  }
+  .task-del {
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    font-size: 1rem; padding: 2px 4px;
+    opacity: 0.35; transition: opacity 0.2s;
+    flex-shrink: 0; line-height: 1;
+  }
+  .task-del:hover { opacity: 1; color: var(--danger); }
+
+  /* ── PÁGINA INICIO ── */
+  .inicio-hero {
+    background: #1A1A2E;
+    padding: 40px 32px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .inicio-blob {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 220px 200px at 88% 18%, rgba(232,69,10,0.30) 0%, transparent 70%),
+      radial-gradient(ellipse 200px 200px at 12% 85%, rgba(91,140,255,0.25) 0%, transparent 65%);
+  }
+  .inicio-hero-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .inicio-greeting-block { flex: 1; min-width: 0; }
+  .inicio-greeting {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .inicio-quote {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.62);
+    font-style: italic;
+    line-height: 1.55;
+    max-width: 260px;
+  }
+  .inicio-ring-wrap {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .inicio-ring { position: absolute; top: 0; left: 0; }
+  .inicio-ring-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+  }
+  #inicioRingNum {
+    font-family: 'Geist Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .inicio-ring-sub {
+    font-size: 0.58rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 3px;
+  }
+  /* Cuerpo claro deslizándose sobre el hero */
+  .inicio-body {
+    margin-top: -28px;
+    background: var(--bg);
+    border-radius: 24px 24px 0 0;
+    padding: 28px 24px 60px;
+    position: relative;
+    z-index: 2;
+    min-height: 60vh;
+  }
+  .inicio-racha-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 500;
+    line-height: 1.5;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  }
+  .inicio-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  /* Tarjetas de estadísticas del mes */
+  .inicio-mes-card {
+    border-radius: 20px;
+    height: 100px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+  .inicio-mes-card-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: stretch;
+    padding: 16px 18px;
+    background: linear-gradient(to right, transparent 40%, rgba(0,0,0,0.20) 100%);
+  }
+  .inicio-mes-card-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+  }
+  .inicio-mes-nombre {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    line-height: 1.2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  }
+  .inicio-mes-emoji { font-size: 1.15rem; }
+  .inicio-mes-pct {
+    font-family: 'Geist Mono', monospace;
+    font-size: 3rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1;
+    align-self: flex-end;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.20);
+  }
+  /* Mini calendario semanal */
+  .inicio-semana-card {
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 4px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  }
+  .inicio-semana-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+  }
+  .inicio-semana-dia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  .inicio-semana-letra {
+    font-size: 11px;
+    font-weight: 500;
+    color: #9E9E9E;
+    text-transform: uppercase;
+  }
+  .inicio-semana-num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+  }
+  .inicio-semana-num.futuro { color: #9E9E9E; }
+  .inicio-semana-num.hoy { background: #E8450A; color: #FFFFFF; }
+  .inicio-semana-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: transparent;
+  }
+  .inicio-semana-dot.completo   { background: #E8450A; }
+  .inicio-semana-dot.incompleto { background: #D4D4D4; }
+
+  /* Tareas en curso */
+  .inicio-en-curso-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: box-shadow 0.15s;
+  }
+  .inicio-en-curso-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .inicio-en-curso-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #5B8CFF;
+    flex-shrink: 0;
+  }
+  .inicio-en-curso-texto {
+    flex: 1;
+    font-size: 0.88rem;
+    color: var(--text);
+    font-weight: 500;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .inicio-en-curso-empty {
+    font-size: 0.82rem;
+    color: var(--muted);
+    padding: 10px 4px;
+  }
+
+  /* ── LUCIDE ICONS ── */
+  .tab-btn i, .tab-btn svg { width: 14px; height: 14px; vertical-align: -2px; }
+  .habit-cat-icon i, .habit-cat-icon svg { display: block; }
+  .hab-streak-flame { display: inline-flex; vertical-align: middle; }
+  .task-check i, .task-check svg { pointer-events: none; }
+
+  /* ── RACHA CHIP HEADER ── */
+  .racha-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(232,69,10,0.12); border-radius: 99px;
+    padding: 4px 10px; font-size: 0.78rem; font-weight: 700;
+    color: #E8450A; white-space: nowrap;
+  }
+  .racha-chip svg, .racha-chip i { width: 13px; height: 13px; }
+  #headerRachaDias { font-family: 'Geist Mono', monospace; font-weight: 700; }
+
+  /* ── ALERTA RACHA EN RIESGO ── */
+  .racha-alerta {
+    align-items: center; gap: 12px;
+    background: #FFF3E0; border-left: 4px solid #E8450A;
+    border-radius: 0 10px 10px 0; padding: 12px 16px;
+    margin-bottom: 20px;
+  }
+  .racha-alerta-icon svg, .racha-alerta-icon i {
+    width: 20px; height: 20px; color: #E8450A;
+    animation: pulse-flame 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-flame {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.55; transform: scale(0.88); }
+  }
+  .racha-alerta-text { flex: 1; font-size: 0.82rem; color: #7A3500; line-height: 1.4; }
+  .racha-alerta-btn {
+    background: #E8450A; color: #FFF; border: none;
+    border-radius: 8px; padding: 6px 12px;
+    font-family: 'Geist', sans-serif; font-size: 0.75rem;
+    font-weight: 700; cursor: pointer; flex-shrink: 0;
+  }
+
+  /* ── BLOQUE GRANDE DE RACHA ── */
+  .racha-big-block {
+    display: flex; flex-direction: row;
+    border-radius: 20px; overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .racha-big-left {
+    flex: 0 0 60%;
+    background: #FFFFFF;
+    padding: 28px 32px;
+    display: flex; flex-direction: column;
+    justify-content: center; gap: 14px;
+  }
+  .racha-big-msg {
+    font-size: 1.625rem; font-weight: 800; color: #1A1A1A;
+    line-height: 1.2;
+  }
+  .racha-big-actions { display: flex; }
+  .racha-big-right {
+    flex: 0 0 40%;
+    background: #E8450A;
+    padding: 28px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 4px;
+  }
+  .racha-big-flame svg, .racha-big-flame i { color: #FFFFFF; width: 36px; height: 36px; }
+  .racha-big-num { font-family: 'Geist Mono', monospace; font-size: 4rem; font-weight: 800; color: #FFFFFF; line-height: 1; }
+  .racha-big-label { font-size: 0.8rem; font-weight: 400; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.5px; }
+  .escudo-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #EBF0FF; border: 1.5px solid #5B8CFF;
+    border-radius: 8px; padding: 7px 12px;
+    font-family: 'Geist', sans-serif; font-size: 0.78rem;
+    font-weight: 700; color: #5B8CFF; cursor: pointer;
+  }
+  .escudo-btn:hover { background: #D8E4FF; }
+  .escudo-btn.usado { color: var(--muted); border-color: var(--border); background: transparent; cursor: default; }
+  .escudo-btn svg, .escudo-btn i { width: 15px; height: 15px; }
+
+  /* ── HITOS DE RACHA ── */
+  .racha-hitos-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .racha-hito {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 12px; border-radius: 99px; font-size: 0.72rem;
+    font-weight: 700; background: #F0F0F0; color: #9E9E9E;
+    border: 1.5px solid transparent;
+  }
+  .racha-hito svg, .racha-hito i { width: 12px; height: 12px; color: #D4D4D4; }
+  .racha-hito.alcanzado { background: #E8450A; color: #FFF; border-color: #E8450A; }
+  .racha-hito.alcanzado svg, .racha-hito.alcanzado i { color: #FFF; }
+  .racha-hito.proximo { background: #FFF; border: 1.5px dashed #E8450A; color: #E8450A; }
+  .racha-hito.proximo svg, .racha-hito.proximo i { color: #E8450A; }
+
+  /* ── MODAL CELEBRACIÓN ── */
+  .celebracion-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 500; display: none; align-items: center;
+    justify-content: center; padding: 24px;
+  }
+  .celebracion-overlay.open { display: flex; }
+  .celebracion-card {
+    background: #FFF; border-radius: 24px; padding: 40px 32px;
+    text-align: center; max-width: 320px; width: 100%;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  }
+  .celebracion-icon { color: #C9A84C; margin-bottom: 16px; }
+  .celebracion-icon svg, .celebracion-icon i { width: 64px; height: 64px; }
+  .celebracion-title { font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+  .celebracion-sub { font-size: 0.9rem; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+  .celebracion-btn {
+    background: #E8450A; color: #FFF; border: none; border-radius: 12px;
+    padding: 14px 28px; font-family: 'Geist', sans-serif;
+    font-size: 0.9rem; font-weight: 700; cursor: pointer; width: 100%;
+  }
+
+  /* ── PÁGINA TAREAS ── */
+  .tareas-portada-wrap { position: relative; margin-bottom: 24px; }
+  .tareas-portada {
+    height: 180px;
+    border-radius: var(--radius);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+  }
+  .portada-change-btn {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    background: rgba(0,0,0,0.35);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+    backdrop-filter: blur(4px);
+  }
+  .tareas-portada:hover .portada-change-btn { opacity: 1; }
+  .portada-selector {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    gap: 0;
+    z-index: 50;
+    width: 220px;
+  }
+  .portada-selector.open { display: flex; }
+  .portada-upload-btn {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%;
+    background: #F5F0EB; border: 1.5px dashed #D4CAC0;
+    border-radius: 8px; padding: 9px 12px;
+    font-family: 'Geist', sans-serif; font-size: 0.78rem;
+    font-weight: 600; color: var(--text);
+    cursor: pointer; text-align: left;
+    transition: background 0.15s;
+  }
+  .portada-upload-btn:hover { background: #EDE8E1; }
+  .portada-quitar-btn {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; margin-top: 6px;
+    background: none; border: none;
+    font-family: 'Geist', sans-serif; font-size: 0.72rem;
+    font-weight: 500; color: var(--danger);
+    cursor: pointer; padding: 4px 2px;
+    text-align: left;
+  }
+  .portada-quitar-btn:hover { opacity: 0.75; }
+  .portada-divider {
+    margin: 12px 0 10px;
+    font-family: 'Geist', sans-serif; font-size: 0.65rem;
+    font-weight: 600; color: #9E9E9E;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    border-top: 1px solid var(--border); padding-top: 10px;
+  }
+  .portada-swatches {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 8px;
+  }
+  .portada-swatch {
+    width: 52px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2.5px solid transparent;
+    transition: transform 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+  }
+  .portada-swatch:hover { transform: scale(1.07); }
+  .portada-swatch.active { border-color: var(--text); }
+  .tareas-page-header { margin-bottom: 20px; }
+  .tareas-page-header h2 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .tareas-page-sub { font-size: 0.8rem; color: var(--muted); margin-top: 5px; }
+  .tareas-filters { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .filter-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .filter-group-label {
+    font-size: 0.67rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    min-width: 52px;
+    flex-shrink: 0;
+  }
+  .filter-pill {
+    padding: 5px 12px;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: rgba(0,0,0,0.05);
+    color: var(--muted);
+    border: none;
+    transition: background 0.15s, color 0.15s;
+    font-family: 'Geist', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .filter-pill.active { background: var(--text); color: #FFFFFF; }
+  .filter-pill:hover:not(.active) { background: rgba(0,0,0,0.09); color: var(--text); }
+  .tareas-page-add {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .tareas-group-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin: 18px 0 10px;
+    user-select: none;
+  }
+  .tareas-group-label:first-child { margin-top: 4px; }
+  .tareas-group-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tarea-page-item {
+    background: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    border-bottom: 1px solid var(--border) !important;
+    border-radius: 10px;
+    padding: 12px 16px !important;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .page-completadas-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 10px 14px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    background: rgba(0,0,0,0.03);
+    border-radius: 8px;
+    user-select: none;
+  }
+
+  @media (max-width: 480px) {
+    header { flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 16px; }
+    .header-cal-day { font-size: 4rem; }
+    .header-right { align-items: flex-start; flex-direction: row; gap: 16px; }
+    .meter-bar { width: 80px; }
+    nav { padding: 8px 14px; }
+    .tab-btn { padding: 7px 13px; font-size: 0.78rem; }
+    main { padding: 20px 14px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-cal">
+    <div class="header-cal-day" id="hCalDay"></div>
+    <div class="header-cal-info">
+      <div class="header-cal-month" id="hCalMonth"></div>
+      <div class="header-cal-weekday" id="hCalWeekday"></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div>
+      <div class="header-brand-name">Sistema Tracy</div>
+      <span class="header-brand-sub">Metas · Hábitos · Acción</span>
+    </div>
+    <div id="headerRachaChip" class="racha-chip">
+      <i data-lucide="flame"></i>
+      <span id="headerRachaDias">0</span>
+    </div>
+    <div class="daily-meter">
+      <span>Hoy</span>
+      <div class="meter-bar">
+        <div class="meter-fill" id="meterFill" style="width:0%"></div>
+      </div>
+      <span class="meter-pct" id="meterPct">0%</span>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="tab-pills">
+    <button class="tab-btn active" onclick="switchTab('inicio')"><i data-lucide="home"></i> Inicio</button>
+    <button class="tab-btn" onclick="switchTab('hoy')"><i data-lucide="sun"></i> Hoy</button>
+    <button class="tab-btn" onclick="switchTab('metas')"><i data-lucide="target"></i> Metas</button>
+    <button class="tab-btn" onclick="switchTab('calendario')"><i data-lucide="calendar"></i> Calendario</button>
+    <button class="tab-btn" onclick="switchTab('tareas')"><i data-lucide="clipboard-list"></i> Tareas</button>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ══ INICIO ══ -->
+  <section id="sec-inicio" class="section active">
+
+    <!-- Bloque 1: Header oscuro -->
+    <div class="inicio-hero">
+      <div class="inicio-blob"></div>
+      <div class="inicio-hero-content">
+        <div class="inicio-greeting-block">
+          <h1 class="inicio-greeting" id="inicioGreeting"></h1>
+          <p class="inicio-quote" id="inicioQuote"></p>
+        </div>
+        <div class="inicio-ring-wrap">
+          <svg class="inicio-ring" viewBox="0 0 90 90" width="90" height="90">
+            <circle cx="45" cy="45" r="38" fill="none"
+                    stroke="rgba(255,255,255,0.12)" stroke-width="8"/>
+            <circle cx="45" cy="45" r="38" fill="none"
+                    stroke="#E8450A" stroke-width="8"
+                    stroke-linecap="round" stroke-dasharray="0 239"
+                    id="inicioRingArc" transform="rotate(-90 45 45)"/>
+          </svg>
+          <div class="inicio-ring-label">
+            <span id="inicioRingNum">0/0</span>
+            <span class="inicio-ring-sub">hoy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloque 2-4: Contenido claro -->
+    <div class="inicio-body">
+
+      <!-- Alerta racha en riesgo (hidden by default) -->
+      <div class="racha-alerta" id="rachaAlerta" style="display:none">
+        <div class="racha-alerta-icon"><i data-lucide="flame"></i></div>
+        <div class="racha-alerta-text">Tu racha está en riesgo — completá tus hábitos antes de medianoche</div>
+        <button class="racha-alerta-btn" onclick="switchTabProgrammatic('hoy')">Ir a Hoy →</button>
+      </div>
+
+      <!-- Bloque grande de racha -->
+      <div id="rachaBigBlock" class="racha-big-block"></div>
+
+      <!-- Hitos -->
+      <div id="rachaHitos" class="racha-hitos-row"></div>
+
+      <!-- Estadísticas del mes -->
+      <h3 class="inicio-section-title">Este mes — <span id="inicioMesLabel"></span></h3>
+      <div id="inicioMesStats" style="margin-bottom:28px"></div>
+
+      <!-- Semana -->
+      <h3 class="inicio-section-title">Esta semana</h3>
+      <div id="inicioSemana" class="inicio-semana-card"></div>
+
+      <!-- En curso -->
+      <h3 class="inicio-section-title" style="margin-top:28px">En curso</h3>
+      <div id="inicioEnCurso"></div>
+
+    </div>
+  </section>
+
+  <!-- ══ HOY ══ -->
+  <section id="sec-hoy" class="section">
+
+    <div class="sec-header">
+      <div>
+        <h2>Buenos días 👋</h2>
+        <p id="habitos-fecha"></p>
+      </div>
+      <button class="btn btn-gold" onclick="openHabitoModal()">+ Nuevo hábito</button>
+    </div>
+
+    <div id="habitos-list"></div>
+
+    <div class="month-stats-section">
+      <div class="sec-header" style="margin-bottom:18px">
+        <div>
+          <h2 id="month-stats-title">Este mes</h2>
+          <p id="month-stats-sub"></p>
+        </div>
+      </div>
+      <div id="month-stats-list"></div>
+      <p id="month-best" class="month-best-label"></p>
+    </div>
+
+  </section>
+
+  <!-- ══ METAS ══ -->
+  <section id="sec-metas" class="section">
+    <div class="sec-header">
+      <div>
+        <h2>Mis Metas</h2>
+        <p>Escrito · Con plazo · Con pasos</p>
+      </div>
+      <button class="btn btn-gold" onclick="openMetaModal()">+ Nueva meta</button>
+    </div>
+
+    <div class="quote-banner">
+      "Una meta no escrita es solo un deseo. Las personas con metas escritas logran cinco veces más que quienes no las tienen."
+      <strong>— Brian Tracy</strong>
+    </div>
+
+    <div id="metas-list"></div>
+  </section>
+
+  <!-- ══ CALENDARIO ══ -->
+  <section id="sec-calendario" class="section">
+    <div class="cal-nav-row">
+      <button class="cal-nav-btn" onclick="calNavPrev()">‹</button>
+      <div id="cal-month-label" class="cal-month-label"></div>
+      <button class="cal-nav-btn" onclick="calNavNext()">›</button>
+    </div>
+    <div id="calendario-grid"></div>
+    <div id="cal-summary" class="cal-summary"></div>
+  </section>
+
+  <!-- ══ TAREAS ══ -->
+  <section id="sec-tareas" class="section">
+
+    <!-- Portada -->
+    <input type="file" id="portadaFileInput" accept="image/*" style="display:none" onchange="handlePortadaFile(event)">
+    <div class="tareas-portada-wrap">
+      <div class="tareas-portada" id="tareasPortada">
+        <button class="portada-change-btn" onclick="togglePortadaSelector(event)">🎨 Cambiar portada</button>
+      </div>
+      <div class="portada-selector" id="portadaSelector"></div>
+    </div>
+
+    <!-- Título -->
+    <div class="tareas-page-header">
+      <h2>Mis Tareas</h2>
+      <p id="tareas-page-subtitle" class="tareas-page-sub"></p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="tareas-filters">
+      <div class="filter-group">
+        <span class="filter-group-label">Etiqueta</span>
+        <button class="filter-pill filter-etiqueta active" onclick="setFiltroEtiqueta('todas',this)">Todas</button>
+        <button class="filter-pill filter-etiqueta" onclick="setFiltroEtiqueta('Personal',this)">Personal</button>
+        <button class="filter-pill filter-etiqueta" onclick="setFiltroEtiqueta('Diseño',this)">Diseño</button>
+        <button class="filter-pill filter-etiqueta" onclick="setFiltroEtiqueta('Trabajo',this)">Trabajo</button>
+        <button class="filter-pill filter-etiqueta" onclick="setFiltroEtiqueta('Iglesia',this)">Iglesia</button>
+        <button class="filter-pill filter-etiqueta" onclick="setFiltroEtiqueta('Urgente',this)">Urgente</button>
+      </div>
+      <div class="filter-group">
+        <span class="filter-group-label">Estado</span>
+        <button class="filter-pill filter-estado active" onclick="setFiltroEstado('todas',this)">Todos</button>
+        <button class="filter-pill filter-estado" onclick="setFiltroEstado('sin_empezar',this)">Sin empezar</button>
+        <button class="filter-pill filter-estado" onclick="setFiltroEstado('en_curso',this)">En curso</button>
+        <button class="filter-pill filter-estado" onclick="setFiltroEstado('completada',this)">Completadas</button>
+      </div>
+    </div>
+
+    <!-- Agregar tarea -->
+    <div class="tareas-page-add">
+      <div class="panel-input-row">
+        <input type="text" id="tarea-page-input" placeholder="Nueva tarea..."
+               onkeydown="if(event.key==='Enter') addTareaPage()"/>
+        <button class="panel-add-btn" onclick="addTareaPage()">+</button>
+      </div>
+      <div class="tag-pills" id="tagPillsPage">
+        <span class="tag-pill tag-personal selected" data-tag="Personal" onclick="selectTagPage(this)">Personal</span>
+        <span class="tag-pill tag-diseno" data-tag="Diseño" onclick="selectTagPage(this)">Diseño</span>
+        <span class="tag-pill tag-trabajo" data-tag="Trabajo" onclick="selectTagPage(this)">Trabajo</span>
+        <span class="tag-pill tag-iglesia" data-tag="Iglesia" onclick="selectTagPage(this)">Iglesia</span>
+        <span class="tag-pill tag-urgente" data-tag="Urgente" onclick="selectTagPage(this)">Urgente</span>
+      </div>
+    </div>
+
+    <!-- Lista de tareas -->
+    <div id="tareas-page-list"></div>
+
+  </section>
+
+</main>
+
+<!-- ══ MODAL CELEBRACIÓN ══ -->
+<div class="celebracion-overlay" id="celebracionModal">
+  <div class="celebracion-card">
+    <div class="celebracion-icon"><i data-lucide="trophy"></i></div>
+    <div class="celebracion-title">¡Hito alcanzado!</div>
+    <div class="celebracion-sub" id="celebracionDias"></div>
+    <button class="celebracion-btn" onclick="closeCelebracionModal()">¡Seguir adelante!</button>
+  </div>
+</div>
+
+<!-- ══ MODAL META ══ -->
+<div class="modal-overlay" id="metaModal">
+  <div class="modal">
+    <h2 id="metaModalTitle">Nueva Meta</h2>
+
+    <div class="form-group">
+      <label>¿Qué querés lograr exactamente?</label>
+      <input type="text" id="meta-titulo" placeholder="Ej: Conseguir mi primer cliente de diseño"/>
+    </div>
+
+    <div class="form-group">
+      <label>¿Por qué es importante? (tu motivación)</label>
+      <textarea id="meta-razon" placeholder="Escribí por qué esta meta importa para tu vida..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Fecha límite</label>
+      <input type="date" id="meta-fecha"/>
+    </div>
+
+    <div class="form-group">
+      <label>Pasos de acción (plan concreto)</label>
+      <div class="steps-builder" id="stepsBuilder">
+        <div class="step-row">
+          <input type="text" placeholder="Paso 1"/>
+          <button onclick="removeStep(this)">×</button>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="addStep()">+ Agregar paso</button>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeMetaModal()">Cancelar</button>
+      <button class="btn btn-gold" onclick="saveMeta()">Guardar meta</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL HÁBITO ══ -->
+<div class="modal-overlay" id="habitoModal">
+  <div class="modal">
+    <h2>Nuevo Hábito</h2>
+
+    <div class="form-group">
+      <label>Nombre del hábito</label>
+      <input type="text" id="habito-nombre" placeholder="Ej: Leer 30 minutos, Ejercicio, Diseñar"/>
+    </div>
+
+    <div class="form-group">
+      <label>Categoría</label>
+      <select id="habito-categoria">
+        <option value="🧠 Mente">🧠 Mente</option>
+        <option value="💪 Cuerpo">💪 Cuerpo</option>
+        <option value="💼 Carrera">💼 Carrera</option>
+        <option value="🎯 Productividad">🎯 Productividad</option>
+        <option value="❤️ Personal">❤️ Personal</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Color</label>
+      <div class="color-swatches" id="colorSwatches">
+        <div class="color-swatch selected" data-color="#C9A84C" style="background:#C9A84C" onclick="selectHabitoColor(this)"></div>
+        <div class="color-swatch" data-color="#4CAF87" style="background:#4CAF87" onclick="selectHabitoColor(this)"></div>
+        <div class="color-swatch" data-color="#5B8CFF" style="background:#5B8CFF" onclick="selectHabitoColor(this)"></div>
+        <div class="color-swatch" data-color="#C96B4C" style="background:#C96B4C" onclick="selectHabitoColor(this)"></div>
+        <div class="color-swatch" data-color="#A64CC9" style="background:#A64CC9" onclick="selectHabitoColor(this)"></div>
+        <div class="color-swatch" data-color="#C94C6B" style="background:#C94C6B" onclick="selectHabitoColor(this)"></div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeHabitoModal()">Cancelar</button>
+      <button class="btn btn-gold" onclick="saveHabito()">Guardar hábito</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FAB ══ -->
+<button class="fab" id="fabBtn" onclick="toggleTaskPanel()" title="Mis tareas"><i data-lucide="pencil"></i></button>
+
+<!-- ══ PANEL OVERLAY ══ -->
+<div class="panel-overlay" id="panelOverlay" onclick="closeTaskPanel()"></div>
+
+<!-- ══ TASK PANEL ══ -->
+<div class="task-panel" id="taskPanel">
+  <div class="panel-header">
+    <div>
+      <div class="panel-title">Mis Tareas</div>
+      <div class="panel-subtitle" id="panelSubtitle">0 pendientes</div>
+    </div>
+    <button class="panel-close" onclick="closeTaskPanel()">✕</button>
+  </div>
+
+  <div class="panel-input-area">
+    <div class="panel-input-row">
+      <input type="text" id="tarea-input" placeholder="Nueva tarea..."
+             onkeydown="if(event.key==='Enter') addTarea()"/>
+      <button class="panel-add-btn" onclick="addTarea()">+</button>
+    </div>
+    <div class="tag-pills" id="tagPills">
+      <span class="tag-pill tag-personal selected" data-tag="Personal" onclick="selectTag(this)">Personal</span>
+      <span class="tag-pill tag-diseno"   data-tag="Diseño"   onclick="selectTag(this)">Diseño</span>
+      <span class="tag-pill tag-trabajo"  data-tag="Trabajo"  onclick="selectTag(this)">Trabajo</span>
+      <span class="tag-pill tag-iglesia"  data-tag="Iglesia"  onclick="selectTag(this)">Iglesia</span>
+      <span class="tag-pill tag-urgente"  data-tag="Urgente"  onclick="selectTag(this)">Urgente</span>
+    </div>
+  </div>
+
+  <div class="panel-tasks" id="panel-tasks-list"></div>
+</div>
+
+<script>
+// ── STATE ──
+const STORAGE_KEY = 'tracy_system_v1';
+let editingMetaIdx = -1;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return { metas: [], habitos: [], habitoChecks: {}, tareas: [] };
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+let state = loadState();
+if (!state.tareas) state.tareas = [];
+if (!state.portadaTareas) state.portadaTareas = 'naranja';
+// Migrar tareas del formato boolean (completada) al formato de 3 estados
+state.tareas.forEach(t => { if (!t.estado) t.estado = t.completada ? 'completada' : 'sin_empezar'; });
+if (!state.escudoUsado) state.escudoUsado = '';
+if (!state.hitosVistos) state.hitosVistos = [];
+if (state.portadaImagen === undefined) state.portadaImagen = null;
+
+// Clean today's check key for new day
+const todayKey = new Date().toISOString().split('T')[0];
+
+// ── TABS ──
+function switchTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + tab).classList.add('active');
+  (event.target.closest('.tab-btn') || event.target).classList.add('active');
+  if (tab === 'inicio')     renderInicio();
+  if (tab === 'hoy')        renderHoy();
+  if (tab === 'metas')      renderMetas();
+  if (tab === 'calendario') renderCalendario();
+  if (tab === 'tareas')     renderPaginaTareas();
+}
+
+// ── PÁGINA INICIO ──
+const FRASES_BIBLICAS = [
+  "Todo lo puedo en Cristo que me fortalece. — Fil 4:13",
+  "Encomienda a Jehová tus obras y tus planes se cumplirán. — Prov 16:3",
+  "El Señor es mi pastor, nada me faltará. — Sal 23:1",
+  "Porque yo sé los planes que tengo para ti, planes de bienestar. — Jer 29:11",
+  "Confía en el Señor con todo tu corazón. — Prov 3:5",
+  "Sé fuerte y valiente, no temas ni desmayes. — Jos 1:9",
+  "El que comenzó en ti la buena obra la perfeccionará. — Fil 1:6",
+  "Busca primero el reino de Dios y todo lo demás se añadirá. — Mat 6:33",
+  "No os conforméis a este siglo, sino transformaos. — Rom 12:2",
+  "Dios no nos dio espíritu de cobardía sino de poder. — 2 Tim 1:7",
+];
+
+const FRASES_TRACY = [
+  "El éxito es el resultado de hacer pequeñas cosas correctamente cada día.",
+  "Desarrolla buenos hábitos y ellos te desarrollarán a ti.",
+  "Muévete con urgencia. El tiempo es tu activo más valioso.",
+  "Las personas exitosas tienen el hábito de hacer lo que los fracasados no quieren hacer.",
+  "La autodisciplina es la clave para el logro personal.",
+  "Cada hábito que desarrollas te acerca o te aleja de tus metas.",
+  "Nunca te rindas en una meta. Solo rinde el tiempo que tomará alcanzarla.",
+  "Tu vida exterior es un reflejo de tu vida interior.",
+  "La claridad es el prerequisito del poder.",
+  "Come ese sapo: haz primero la tarea más difícil del día.",
+];
+
+function getSaludo() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return 'Buenos días';
+  if (h >= 12 && h < 19) return 'Buenas tardes';
+  return 'Buenas noches';
+}
+
+function getFraseDelDia() {
+  const inicio = new Date(new Date().getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((new Date() - inicio) / 86400000);
+  if (dayOfYear % 2 === 0) {
+    return FRASES_BIBLICAS[Math.floor(dayOfYear / 2) % FRASES_BIBLICAS.length];
+  }
+  return FRASES_TRACY[Math.floor(dayOfYear / 2) % FRASES_TRACY.length];
+}
+
+function calcularRachaGlobal() {
+  if (!state.habitos.length) return 0;
+  const total    = state.habitos.length;
+  const mesActual = todayKey.slice(0, 7);
+  let streak = 0;
+  const d = new Date();
+  for (let i = 0; i < 365; i++) {
+    const key    = d.toISOString().split('T')[0];
+    const checks = state.habitoChecks[key] || {};
+    const done   = Object.values(checks).filter(Boolean).length;
+    const shieldProtectsToday = (i === 0) && (state.escudoUsado === mesActual);
+    if (done >= total || shieldProtectsToday) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+
+const CATEGORIA_ICON = {
+  '🧠': 'brain', '💪': 'dumbbell', '💼': 'briefcase',
+  '🎯': 'target', '❤️': 'heart',
+};
+const HITOS_RACHA = [7, 14, 30, 60, 100];
+
+function getMensajeRacha(dias) {
+  if (dias === 0)  return '¡Empezá hoy tu racha!';
+  if (dias < 7)   return '¡Buen comienzo, seguí así!';
+  if (dias < 14)  return '¡Una semana completa! 💪';
+  if (dias < 30)  return '¡Dos semanas! Sos imparable';
+  if (dias < 60)  return '¡Un mes! Sos extraordinario';
+  if (dias < 100) return '¡Dos meses! Hábito formado';
+  return '¡LEYENDA! +100 días 🏆';
+}
+
+function switchTabProgrammatic(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + tab).classList.add('active');
+  Array.from(document.querySelectorAll('.tab-btn')).find(b =>
+    b.getAttribute('onclick').includes(`'${tab}'`)
+  )?.classList.add('active');
+  if (tab === 'inicio')     renderInicio();
+  if (tab === 'hoy')        renderHoy();
+  if (tab === 'metas')      renderMetas();
+  if (tab === 'calendario') renderCalendario();
+  if (tab === 'tareas')     renderPaginaTareas();
+  if (window.lucide) lucide.createIcons();
+}
+
+function activarEscudo() {
+  const mes = todayKey.slice(0, 7);
+  if (state.escudoUsado === mes) return;
+  if (!confirm('¿Activar el escudo de racha para este mes? Solo podés usarlo una vez al mes.')) return;
+  state.escudoUsado = mes;
+  saveState();
+  renderInicio();
+}
+
+function checkCelebracion(racha) {
+  for (const hito of HITOS_RACHA) {
+    if (racha === hito && !state.hitosVistos.includes(hito)) {
+      state.hitosVistos.push(hito);
+      saveState();
+      document.getElementById('celebracionDias').textContent = `¡${hito} días de racha consecutiva!`;
+      document.getElementById('celebracionModal').classList.add('open');
+      if (window.lucide) lucide.createIcons();
+      break;
+    }
+  }
+}
+
+function closeCelebracionModal() {
+  document.getElementById('celebracionModal').classList.remove('open');
+}
+
+function renderInicio() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const daysElapsed = now.getDate();
+  const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                 'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  // Saludo y frase
+  document.getElementById('inicioGreeting').textContent = `${getSaludo()}, Agustín`;
+  document.getElementById('inicioQuote').textContent = getFraseDelDia();
+
+  // Anillo de progreso
+  const checks = state.habitoChecks[todayKey] || {};
+  const totalH = state.habitos.length;
+  const doneH  = Object.values(checks).filter(Boolean).length;
+  const pctH   = totalH ? doneH / totalH : 0;
+  const circ   = 2 * Math.PI * 38;
+  document.getElementById('inicioRingArc')
+    .setAttribute('stroke-dasharray', `${circ * pctH} ${circ}`);
+  document.getElementById('inicioRingNum').textContent = `${doneH}/${totalH}`;
+
+  // Racha global
+  const racha = calcularRachaGlobal();
+  document.getElementById('headerRachaDias').textContent = racha;
+
+  // Alert banner — mostrar si es después de 20:00, hay hábitos incompletos y racha > 0
+  const rachaAlerta = document.getElementById('rachaAlerta');
+  const hora = now.getHours();
+  const todayDone = doneH >= totalH;
+  if (hora >= 20 && !todayDone && racha > 0 && totalH > 0) {
+    rachaAlerta.style.display = 'flex';
+  } else {
+    rachaAlerta.style.display = 'none';
+  }
+
+  // Bloque grande de racha
+  const mesActual = todayKey.slice(0, 7);
+  const escudoDisponible = state.escudoUsado !== mesActual;
+  const msg = getMensajeRacha(racha);
+  document.getElementById('rachaBigBlock').innerHTML = `
+    <div class="racha-big-left">
+      <div class="racha-big-msg">${msg}</div>
+      <div class="racha-big-actions">
+        ${escudoDisponible
+          ? `<button class="escudo-btn" onclick="activarEscudo()"><i data-lucide="shield" style="width:15px;height:15px"></i> Activar escudo</button>`
+          : `<span class="escudo-btn usado"><i data-lucide="shield" style="width:15px;height:15px"></i> Escudo usado este mes</span>`}
+      </div>
+    </div>
+    <div class="racha-big-right">
+      <div class="racha-big-flame"><i data-lucide="flame" style="width:36px;height:36px;color:#FFFFFF"></i></div>
+      <div class="racha-big-num">${racha}</div>
+      <div class="racha-big-label">día${racha !== 1 ? 's' : ''}</div>
+    </div>`;
+  lucide.createIcons();
+
+  // Hitos
+  const proximoHito = HITOS_RACHA.find(h => h > racha);
+  document.getElementById('rachaHitos').innerHTML = HITOS_RACHA.map(h => {
+    const cls = racha >= h ? 'racha-hito alcanzado' : h === proximoHito ? 'racha-hito proximo' : 'racha-hito';
+    return `<span class="${cls}"><i data-lucide="trophy"></i> ${h}</span>`;
+  }).join('');
+
+  // Check celebración de hito
+  checkCelebracion(racha);
+
+  // Estadísticas del mes — tarjetas grandes
+  document.getElementById('inicioMesLabel').textContent = MESES[month];
+  const mesEl = document.getElementById('inicioMesStats');
+  if (!state.habitos.length) {
+    mesEl.innerHTML = '<p class="inicio-en-curso-empty">Agregá hábitos para ver estadísticas del mes.</p>';
+  } else {
+    mesEl.innerHTML = state.habitos.map((h, hi) => {
+      let completed = 0;
+      for (let d = 1; d <= daysElapsed; d++) {
+        const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        if (state.habitoChecks[key] && state.habitoChecks[key][hi]) completed++;
+      }
+      const pct      = Math.round((completed / daysElapsed) * 100);
+      const color    = h.color || '#C9A84C';
+      const catEmoji = h.categoria.split(' ')[0];
+      const catIcon  = CATEGORIA_ICON[catEmoji] || 'activity';
+      return `
+        <div class="inicio-mes-card" style="background:${color}">
+          <div class="inicio-mes-card-inner">
+            <div class="inicio-mes-card-left">
+              <div class="inicio-mes-nombre">${escHtml(h.nombre)}</div>
+              <div class="inicio-mes-emoji"><i data-lucide="${catIcon}" style="width:22px;height:22px"></i></div>
+            </div>
+            <div class="inicio-mes-pct">${pct}%</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // Mini calendario semanal
+  const LETRAS_DIA = ['L','M','M','J','V','S','D'];
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - (now.getDay() + 6) % 7);
+  startOfWeek.setHours(0, 0, 0, 0);
+  const nowMidnight = new Date(now); nowMidnight.setHours(0, 0, 0, 0);
+
+  document.getElementById('inicioSemana').innerHTML = `<div class="inicio-semana-row">` +
+    LETRAS_DIA.map((letra, i) => {
+      const dia = new Date(startOfWeek);
+      dia.setDate(startOfWeek.getDate() + i);
+      const key    = dia.toISOString().split('T')[0];
+      const isHoy  = key === todayKey;
+      const isFut  = dia > nowMidnight;
+
+      let numClass = '';
+      let dotClass = '';
+      if (isHoy) {
+        numClass = 'hoy';
+      } else if (isFut) {
+        numClass = 'futuro';
+      } else {
+        const dc = state.habitoChecks[key] || {};
+        const done = Object.values(dc).filter(Boolean).length;
+        dotClass = (state.habitos.length > 0 && done >= state.habitos.length)
+          ? 'completo' : 'incompleto';
+      }
+
+      return `
+        <div class="inicio-semana-dia">
+          <span class="inicio-semana-letra">${letra}</span>
+          <span class="inicio-semana-num ${numClass}">${dia.getDate()}</span>
+          <span class="inicio-semana-dot ${dotClass}"></span>
+        </div>`;
+    }).join('') + `</div>`;
+
+  // En curso
+  const enCurso = state.tareas.filter(t => t.estado === 'en_curso');
+  const enCursoEl = document.getElementById('inicioEnCurso');
+  if (!enCurso.length) {
+    enCursoEl.innerHTML = '<p class="inicio-en-curso-empty">Sin tareas en curso por ahora.</p>';
+  } else {
+    enCursoEl.innerHTML = enCurso.map(t => {
+      const tagCls = TAG_CLASSES[t.etiqueta] || 'tag-personal';
+      return `
+        <div class="inicio-en-curso-item" onclick="openTaskPanel()">
+          <div class="inicio-en-curso-dot"></div>
+          <span class="inicio-en-curso-texto">${escHtml(t.texto)}</span>
+          <span class="task-tag ${tagCls}">${escHtml(t.etiqueta)}</span>
+        </div>`;
+    }).join('');
+  }
+
+  if (window.lucide) lucide.createIcons();
+}
+
+// ── RENDER METAS ──
+function renderMetas() {
+  const container = document.getElementById('metas-list');
+  if (!state.metas.length) {
+    container.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🎯</div>
+        <h3>Sin metas todavía</h3>
+        <p>Creá tu primera meta con plazo y pasos de acción.<br>Las metas escritas son 5× más efectivas.</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = state.metas.map((m, mi) => {
+    const totalSteps = m.steps.length;
+    const doneSteps = m.steps.filter(s => s.done).length;
+    const pct = totalSteps ? Math.round((doneSteps / totalSteps) * 100) : 0;
+    const today = new Date();
+    const deadline = new Date(m.fecha + 'T00:00:00');
+    const diff = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+    const daysLabel = diff > 0 ? `${diff} días restantes` : diff === 0 ? 'Vence hoy' : `Vencida hace ${Math.abs(diff)} días`;
+    const badgeClass = pct === 100 ? 'badge-done' : 'badge-active';
+    const badgeText = pct === 100 ? 'Lograda' : 'Activa';
+
+    const stepsHtml = m.steps.length ? `
+      <ul class="steps-list">
+        ${m.steps.map((s, si) => `
+          <li>
+            <div class="step-check ${s.done ? 'checked' : ''}" onclick="toggleStep(${mi}, ${si})"></div>
+            <span class="step-text ${s.done ? 'done' : ''}">${escHtml(s.text)}</span>
+          </li>
+        `).join('')}
+      </ul>` : '<p style="font-size:0.78rem;color:var(--muted);margin-top:8px">Sin pasos definidos.</p>';
+
+    return `
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">${escHtml(m.titulo)}</div>
+          <span class="badge ${badgeClass}">${badgeText}</span>
+        </div>
+        ${m.razon ? `<p style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;font-style:italic">"${escHtml(m.razon)}"</p>` : ''}
+        <div class="card-meta">
+          <span>📅 <strong>${formatFecha(m.fecha)}</strong></span>
+          <span>⏳ ${daysLabel}</span>
+          <span>✅ ${doneSteps}/${totalSteps} pasos</span>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-label"><span>Progreso</span><span style="font-family:'Geist Mono',monospace;font-weight:700">${pct}%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </div>
+        ${stepsHtml}
+        <div class="card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="openMetaModal(${mi})">Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteMeta(${mi})">Eliminar</button>
+        </div>
+      </div>`;
+  }).join('');
+  if (window.lucide) lucide.createIcons();
+}
+
+function toggleStep(metaIdx, stepIdx) {
+  state.metas[metaIdx].steps[stepIdx].done = !state.metas[metaIdx].steps[stepIdx].done;
+  saveState();
+  renderMetas();
+}
+
+function deleteMeta(idx) {
+  if (confirm('¿Eliminar esta meta?')) {
+    state.metas.splice(idx, 1);
+    saveState();
+    renderMetas();
+  }
+}
+
+// ── META MODAL ──
+function openMetaModal(idx) {
+  editingMetaIdx = (idx !== undefined) ? idx : -1;
+  const m = editingMetaIdx >= 0 ? state.metas[editingMetaIdx] : null;
+  document.getElementById('metaModalTitle').textContent = m ? 'Editar Meta' : 'Nueva Meta';
+  document.getElementById('meta-titulo').value = m ? m.titulo : '';
+  document.getElementById('meta-razon').value = m ? m.razon : '';
+  document.getElementById('meta-fecha').value = m ? m.fecha : '';
+  const builder = document.getElementById('stepsBuilder');
+  if (m && m.steps.length) {
+    builder.innerHTML = m.steps.map((s, i) =>
+      `<div class="step-row"><input type="text" value="${escHtml(s.text)}" placeholder="Paso ${i+1}"/><button onclick="removeStep(this)">×</button></div>`
+    ).join('');
+  } else {
+    builder.innerHTML = `<div class="step-row"><input type="text" placeholder="Paso 1"/><button onclick="removeStep(this)">×</button></div>`;
+  }
+  document.getElementById('metaModal').classList.add('open');
+}
+function closeMetaModal() {
+  document.getElementById('metaModal').classList.remove('open');
+  editingMetaIdx = -1;
+}
+function addStep() {
+  const builder = document.getElementById('stepsBuilder');
+  const n = builder.children.length + 1;
+  const row = document.createElement('div');
+  row.className = 'step-row';
+  row.innerHTML = `<input type="text" placeholder="Paso ${n}"/><button onclick="removeStep(this)">×</button>`;
+  builder.appendChild(row);
+}
+function removeStep(btn) {
+  const builder = document.getElementById('stepsBuilder');
+  if (builder.children.length > 1) btn.parentElement.remove();
+}
+function saveMeta() {
+  const titulo = document.getElementById('meta-titulo').value.trim();
+  const razon  = document.getElementById('meta-razon').value.trim();
+  const fecha  = document.getElementById('meta-fecha').value;
+  if (!titulo) { alert('Escribí el título de tu meta.'); return; }
+  if (!fecha)  { alert('Definí una fecha límite.'); return; }
+
+  const stepInputs = document.querySelectorAll('#stepsBuilder input');
+  const steps = Array.from(stepInputs)
+    .map(i => i.value.trim())
+    .filter(Boolean)
+    .map(text => ({ text, done: false }));
+
+  if (editingMetaIdx >= 0) {
+    const original = state.metas[editingMetaIdx];
+    // Preserve done state of steps that match by position
+    const mergedSteps = steps.map((s, i) => ({
+      text: s.text,
+      done: (original.steps[i] && original.steps[i].text === s.text) ? original.steps[i].done : false
+    }));
+    state.metas[editingMetaIdx] = { ...original, titulo, razon, fecha, steps: mergedSteps };
+  } else {
+    state.metas.push({ titulo, razon, fecha, steps, creado: new Date().toISOString() });
+  }
+  saveState();
+  closeMetaModal();
+  renderMetas();
+}
+
+// ── RENDER HÁBITOS ──
+function renderHabitos() {
+  const checks = state.habitoChecks[todayKey] || {};
+  const total = state.habitos.length;
+  const done  = Object.values(checks).filter(Boolean).length;
+
+  // Update meter
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('meterFill').style.width = pct + '%';
+  document.getElementById('meterPct').textContent = pct + '%';
+
+  // Date label
+  const dateOpts = { weekday: 'long', day: 'numeric', month: 'long' };
+  document.getElementById('habitos-fecha').textContent =
+    new Date().toLocaleDateString('es-PY', dateOpts);
+
+  const container = document.getElementById('habitos-list');
+  if (!state.habitos.length) {
+    container.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">🔄</div>
+        <h3>Sin hábitos registrados</h3>
+        <p>Los hábitos diarios son la base del éxito sostenido.<br>Agregá el primero y marcalo cada día.</p>
+      </div>`;
+    return;
+  }
+
+  const gridBase = new Date();
+
+  container.innerHTML = state.habitos.map((h, hi) => {
+    const checked = checks[hi] || false;
+    const streak = calcStreak(hi);
+    const color = h.color || '#C9A84C';
+    const catEmoji = h.categoria.split(' ')[0];
+    const catIcon  = CATEGORIA_ICON[catEmoji] || 'activity';
+
+    // 23-col × 4-row grid = 92 slots. 2 invisible placeholders push today to slot 92 (bottom-right).
+    let dotsHtml = '<div class="hdot" style="background:transparent"></div>'.repeat(2);
+    for (let d = 89; d >= 0; d--) {
+      const dd = new Date(gridBase);
+      dd.setDate(gridBase.getDate() - d);
+      const key = dd.toISOString().split('T')[0];
+      const isDone = !!(state.habitoChecks[key] && state.habitoChecks[key][hi]);
+      const bg = isDone ? color : color + '26';
+      dotsHtml += `<div class="hdot" style="background:${bg}"></div>`;
+    }
+
+    return `
+      <div class="habit-card" style="--hcolor:${color}">
+        <div class="habit-card-top">
+          <div class="habit-cat-icon"><i data-lucide="${catIcon}" style="width:20px;height:20px"></i></div>
+          <div class="habit-info">
+            <div class="habit-name">${escHtml(h.nombre)}</div>
+            <div class="habit-streak">${streak > 0 ? `<i data-lucide="flame" style="width:14px;height:14px;vertical-align:-2px;color:#f97316"></i> <span style="font-family:'Geist Mono',monospace;font-weight:600">${streak}</span> días seguidos` : 'Sin racha aún'}</div>
+          </div>
+          <div class="habit-card-actions">
+            <button class="habit-del" onclick="deleteHabito(${hi})">×</button>
+            <div class="habit-check-big ${checked ? 'checked' : ''}"
+                 onclick="toggleHabito(${hi})"></div>
+          </div>
+        </div>
+        <div class="habit-dots-grid">${dotsHtml}</div>
+      </div>`;
+  }).join('');
+  if (window.lucide) lucide.createIcons();
+}
+
+function toggleHabito(idx) {
+  if (!state.habitoChecks[todayKey]) state.habitoChecks[todayKey] = {};
+  state.habitoChecks[todayKey][idx] = !state.habitoChecks[todayKey][idx];
+  saveState();
+  renderHoy();
+  const racha = calcularRachaGlobal();
+  document.getElementById('headerRachaDias').textContent = racha;
+  if (window.lucide) lucide.createIcons();
+}
+
+function calcStreak(habitoIdx) {
+  let streak = 0;
+  const d = new Date();
+  for (let i = 0; i < 365; i++) {
+    const key = d.toISOString().split('T')[0];
+    if (state.habitoChecks[key] && state.habitoChecks[key][habitoIdx]) {
+      streak++;
+      d.setDate(d.getDate() - 1);
+    } else { break; }
+  }
+  return streak;
+}
+
+function deleteHabito(idx) {
+  if (confirm('¿Eliminar este hábito?')) {
+    const oldLen = state.habitos.length;
+    state.habitos.splice(idx, 1);
+    // Rebuild checks: remap old indices skipping the deleted one
+    const newChecks = {};
+    Object.keys(state.habitoChecks).forEach(day => {
+      newChecks[day] = {};
+      const dayData = state.habitoChecks[day];
+      let newIdx = 0;
+      for (let oldIdx = 0; oldIdx < oldLen; oldIdx++) {
+        if (oldIdx !== idx) newChecks[day][newIdx++] = dayData[oldIdx] || false;
+      }
+    });
+    state.habitoChecks = newChecks;
+    saveState();
+    renderHoy();
+  }
+}
+
+// ── HÁBITO MODAL ──
+let selectedHabitoColor = '#C9A84C';
+
+function selectHabitoColor(el) {
+  document.querySelectorAll('#colorSwatches .color-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedHabitoColor = el.dataset.color;
+}
+
+function openHabitoModal() {
+  document.getElementById('habito-nombre').value = '';
+  selectedHabitoColor = '#C9A84C';
+  document.querySelectorAll('#colorSwatches .color-swatch').forEach((s, i) => {
+    s.classList.toggle('selected', i === 0);
+  });
+  document.getElementById('habitoModal').classList.add('open');
+}
+function closeHabitoModal() {
+  document.getElementById('habitoModal').classList.remove('open');
+}
+function saveHabito() {
+  const nombre = document.getElementById('habito-nombre').value.trim();
+  const categoria = document.getElementById('habito-categoria').value;
+  if (!nombre) { alert('Escribí el nombre del hábito.'); return; }
+  state.habitos.push({ nombre, categoria, color: selectedHabitoColor });
+  saveState();
+  closeHabitoModal();
+  renderHoy();
+}
+
+// ── RENDER HOY ──
+function renderHoy() {
+  renderHabitos();
+  renderMonthStats();
+}
+
+// ── RENDER ESTADÍSTICAS DEL MES ──
+function renderMonthStats() {
+  const container = document.getElementById('month-stats-list');
+  const total = state.habitos.length;
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const daysElapsed = now.getDate();
+  const mesesNombres = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  document.getElementById('month-stats-title').textContent = `Este mes — ${mesesNombres[month]}`;
+  document.getElementById('month-stats-sub').textContent = `${daysElapsed} días transcurridos`;
+
+  if (!total) {
+    container.innerHTML = '<p style="font-size:0.82rem;color:var(--muted)">Agregá hábitos para ver estadísticas del mes.</p>';
+    document.getElementById('month-best').textContent = '';
+    return;
+  }
+
+  const stats = state.habitos.map((h, hi) => {
+    let completed = 0;
+    for (let d = 1; d <= daysElapsed; d++) {
+      const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      if (state.habitoChecks[key] && state.habitoChecks[key][hi]) completed++;
+    }
+    const pct = Math.round((completed / daysElapsed) * 100);
+    return { h, completed, pct };
+  });
+
+  container.innerHTML = stats.map(({ h, pct }) => {
+    const color = h.color || '#C9A84C';
+    return `
+      <div class="month-stat-row">
+        <div class="month-stat-name">${escHtml(h.nombre)}</div>
+        <div class="month-stat-bar-wrap">
+          <div class="month-stat-bar" style="width:${pct}%;background:${color}"></div>
+        </div>
+        <div class="month-stat-pct" style="color:${color}">${pct}%</div>
+      </div>`;
+  }).join('');
+
+  const best = stats.reduce((a, b) => a.pct >= b.pct ? a : b);
+  document.getElementById('month-best').textContent = best.pct > 0
+    ? `Tu mejor hábito este mes: ${best.h.nombre} (${best.pct}%)`
+    : 'Completá hábitos para ver estadísticas.';
+}
+
+// ── RENDER CALENDARIO ──
+let calendarMonth = new Date().getMonth();
+let calendarYear  = new Date().getFullYear();
+
+function renderCalendario() {
+  const total = state.habitos.length;
+  const year  = calendarYear;
+  const month = calendarMonth;
+  const firstDay  = new Date(year, month, 1);
+  const lastDay   = new Date(year, month + 1, 0);
+  const todayDate = new Date();
+
+  const mesesNombres = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  document.getElementById('cal-month-label').textContent = `${mesesNombres[month]} ${year}`;
+
+  // Monday-first: (getDay()+6)%7 → 0=Mon … 6=Sun
+  const startDow = (firstDay.getDay() + 6) % 7;
+
+  let gridHtml = '<div class="cal-grid">';
+  ['L','M','M','J','V','S','D'].forEach(d => {
+    gridHtml += `<div class="cal-header-cell">${d}</div>`;
+  });
+  for (let i = 0; i < startDow; i++) gridHtml += '<div class="cal-cell"></div>';
+
+  let perfectDays = 0, bestStreak = 0, curStreak = 0;
+  let totalDone = 0, totalPossible = 0;
+
+  for (let day = 1; day <= lastDay.getDate(); day++) {
+    const dateObj = new Date(year, month, day);
+    const key = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const isFuture = dateObj > todayDate;
+    const isToday  = key === todayKey;
+
+    let doneCnt = 0;
+    if (!isFuture && total > 0) {
+      const dc = state.habitoChecks[key] || {};
+      doneCnt = state.habitos.filter((_, hi) => dc[hi]).length;
+      totalDone += doneCnt;
+      totalPossible += total;
+    }
+
+    const isPerfect = !isFuture && total > 0 && doneCnt === total;
+    const isPartial = !isFuture && doneCnt > 0 && !isPerfect;
+
+    if (isPerfect) { curStreak++; bestStreak = Math.max(bestStreak, curStreak); perfectDays++; }
+    else if (!isFuture) curStreak = 0;
+
+    let cls = 'cal-cell';
+    if (isPerfect) cls += ' cal-perfect';
+    else if (isPartial) cls += ' cal-partial';
+    else if (isFuture) cls += ' cal-future';
+
+    gridHtml += `<div class="${cls}">
+      <span class="cal-day-num">${day}</span>
+      ${isToday ? '<div class="cal-today-dot"></div>' : ''}
+    </div>`;
+  }
+  gridHtml += '</div>';
+
+  document.getElementById('calendario-grid').innerHTML = gridHtml;
+
+  const avgPct = totalPossible > 0 ? Math.round((totalDone / totalPossible) * 100) : 0;
+  document.getElementById('cal-summary').innerHTML = `
+    <span><strong>${perfectDays}</strong>Días perfectos</span>
+    <span><strong>${bestStreak}</strong>Mejor racha</span>
+    <span><strong>${avgPct}%</strong>Promedio</span>`;
+}
+
+function calNavPrev() {
+  calendarMonth--;
+  if (calendarMonth < 0) { calendarMonth = 11; calendarYear--; }
+  renderCalendario();
+}
+function calNavNext() {
+  const now = new Date();
+  if (calendarYear < now.getFullYear() || calendarMonth < now.getMonth()) {
+    calendarMonth++;
+    if (calendarMonth > 11) { calendarMonth = 0; calendarYear++; }
+    renderCalendario();
+  }
+}
+
+// ── TASK PANEL ──
+let selectedTag = 'Personal';
+let panelOpen = false;
+
+const TAG_CLASSES = {
+  'Personal': 'tag-personal',
+  'Diseño':   'tag-diseno',
+  'Trabajo':  'tag-trabajo',
+  'Iglesia':  'tag-iglesia',
+  'Urgente':  'tag-urgente',
+};
+
+function toggleTaskPanel() { panelOpen ? closeTaskPanel() : openTaskPanel(); }
+
+function openTaskPanel() {
+  panelOpen = true;
+  document.getElementById('taskPanel').classList.add('open');
+  document.getElementById('panelOverlay').classList.add('open');
+  document.getElementById('fabBtn').textContent = '✕';
+  renderTareas();
+}
+
+function closeTaskPanel() {
+  panelOpen = false;
+  document.getElementById('taskPanel').classList.remove('open');
+  document.getElementById('panelOverlay').classList.remove('open');
+  document.getElementById('fabBtn').textContent = '✎';
+}
+
+function selectTag(el) {
+  document.querySelectorAll('#tagPills .tag-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTag = el.dataset.tag;
+}
+
+function addTarea() {
+  const input = document.getElementById('tarea-input');
+  const texto = input.value.trim();
+  if (!texto) return;
+  state.tareas.push({ id: Date.now(), texto, etiqueta: selectedTag, estado: 'sin_empezar' });
+  saveState();
+  input.value = '';
+  renderTareas();
+  if (document.getElementById('sec-tareas').classList.contains('active')) renderTareasLista();
+}
+
+const ESTADO_CYCLE = { sin_empezar: 'en_curso', en_curso: 'completada', completada: 'sin_empezar' };
+
+function toggleTarea(id) {
+  const t = state.tareas.find(t => t.id === id);
+  if (!t) return;
+  t.estado = ESTADO_CYCLE[t.estado] || 'en_curso';
+  t.completada = t.estado === 'completada'; // backwards compat
+  saveState();
+  renderTareas();
+  if (document.getElementById('sec-tareas').classList.contains('active')) renderTareasLista();
+}
+
+function deleteTarea(id) {
+  state.tareas = state.tareas.filter(t => t.id !== id);
+  saveState();
+  renderTareas();
+  if (document.getElementById('sec-tareas').classList.contains('active')) renderTareasLista();
+}
+
+let completadasCollapsed = true;
+function toggleCompletadas() {
+  completadasCollapsed = !completadasCollapsed;
+  renderTareas();
+}
+
+function renderTareas() {
+  const enCurso    = state.tareas.filter(t => t.estado === 'en_curso');
+  const sinEmpezar = state.tareas.filter(t => !t.estado || t.estado === 'sin_empezar');
+  const completadas = state.tareas.filter(t => t.estado === 'completada');
+  const pendientesCnt = enCurso.length + sinEmpezar.length;
+
+  document.getElementById('panelSubtitle').textContent =
+    `${pendientesCnt} pendiente${pendientesCnt !== 1 ? 's' : ''}`;
+
+  function checkHtml(t) {
+    if (t.estado === 'en_curso')   return `<div class="task-check en-curso"  onclick="toggleTarea(${t.id})"></div>`;
+    if (t.estado === 'completada') return `<div class="task-check completada" onclick="toggleTarea(${t.id})"><i data-lucide="check" style="width:12px;height:12px;color:#fff"></i></div>`;
+    return `<div class="task-check" onclick="toggleTarea(${t.id})"></div>`;
+  }
+
+  function estadoPill(t) {
+    if (t.estado === 'en_curso')   return `<span class="estado-pill estado-en-curso">En curso</span>`;
+    if (t.estado === 'completada') return `<span class="estado-pill estado-completada">Hecho</span>`;
+    return '';
+  }
+
+  function itemHtml(t) {
+    const tagCls = TAG_CLASSES[t.etiqueta] || 'tag-personal';
+    return `
+      <div class="task-item ${t.estado === 'completada' ? 'done' : ''}">
+        ${checkHtml(t)}
+        <span class="task-text">${escHtml(t.texto)}</span>
+        ${estadoPill(t)}
+        <span class="task-tag ${tagCls}">${escHtml(t.etiqueta)}</span>
+        <button class="task-del" onclick="deleteTarea(${t.id})">×</button>
+      </div>`;
+  }
+
+  let html = '';
+  if (!state.tareas.length) {
+    html = `<div class="empty" style="padding:32px 0">
+              <div class="empty-icon">✅</div>
+              <h3>Sin tareas</h3>
+              <p>Agregá tu primera tarea arriba.</p>
+            </div>`;
+  } else {
+    if (enCurso.length)
+      html += `<div class="tasks-group-label">En curso</div>` + enCurso.map(itemHtml).join('');
+    if (sinEmpezar.length)
+      html += `<div class="tasks-group-label">Pendientes</div>` + sinEmpezar.map(itemHtml).join('');
+    if (completadas.length) {
+      html += `<div class="completadas-toggle" onclick="toggleCompletadas()">
+        <span>Completadas (${completadas.length})</span>
+        <span>${completadasCollapsed ? '▸' : '▾'}</span>
+      </div>`;
+      if (!completadasCollapsed) html += completadas.map(itemHtml).join('');
+    }
+  }
+
+  document.getElementById('panel-tasks-list').innerHTML = html;
+  if (window.lucide) lucide.createIcons();
+}
+
+// ── PÁGINA TAREAS ──
+const PORTADAS = [
+  { id: 'naranja', label: 'Naranja', g: 'linear-gradient(135deg,#E8450A,#C23A08)' },
+  { id: 'azul',    label: 'Azul',    g: 'linear-gradient(135deg,#5B8CFF,#1A3FBB)' },
+  { id: 'verde',   label: 'Verde',   g: 'linear-gradient(135deg,#4CAF87,#1A7A54)' },
+  { id: 'violeta', label: 'Violeta', g: 'linear-gradient(135deg,#A64CC9,#5C1A8A)' },
+  { id: 'oscuro',  label: 'Oscuro',  g: 'linear-gradient(135deg,#1A1A2E,#16213E)' },
+  { id: 'tierra',  label: 'Tierra',  g: 'linear-gradient(135deg,#8B6F2E,#5C3D2E)' },
+];
+
+function getPortadaGradient() {
+  const id = state.portadaTareas || 'naranja';
+  return (PORTADAS.find(p => p.id === id) || PORTADAS[0]).g;
+}
+
+function applyPortadaBanner() {
+  const el = document.getElementById('tareasPortada');
+  if (state.portadaImagen) {
+    el.style.background = `url(${state.portadaImagen}) center/cover no-repeat`;
+  } else {
+    el.style.background = getPortadaGradient();
+  }
+}
+
+function togglePortadaSelector(e) {
+  e.stopPropagation();
+  const sel = document.getElementById('portadaSelector');
+  const isOpen = sel.classList.contains('open');
+  if (!isOpen) sel.innerHTML = buildPortadaPanel();
+  sel.classList.toggle('open');
+}
+
+function selectPortada(id) {
+  state.portadaTareas = id;
+  state.portadaImagen = null;
+  saveState();
+  applyPortadaBanner();
+  document.getElementById('portadaSelector').innerHTML = buildPortadaPanel();
+  document.getElementById('portadaSelector').classList.remove('open');
+}
+
+function handlePortadaFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    state.portadaImagen = ev.target.result;
+    saveState();
+    applyPortadaBanner();
+    document.getElementById('portadaSelector').innerHTML = buildPortadaPanel();
+    document.getElementById('portadaSelector').classList.remove('open');
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+}
+
+function quitarPortadaImagen() {
+  state.portadaImagen = null;
+  saveState();
+  applyPortadaBanner();
+  document.getElementById('portadaSelector').innerHTML = buildPortadaPanel();
+}
+
+function buildPortadaPanel() {
+  const swatches = PORTADAS.map(p => `
+    <div class="portada-swatch${(!state.portadaImagen && (state.portadaTareas || 'naranja') === p.id) ? ' active' : ''}"
+         style="background:${p.g}"
+         onclick="selectPortada('${p.id}')"
+         title="${p.label}"></div>
+  `).join('');
+
+  const quitarBtn = state.portadaImagen
+    ? `<button class="portada-quitar-btn" onclick="quitarPortadaImagen()">✕ Quitar imagen</button>`
+    : '';
+
+  return `
+    <button class="portada-upload-btn" onclick="document.getElementById('portadaFileInput').click()">
+      📁 Subir imagen
+    </button>
+    ${quitarBtn}
+    <div class="portada-divider">O elegí un color</div>
+    <div class="portada-swatches">${swatches}</div>
+  `;
+}
+
+let filtroEtiqueta = 'todas';
+let filtroEstado   = 'todas';
+let pagCompletadasCollapsed = true;
+let selectedTagPage = 'Personal';
+
+function setFiltroEtiqueta(val, el) {
+  filtroEtiqueta = val;
+  document.querySelectorAll('.filter-etiqueta').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderTareasLista();
+}
+
+function setFiltroEstado(val, el) {
+  filtroEstado = val;
+  document.querySelectorAll('.filter-estado').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderTareasLista();
+}
+
+function selectTagPage(el) {
+  document.querySelectorAll('#tagPillsPage .tag-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedTagPage = el.dataset.tag;
+}
+
+function addTareaPage() {
+  const input = document.getElementById('tarea-page-input');
+  const texto = input.value.trim();
+  if (!texto) return;
+  state.tareas.push({ id: Date.now(), texto, etiqueta: selectedTagPage, estado: 'sin_empezar' });
+  saveState();
+  input.value = '';
+  renderTareasLista();
+  renderTareas();
+}
+
+function toggleTareaPage(id) {
+  const t = state.tareas.find(t => t.id === id);
+  if (!t) return;
+  t.estado = ESTADO_CYCLE[t.estado] || 'en_curso';
+  t.completada = t.estado === 'completada';
+  saveState();
+  renderTareasLista();
+  renderTareas();
+}
+
+function deleteTareaPage(id) {
+  state.tareas = state.tareas.filter(t => t.id !== id);
+  saveState();
+  renderTareasLista();
+  renderTareas();
+}
+
+function togglePageCompletadas() {
+  pagCompletadasCollapsed = !pagCompletadasCollapsed;
+  renderTareasLista();
+}
+
+function renderTareasLista() {
+  const total        = state.tareas.length;
+  const enCursoAll   = state.tareas.filter(t => t.estado === 'en_curso');
+  const sinEmpAll    = state.tareas.filter(t => !t.estado || t.estado === 'sin_empezar');
+  const compAll      = state.tareas.filter(t => t.estado === 'completada');
+
+  const sub = document.getElementById('tareas-page-subtitle');
+  if (sub) sub.textContent =
+    `${sinEmpAll.length} sin empezar · ${enCursoAll.length} en curso · ${compAll.length} completadas`;
+
+  const filtered = state.tareas.filter(t => {
+    const mE = filtroEtiqueta === 'todas' || t.etiqueta === filtroEtiqueta;
+    const mS = filtroEstado   === 'todas' || t.estado === filtroEstado ||
+               (!t.estado && filtroEstado === 'sin_empezar');
+    return mE && mS;
+  });
+
+  const enCurso    = filtered.filter(t => t.estado === 'en_curso');
+  const sinEmpezar = filtered.filter(t => !t.estado || t.estado === 'sin_empezar');
+  const completadas= filtered.filter(t => t.estado === 'completada');
+
+  function checkHtml(t) {
+    if (t.estado === 'en_curso')   return `<div class="task-check en-curso"  onclick="toggleTareaPage(${t.id})"></div>`;
+    if (t.estado === 'completada') return `<div class="task-check completada" onclick="toggleTareaPage(${t.id})"><i data-lucide="check" style="width:12px;height:12px;color:#fff"></i></div>`;
+    return `<div class="task-check" onclick="toggleTareaPage(${t.id})"></div>`;
+  }
+  function estadoPill(t) {
+    if (t.estado === 'en_curso')   return `<span class="estado-pill estado-en-curso">En curso</span>`;
+    if (t.estado === 'completada') return `<span class="estado-pill estado-completada">Hecho</span>`;
+    return '';
+  }
+  function itemHtml(t) {
+    const tagCls = TAG_CLASSES[t.etiqueta] || 'tag-personal';
+    return `
+      <div class="task-item tarea-page-item${t.estado === 'completada' ? ' done' : ''}">
+        ${checkHtml(t)}
+        <span class="task-text">${escHtml(t.texto)}</span>
+        ${estadoPill(t)}
+        <span class="task-tag ${tagCls}">${escHtml(t.etiqueta)}</span>
+        <button class="task-del" onclick="deleteTareaPage(${t.id})">×</button>
+      </div>`;
+  }
+
+  let html = '';
+  if (!filtered.length) {
+    html = total
+      ? `<div class="empty" style="padding:32px 0"><div class="empty-icon">🔍</div><h3>Sin resultados</h3><p>No hay tareas con esos filtros.</p></div>`
+      : `<div class="empty" style="padding:32px 0"><div class="empty-icon">📋</div><h3>Sin tareas</h3><p>Agregá tu primera tarea arriba.</p></div>`;
+  } else {
+    if (enCurso.length) {
+      html += `<div class="tareas-group-label"><span class="tareas-group-dot" style="background:#5B8CFF"></span>En curso</div>`;
+      html += enCurso.map(itemHtml).join('');
+    }
+    if (sinEmpezar.length) {
+      html += `<div class="tareas-group-label"><span class="tareas-group-dot" style="background:var(--border)"></span>Sin empezar</div>`;
+      html += sinEmpezar.map(itemHtml).join('');
+    }
+    if (completadas.length) {
+      html += `<div class="page-completadas-toggle" onclick="togglePageCompletadas()">
+        <span>✅ Completadas (${completadas.length})</span>
+        <span>${pagCompletadasCollapsed ? '▸' : '▾'}</span>
+      </div>`;
+      if (!pagCompletadasCollapsed) html += completadas.map(itemHtml).join('');
+    }
+  }
+  document.getElementById('tareas-page-list').innerHTML = html;
+  if (window.lucide) lucide.createIcons();
+}
+
+function renderPaginaTareas() {
+  applyPortadaBanner();
+  renderTareasLista();
+}
+
+document.addEventListener('click', function(e) {
+  const sel = document.getElementById('portadaSelector');
+  if (sel && sel.classList.contains('open') &&
+      !sel.contains(e.target) &&
+      !e.target.closest('.portada-change-btn')) {
+    sel.classList.remove('open');
+  }
+});
+
+// Close modals clicking overlay or pressing Escape
+document.getElementById('metaModal').addEventListener('click', function(e) {
+  if (e.target === this) closeMetaModal();
+});
+document.getElementById('habitoModal').addEventListener('click', function(e) {
+  if (e.target === this) closeHabitoModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { closeMetaModal(); closeHabitoModal(); closeTaskPanel(); }
+});
+
+// ── UTILS ──
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function formatFecha(str) {
+  if (!str) return '';
+  const [y, m, d] = str.split('-');
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return `${d} ${meses[parseInt(m)-1]} ${y}`;
+}
+
+// ── INIT ──
+(function initHeader() {
+  const now = new Date();
+  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  document.getElementById('hCalDay').textContent = now.getDate();
+  document.getElementById('hCalMonth').textContent = `${meses[now.getMonth()]} ${now.getFullYear()}`;
+  document.getElementById('hCalWeekday').textContent = dias[now.getDay()];
+})();
+
+renderInicio();
+if (window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>
