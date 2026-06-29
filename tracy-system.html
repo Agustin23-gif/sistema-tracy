@@ -966,11 +966,19 @@
     letter-spacing: 1px;
   }
   .inicio-quote {
-    font-size: 0.82rem;
-    color: rgba(255,255,255,0.62);
-    font-style: italic;
+    font-family: 'Geist', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    font-style: normal;
+    color: rgba(255,255,255,0.90);
     line-height: 1.55;
     max-width: 260px;
+  }
+  .inicio-quote-autor {
+    display: block;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.70);
   }
   .inicio-ring-wrap {
     position: relative;
@@ -2125,7 +2133,12 @@ function renderInicio() {
 
   // Saludo y frase
   document.getElementById('inicioGreeting').textContent = `${getSaludo()}, Agustín`;
-  document.getElementById('inicioQuote').textContent = getFraseDelDia();
+  const fraseRaw = getFraseDelDia();
+  const fraseParts = fraseRaw.split(' — ');
+  const fraseTexto = fraseParts[0];
+  const fraseAutor = fraseParts.length > 1 ? ' — ' + fraseParts.slice(1).join(' — ') : '';
+  document.getElementById('inicioQuote').innerHTML =
+    fraseTexto + (fraseAutor ? `<span class="inicio-quote-autor">${fraseAutor}</span>` : '');
 
   // Clima — SVG inline como fondo + temperatura
   const heroEl  = document.getElementById('inicioHero');
