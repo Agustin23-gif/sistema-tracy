@@ -1800,24 +1800,6 @@
       <div id="inicioEnCurso"></div>
 
       <!-- Backup -->
-      <!-- Notificaciones -->
-      <div class="backup-section" id="notifSection">
-        <div class="backup-title">Recordatorio diario</div>
-        <div id="notifStatus" style="font-size:13px;color:var(--muted);margin-bottom:10px"></div>
-        <div class="backup-btns" style="align-items:center;flex-wrap:wrap;gap:10px">
-          <label style="font-size:13px;color:var(--text);display:flex;align-items:center;gap:8px">
-            Hora:
-            <input type="time" id="notifTime" value="20:00"
-              style="font-family:'Geist Mono',monospace;font-size:13px;padding:5px 8px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text)">
-          </label>
-          <button class="backup-btn" onclick="activarNotificaciones()" id="notifBtn">
-            <i data-lucide="bell"></i> Activar recordatorio
-          </button>
-        </div>
-        <div class="backup-hint">Recibís un aviso diario para registrar tus hábitos</div>
-        <div class="backup-msg" id="notifMsg"></div>
-      </div>
-
       <div class="backup-section">
         <div class="backup-title">Datos</div>
         <div class="backup-btns">
@@ -2411,7 +2393,6 @@ function renderInicio() {
   }
 
   renderAvatar('inicio');
-  actualizarUINotif();
   if (window.lucide) lucide.createIcons();
 }
 
@@ -3468,128 +3449,6 @@ async function fetchWeather() {
   }
 }
 
-// ── NOTIFICACIONES ──
-let swRegistration = null;
-let notifSchedulerTimer = null;
-
-async function registrarSW() {
-  if (!('serviceWorker' in navigator)) return;
-  try {
-    swRegistration = await navigator.serviceWorker.register('./service-worker.js');
-  } catch(e) { /* silencioso */ }
-}
-
-function getNotifConfig() {
-  const saved = localStorage.getItem('tracy_notif');
-  return saved ? JSON.parse(saved) : { hora: 20, minuto: 0, activo: false };
-}
-function saveNotifConfig(cfg) {
-  localStorage.setItem('tracy_notif', JSON.stringify(cfg));
-}
-
-const NOTIF_MENSAJES = [
-  '¡Es hora de registrar tus hábitos del día! 💪',
-  '¡No rompas tu racha! Registrá tus hábitos ahora.',
-  '¿Ya completaste tus hábitos de hoy? ¡Entrá a Sistema Tracy!',
-  '¡Cada hábito cuenta! Registrá el progreso de hoy.',
-];
-
-function mostrarNotificacion() {
-  const checks = state.habitoChecks[todayKey] || {};
-  const totalH = state.habitos.length;
-  const doneH  = Object.values(checks).filter(Boolean).length;
-  if (totalH > 0 && doneH >= totalH) return; // ya completados
-  const cuerpo = NOTIF_MENSAJES[Math.floor(Math.random() * NOTIF_MENSAJES.length)];
-  if (swRegistration && swRegistration.active) {
-    swRegistration.active.postMessage({ type: 'SHOW_NOTIFICATION', titulo: 'Sistema Tracy', cuerpo });
-  } else if (Notification.permission === 'granted') {
-    new Notification('Sistema Tracy', { body: cuerpo, icon: './icon-192.png', tag: 'habitos-recordatorio' });
-  }
-}
-
-function programarNotificacion() {
-  clearTimeout(notifSchedulerTimer);
-  const cfg = getNotifConfig();
-  if (!cfg.activo || Notification.permission !== 'granted') return;
-  const now = new Date();
-  const target = new Date();
-  target.setHours(cfg.hora, cfg.minuto, 0, 0);
-  if (target <= now) target.setDate(target.getDate() + 1);
-  const ms = target - now;
-  notifSchedulerTimer = setTimeout(() => {
-    mostrarNotificacion();
-    programarNotificacion(); // re-programar para el día siguiente
-  }, ms);
-  if (swRegistration) {
-    navigator.serviceWorker.ready.then(reg => {
-      reg.active && reg.active.postMessage({
-        type: 'SCHEDULE_NOTIFICATION', hora: cfg.hora, minuto: cfg.minuto,
-        titulo: 'Sistema Tracy', cuerpo: NOTIF_MENSAJES[0]
-      });
-    });
-  }
-}
-
-async function activarNotificaciones() {
-  const btn = document.getElementById('notifBtn');
-  const msg = document.getElementById('notifMsg');
-  const timeInput = document.getElementById('notifTime');
-  const [hora, minuto] = timeInput.value.split(':').map(Number);
-
-  if (!('Notification' in window)) {
-    msg.textContent = 'Tu navegador no soporta notificaciones.';
-    return;
-  }
-
-  const perm = await Notification.requestPermission();
-  if (perm !== 'granted') {
-    msg.textContent = 'Permiso denegado. Activalo en Configuración → Safari → Notificaciones.';
-    actualizarUINotif();
-    return;
-  }
-
-  const cfg = { hora, minuto, activo: true };
-  saveNotifConfig(cfg);
-  programarNotificacion();
-  actualizarUINotif();
-  msg.style.color = '#16a34a';
-  msg.textContent = `✅ Recordatorio activado a las ${String(hora).padStart(2,'0')}:${String(minuto).padStart(2,'0')}`;
-  setTimeout(() => { msg.textContent = ''; }, 4000);
-}
-
-function actualizarUINotif() {
-  const statusEl = document.getElementById('notifStatus');
-  const btnEl    = document.getElementById('notifBtn');
-  const timeEl   = document.getElementById('notifTime');
-  if (!statusEl) return;
-  const cfg  = getNotifConfig();
-  const perm = ('Notification' in window) ? Notification.permission : 'unsupported';
-  if (perm === 'unsupported') {
-    statusEl.textContent = 'Notificaciones no disponibles en este dispositivo.';
-    if (btnEl) btnEl.style.display = 'none';
-    return;
-  }
-  if (cfg.activo && perm === 'granted') {
-    statusEl.textContent = `Activo — cada día a las ${String(cfg.hora).padStart(2,'0')}:${String(cfg.minuto).padStart(2,'0')}`;
-    if (btnEl) { btnEl.innerHTML = '<i data-lucide="bell-off"></i> Desactivar'; btnEl.onclick = desactivarNotificaciones; }
-    if (timeEl) timeEl.value = `${String(cfg.hora).padStart(2,'0')}:${String(cfg.minuto).padStart(2,'0')}`;
-  } else {
-    statusEl.textContent = perm === 'denied' ? 'Bloqueado — habilitá notificaciones en Ajustes.' : 'Sin recordatorio activo.';
-    if (btnEl) { btnEl.innerHTML = '<i data-lucide="bell"></i> Activar recordatorio'; btnEl.onclick = activarNotificaciones; }
-  }
-  if (window.lucide) lucide.createIcons();
-}
-
-function desactivarNotificaciones() {
-  clearTimeout(notifSchedulerTimer);
-  const cfg = getNotifConfig();
-  cfg.activo = false;
-  saveNotifConfig(cfg);
-  actualizarUINotif();
-  const msg = document.getElementById('notifMsg');
-  if (msg) { msg.style.color = 'var(--muted)'; msg.textContent = 'Recordatorio desactivado.'; setTimeout(() => { msg.textContent = ''; }, 3000); }
-}
-
 // ── AVATAR ──
 const AVATAR_MSGS = {
   inicio: {
@@ -3702,10 +3561,6 @@ function renderAvatar(section) {
 renderInicio();
 showAvatarBubble('inicio');
 fetchWeather();
-registrarSW().then(() => {
-  actualizarUINotif();
-  if (getNotifConfig().activo) programarNotificacion();
-});
 if (window.lucide) lucide.createIcons();
 </script>
 </body>
