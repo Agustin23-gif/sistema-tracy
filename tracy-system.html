@@ -2,12 +2,18 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Sistema Tracy — Metas & Hábitos</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sistema Tracy">
+<meta name="theme-color" content="#F5F0EB">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Sistema%20Tracy%22,%22short_name%22:%22Tracy%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23F5F0EB%22,%22theme_color%22:%22%23E8450A%22,%22orientation%22:%22portrait%22}">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
   :root {
     --bg:        #F5F0EB;
@@ -28,13 +34,14 @@
     color: var(--text);
     font-family: 'Geist', sans-serif;
     min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   /* ── HEADER ── */
   header {
     background: var(--bg);
     border-bottom: 1px solid var(--border);
-    padding: 14px 24px;
+    padding: calc(14px + env(safe-area-inset-top)) 24px 14px;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -134,6 +141,7 @@
     border-bottom: 1px solid var(--border);
     padding: 10px 24px;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .tab-pills {
     display: flex;
@@ -347,7 +355,7 @@
     border-radius: 8px;
     color: var(--text);
     font-family: 'Geist', sans-serif;
-    font-size: 0.88rem;
+    font-size: max(0.88rem, 16px);
     padding: 10px 14px;
     outline: none;
     transition: border-color 0.2s;
@@ -997,9 +1005,8 @@
   }
   /* Cuerpo claro deslizándose sobre el hero */
   .inicio-body {
-    margin-top: -28px;
     background: var(--bg);
-    border-radius: 24px 24px 0 0;
+    border-radius: 0;
     padding: 28px 24px 60px;
     position: relative;
     z-index: 2;
@@ -1114,6 +1121,52 @@
   }
   .inicio-semana-dot.completo   { background: #E8450A; }
   .inicio-semana-dot.incompleto { background: #D4D4D4; }
+
+  /* Backup */
+  .backup-section {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .backup-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #9E9E9E;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+  }
+  .backup-btns {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .backup-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1.5px solid #D4CAC0;
+    border-radius: 8px;
+    background: transparent;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6B6B6B;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .backup-btn:hover { border-color: #9E9E9E; color: var(--text); }
+  .backup-btn i, .backup-btn svg { width: 14px; height: 14px; }
+  .backup-hint {
+    font-size: 11px;
+    color: #9E9E9E;
+  }
+  .backup-msg {
+    font-size: 0.78rem;
+    margin-top: 8px;
+    min-height: 20px;
+  }
 
   /* Tareas en curso */
   .inicio-en-curso-item {
@@ -1439,13 +1492,83 @@
   }
 
   @media (max-width: 480px) {
-    header { flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 16px; }
-    .header-cal-day { font-size: 4rem; }
-    .header-right { align-items: flex-start; flex-direction: row; gap: 16px; }
-    .meter-bar { width: 80px; }
-    nav { padding: 8px 14px; }
-    .tab-btn { padding: 7px 13px; font-size: 0.78rem; }
-    main { padding: 20px 14px 60px; }
+    /* HEADER */
+    header {
+      padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
+      gap: 10px;
+    }
+    .header-cal-day { font-size: 3.5rem; }
+    .header-cal-month, .header-cal-weekday { font-size: 11px; }
+    .header-brand-name { font-size: 0.72rem; }
+    .header-brand-sub { display: none; }
+    .meter-bar { width: 70px; }
+    .header-right { gap: 12px; }
+
+    /* NAV */
+    nav { padding: 6px 10px; }
+    .tab-pills { gap: 2px; }
+    .tab-btn { padding: 6px 10px; font-size: 0.68rem; min-height: 36px; }
+    .tab-btn i, .tab-btn svg { width: 13px; height: 13px; }
+
+    /* MAIN */
+    main { padding: 16px 14px calc(80px + env(safe-area-inset-bottom)); }
+
+    /* INICIO HERO */
+    .inicio-greeting { font-size: 1.75rem; }
+    .inicio-hero { padding: 28px 20px 40px; }
+    .inicio-ring-wrap { width: 70px; height: 70px; }
+    .inicio-ring { width: 70px !important; height: 70px !important; }
+
+    /* RACHA CARD */
+    .racha-big-num { font-size: 3rem; }
+    .racha-big-msg { font-size: 1.125rem; }
+    .racha-big-left { padding: 20px 18px; }
+    .racha-big-right { padding: 20px; }
+
+    /* ESTADÍSTICAS DEL MES */
+    .inicio-mes-card { height: 80px; }
+    .inicio-mes-pct { font-size: 2.25rem; }
+
+    /* HABIT DOTS */
+    .hist-dot { width: 5px; height: 5px; }
+
+    /* MINI CALENDARIO */
+    .inicio-semana-num { font-size: 13px; width: 26px; height: 26px; }
+
+    /* CARDS */
+    .card, .habit-card { border-radius: 14px; }
+
+    /* MODALES */
+    .modal-overlay { padding: 0; align-items: flex-end; }
+    .modal {
+      border-radius: 16px 16px 0 0;
+      max-width: 100%;
+      max-height: 85vh;
+      padding-bottom: calc(28px + env(safe-area-inset-bottom));
+    }
+
+    /* PANEL FLOTANTE */
+    .task-panel { width: 85vw; }
+
+    /* FAB */
+    .fab {
+      bottom: calc(24px + env(safe-area-inset-bottom));
+      left: 16px;
+      width: 48px;
+      height: 48px;
+    }
+
+    /* PORTADA TAREAS */
+    .tareas-portada { height: 140px; }
+
+    /* SECTION HEADER */
+    .sec-header h2 { font-size: 1.1rem; }
+
+    /* INPUTS — prevenir zoom en iOS */
+    .form-group input,
+    .form-group textarea,
+    .form-group select,
+    .panel-input-row input { font-size: 16px; }
   }
 </style>
 </head>
@@ -1545,6 +1668,22 @@
       <!-- En curso -->
       <h3 class="inicio-section-title" style="margin-top:28px">En curso</h3>
       <div id="inicioEnCurso"></div>
+
+      <!-- Backup -->
+      <div class="backup-section">
+        <div class="backup-title">Datos</div>
+        <div class="backup-btns">
+          <button class="backup-btn" onclick="exportarBackup()">
+            <i data-lucide="download"></i> Exportar backup
+          </button>
+          <button class="backup-btn" onclick="document.getElementById('backupFileInput').click()">
+            <i data-lucide="upload"></i> Importar backup
+          </button>
+        </div>
+        <input type="file" id="backupFileInput" accept=".json" style="display:none" onchange="importarBackup(event)">
+        <div class="backup-hint">Guardá copias de seguridad periódicamente</div>
+        <div class="backup-msg" id="backupMsg"></div>
+      </div>
 
     </div>
   </section>
@@ -2875,6 +3014,46 @@ document.getElementById('habitoModal').addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') { closeMetaModal(); closeHabitoModal(); closeTaskPanel(); }
 });
+
+// ── BACKUP ──
+function exportarBackup() {
+  const fecha = new Date().toISOString().split('T')[0];
+  const json  = JSON.stringify(state, null, 2);
+  const blob  = new Blob([json], { type: 'application/json' });
+  const url   = URL.createObjectURL(blob);
+  const a     = document.createElement('a');
+  a.href      = url;
+  a.download  = `sistema-tracy-backup-${fecha}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importarBackup(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const msg = document.getElementById('backupMsg');
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (!parsed.metas || !parsed.habitos || !parsed.habitoChecks) throw new Error('invalid');
+      Object.assign(state, parsed);
+      saveState();
+      renderInicio();
+      renderHoy();
+      renderMetas();
+      if (window.lucide) lucide.createIcons();
+      msg.style.color = '#2E9B6B';
+      msg.textContent = '✅ Backup restaurado correctamente';
+    } catch {
+      msg.style.color = '#D94040';
+      msg.textContent = '❌ Archivo inválido';
+    }
+    setTimeout(() => { msg.textContent = ''; }, 4000);
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
 
 // ── UTILS ──
 function escHtml(str) {
