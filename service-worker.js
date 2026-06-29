@@ -26,12 +26,23 @@ self.addEventListener('fetch', event => {
   );
 });
 
-// Escuchar mensajes para programar notificaciones
+// Escuchar mensajes desde la app
 self.addEventListener('message', event => {
+  if (!event.data) return;
+
   if (event.data.type === 'SCHEDULE_NOTIFICATION') {
     const { hora, minuto, titulo, cuerpo } = event.data;
-    // Guardar la configuración
     self.notificationConfig = { hora, minuto, titulo, cuerpo };
+  }
+
+  if (event.data.type === 'SHOW_NOTIFICATION') {
+    self.registration.showNotification('Sistema Tracy 🔥', {
+      body: event.data.mensaje || '¡Es hora de registrar tus hábitos!',
+      icon: './icon-192.png',
+      tag: 'recordatorio-habitos',
+      renotify: true,
+      vibrate: [200, 100, 200]
+    });
   }
 });
 

@@ -3567,8 +3567,7 @@ function programarRecordatorio(horaStr) {
   }, 60000);
 }
 
-function mostrarNotificacion() {
-  if (Notification.permission !== 'granted') return;
+function obtenerMensajeAleatorio() {
   const completados = calcularHabitosHoy();
   const total = state.habitos.length;
   const pendientes = total - completados;
@@ -3576,15 +3575,24 @@ function mostrarNotificacion() {
     `¡Tenés ${pendientes} hábito${pendientes > 1 ? 's' : ''} por completar hoy!`,
     '¡No rompas tu racha! Registrá tus hábitos.',
     '¡Vamos! Todavía estás a tiempo de completar tu día.',
-    '¡Brian Tracy diría: actúa ahora! Registrá tus hábitos.',
+    '¡Actuá ahora! Registrá tus hábitos de hoy.',
   ];
-  const mensaje = mensajes[Math.floor(Math.random() * mensajes.length)];
-  new Notification('Sistema Tracy 🔥', {
-    body: mensaje,
-    icon: './icon-192.png',
-    tag: 'recordatorio-habitos',
-    renotify: true
-  });
+  return mensajes[Math.floor(Math.random() * mensajes.length)];
+}
+
+async function mostrarNotificacion() {
+  const mensaje = obtenerMensajeAleatorio();
+  // Intentar via Service Worker primero (más confiable en iOS)
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', mensaje });
+  } else if (Notification.permission === 'granted') {
+    new Notification('Sistema Tracy 🔥', {
+      body: mensaje,
+      icon: './icon-192.png',
+      tag: 'recordatorio-habitos',
+      renotify: true
+    });
+  }
 }
 
 function calcularHabitosHoy() {
@@ -3627,9 +3635,15 @@ function desactivarRecordatorio() {
 function renderNotifCard() {
   const el = document.getElementById('inicioNotifCard');
   if (!el) return;
-  const cfg  = state.notificacion || {};
-  const perm = ('Notification' in window) ? Notification.permission : 'unsupported';
+  const cfg    = state.notificacion || {};
+  const perm   = ('Notification' in window) ? Notification.permission : 'unsupported';
+  const swActivo = ('serviceWorker' in navigator && navigator.serviceWorker.controller) ? 'Activo ✓' : 'No activo';
   const activo = cfg.activa && perm === 'granted';
+
+  const diagHtml = `
+    <div class="notif-hint" style="margin-top:8px;line-height:1.8">
+      Permiso: <strong>${perm}</strong> &nbsp;·&nbsp; SW: <strong>${swActivo}</strong>
+    </div>`;
 
   if (activo) {
     el.innerHTML = `
@@ -3642,7 +3656,11 @@ function renderNotifCard() {
           </div>
           <button class="notif-btn-ghost" onclick="desactivarRecordatorio()">Desactivar</button>
         </div>
-        <div class="notif-hint">Solo se notifica si no completaste todos tus hábitos</div>
+        <div class="notif-card-row" style="margin-top:10px">
+          <button class="notif-btn-primary" onclick="mostrarNotificacion()">🔔 Probar ahora</button>
+        </div>
+        <div class="notif-hint" style="margin-top:6px">Solo se notifica si no completaste todos tus hábitos</div>
+        ${diagHtml}
         <div class="notif-msg" id="notifCardMsg"></div>
       </div>`;
   } else {
@@ -3658,7 +3676,8 @@ function renderNotifCard() {
           </div>
           <button class="notif-btn-primary" onclick="activarRecordatorio()">Activar</button>
         </div>
-        ${perm === 'denied' ? '<div class="notif-hint" style="color:#dc2626">Notificaciones bloqueadas — habilitá en Ajustes → Safari.</div>' : ''}
+        ${perm === 'denied' ? '<div class="notif-hint" style="color:#dc2626;margin-top:6px">Notificaciones bloqueadas — habilitá en Ajustes → Safari.</div>' : ''}
+        ${diagHtml}
         <div class="notif-msg" id="notifCardMsg"></div>
       </div>`;
   }
