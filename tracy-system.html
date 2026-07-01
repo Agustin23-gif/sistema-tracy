@@ -1759,7 +1759,7 @@
   @keyframes av-float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
   @keyframes av-jump   { 0%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
   @keyframes av-energy { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-3px) rotate(1deg)} }
-  @keyframes av-sleep  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+  @keyframes av-sleep  { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-3px) rotate(2deg)} }
   @keyframes av-bounce { 0%,100%{transform:scale(1)} 40%{transform:scale(0.88)} 70%{transform:scale(1.08)} }
   @keyframes av-zzz    { 0%{opacity:0;transform:translateY(0) scale(0.7)} 30%{opacity:1} 100%{opacity:0;transform:translateY(-10px) scale(1)} }
   @keyframes av-star   { 0%{opacity:0;transform:scale(0.3)} 40%{opacity:1;transform:scale(1.2)} 100%{opacity:0;transform:scale(0.8)} }
@@ -4064,16 +4064,16 @@ function renderNotifCard() {
 // ── AVATAR ──
 const AVATAR_MSGS = {
   inicio: {
-    idle:       ['¡Buen día! ¿Listo para conquistar tus hábitos hoy?', '¡Cada día es una nueva oportunidad. Aprovechala!'],
-    happy:      ['¡Lo lograste! Todos tus hábitos completados 🎉', '¡Sos increíble! Día 100% completado 🔥'],
-    motivating: ['¡Vamos! Todavía podés completar tus hábitos de hoy', '¡Un paso a la vez! Podés hacerlo 💪'],
-    sleeping:   ['Shhh... ya es tarde, descansá bien 😴', 'Mañana es un nuevo día. ¡Descansá!'],
+    idle:       ['¡Rugí con determinación hoy, Agustín! 🦁', '¡Cada día es una caza nueva! ¡A por ello!'],
+    happy:      ['¡RUGIDO DE VICTORIA! ¡Día perfecto! 🦁', '¡La manada celebra! ¡Sos el rey hoy! 🔥'],
+    motivating: ['¡Un león nunca se rinde! ¡A cazar esos hábitos!', '¡La selva espera, campeón! ¡Arriba! 💪'],
+    sleeping:   ['Hasta los leones descansan... 😴', '¡Recargá energías! Mañana nueva caza 🌙'],
   },
   hoy: {
-    idle:       ['¡Cada hábito que completás te acerca a tu meta!', '¡No pares ahora, ya casi terminás!', '¡Recordá tu racha, no la rompas!'],
-    happy:      ['¡INCREÍBLE! ¡Día perfecto! 🔥', '¡Tu racha sigue viva, sos un campeón!'],
-    motivating: ['¡Vamos! Todavía podés completar tus hábitos de hoy', '¡Cada check te hace más fuerte!'],
-    sleeping:   ['Ya es tarde, ¡pero aún podés hacerlo! 💪'],
+    idle:       ['¡Cada hábito fortalece al rey! 💪', '¡Tu manada te observa, no pares!', '¡Recordá tu racha, los leones no la rompen!'],
+    happy:      ['¡RUGIDO DE VICTORIA! ¡Día perfecto! 🦁', '¡Tu racha sigue viva, sos el rey de la selva!'],
+    motivating: ['¡Un león nunca se rinde, vamos! 🦁', '¡Cada check te hace más fuerte, rey!'],
+    sleeping:   ['Hasta los leones descansan... 😴'],
   },
 };
 
@@ -4095,45 +4095,142 @@ function getAvatarMsg(section) {
 }
 
 function buildAvatarSVG(avState, small) {
-  const w = small ? 40 : 53, h = small ? 60 : 80;
-  let aL, aR;
-  if (avState === 'happy') {
-    aL = `<line x1="16" y1="37" x2="5" y2="25" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
-    aR = `<line x1="44" y1="37" x2="55" y2="25" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
+  const h = small ? 80 : 110;
+  const w = Math.round(h * 120 / 140);
+
+  const tail = `
+    <path d="M 82 118 Q 110 104 114 82 Q 116 66 108 59" stroke="#C8860A" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="108" cy="56" r="9" fill="#D4920F"/>
+    <circle cx="108" cy="56" r="5" fill="#C8860A"/>`;
+
+  const mane = `<circle cx="60" cy="62" r="44" fill="#C8860A"/>`;
+
+  const maneTufts = `
+    <ellipse cx="60" cy="18" rx="14" ry="10" fill="#D4920F"/>
+    <ellipse cx="36" cy="26" rx="12" ry="9" fill="#A06B0A"/>
+    <ellipse cx="84" cy="26" rx="12" ry="9" fill="#A06B0A"/>
+    <ellipse cx="16" cy="54" rx="10" ry="14" fill="#D4920F"/>
+    <ellipse cx="104" cy="54" rx="10" ry="14" fill="#D4920F"/>
+    <ellipse cx="22" cy="83" rx="10" ry="8" fill="#A06B0A"/>
+    <ellipse cx="98" cy="83" rx="10" ry="8" fill="#A06B0A"/>`;
+
+  const ears = `
+    <ellipse cx="28" cy="24" rx="12" ry="15" fill="#C8860A" transform="rotate(-12 28 24)"/>
+    <ellipse cx="28" cy="24" rx="7" ry="9" fill="#FFB3A0" transform="rotate(-12 28 24)"/>
+    <ellipse cx="92" cy="24" rx="12" ry="15" fill="#C8860A" transform="rotate(12 92 24)"/>
+    <ellipse cx="92" cy="24" rx="7" ry="9" fill="#FFB3A0" transform="rotate(12 92 24)"/>`;
+
+  const head = `
+    <circle cx="60" cy="60" r="32" fill="#F5C842"/>
+    <ellipse cx="60" cy="80" rx="20" ry="8" fill="#E0A820" opacity="0.3"/>`;
+
+  const nose = `<ellipse cx="60" cy="65" rx="6" ry="4" fill="#E8450A"/>`;
+
+  const whiskers = `
+    <line x1="37" y1="64" x2="53" y2="66" stroke="#8B5E0A" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+    <line x1="37" y1="68" x2="53" y2="68" stroke="#8B5E0A" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+    <line x1="67" y1="66" x2="83" y2="64" stroke="#8B5E0A" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+    <line x1="67" y1="68" x2="83" y2="68" stroke="#8B5E0A" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>`;
+
+  const body = `
+    <ellipse cx="60" cy="111" rx="22" ry="20" fill="#E8450A"/>
+    <ellipse cx="60" cy="126" rx="14" ry="5" fill="#C43C10" opacity="0.35"/>`;
+
+  const armsDefault = `
+    <ellipse cx="33" cy="107" rx="11" ry="7" fill="#F5C842" transform="rotate(-25 33 107)"/>
+    <ellipse cx="87" cy="107" rx="11" ry="7" fill="#F5C842" transform="rotate(25 87 107)"/>`;
+
+  const armsMotivating = `
+    <ellipse cx="33" cy="107" rx="11" ry="7" fill="#F5C842" transform="rotate(-25 33 107)"/>
+    <ellipse cx="91" cy="90" rx="7" ry="12" fill="#F5C842" transform="rotate(20 91 90)"/>`;
+
+  const paws = `
+    <ellipse cx="44" cy="131" rx="11" ry="6" fill="#F5C842"/>
+    <ellipse cx="76" cy="131" rx="11" ry="6" fill="#F5C842"/>
+    <line x1="39" y1="134" x2="38" y2="138" stroke="#D4920F" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="44" y1="135" x2="44" y2="139" stroke="#D4920F" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="49" y1="134" x2="50" y2="138" stroke="#D4920F" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="71" y1="134" x2="70" y2="138" stroke="#D4920F" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="76" y1="135" x2="76" y2="139" stroke="#D4920F" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="81" y1="134" x2="82" y2="138" stroke="#D4920F" stroke-width="1.5" stroke-linecap="round"/>`;
+
+  let eyes, brows, mouth;
+
+  if (avState === 'sleeping') {
+    eyes = `
+      <circle cx="45" cy="52" r="9" fill="white"/>
+      <circle cx="75" cy="52" r="9" fill="white"/>
+      <path d="M 37 51 Q 45 57 53 51" stroke="#4A3000" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M 67 51 Q 75 57 83 51" stroke="#4A3000" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    brows = `
+      <path d="M 38 44 Q 45 43 52 45" stroke="#8B5E0A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M 68 45 Q 75 43 82 44" stroke="#8B5E0A" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    mouth = `<path d="M 56 74 Q 60 72 64 74" stroke="#8B4513" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+  } else if (avState === 'happy') {
+    eyes = `
+      <circle cx="45" cy="53" r="9" fill="white"/>
+      <circle cx="75" cy="53" r="9" fill="white"/>
+      <path d="M 37 55 Q 45 46 53 55" stroke="#4A3000" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M 67 55 Q 75 46 83 55" stroke="#4A3000" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle cx="47" cy="55" r="1.8" fill="white"/>
+      <circle cx="77" cy="55" r="1.8" fill="white"/>`;
+    brows = `
+      <path d="M 37 41 Q 45 36 53 41" stroke="#8B5E0A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M 67 41 Q 75 36 83 41" stroke="#8B5E0A" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    mouth = `
+      <path d="M 47 72 Q 60 85 73 72 Z" fill="white" opacity="0.85"/>
+      <path d="M 47 72 Q 60 85 73 72" stroke="#8B4513" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
   } else if (avState === 'motivating') {
-    aL = `<line x1="16" y1="37" x2="7" y2="52" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
-    aR = `<line x1="44" y1="37" x2="56" y2="26" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
+    eyes = `
+      <circle cx="45" cy="52" r="9" fill="white"/>
+      <circle cx="75" cy="52" r="9" fill="white"/>
+      <circle cx="45" cy="52" r="6" fill="#8B4513"/>
+      <circle cx="75" cy="52" r="6" fill="#8B4513"/>
+      <circle cx="45" cy="52" r="3.5" fill="#1A1A1A"/>
+      <circle cx="75" cy="52" r="3.5" fill="#1A1A1A"/>
+      <circle cx="47" cy="50" r="1.5" fill="white"/>
+      <circle cx="77" cy="50" r="1.5" fill="white"/>`;
+    brows = `
+      <path d="M 38 47 Q 45 42 52 45" stroke="#8B5E0A" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M 68 45 Q 75 42 82 47" stroke="#8B5E0A" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    mouth = `<path d="M 50 74 Q 58 80 70 72" stroke="#8B4513" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
   } else {
-    aL = `<line x1="16" y1="37" x2="7" y2="52" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
-    aR = `<line x1="44" y1="37" x2="53" y2="52" stroke="#E8450A" stroke-width="6" stroke-linecap="round"/>`;
+    eyes = `
+      <circle cx="45" cy="52" r="9" fill="white"/>
+      <circle cx="75" cy="52" r="9" fill="white"/>
+      <circle cx="45" cy="52" r="6" fill="#8B4513"/>
+      <circle cx="75" cy="52" r="6" fill="#8B4513"/>
+      <circle cx="45" cy="52" r="3.5" fill="#1A1A1A"/>
+      <circle cx="75" cy="52" r="3.5" fill="#1A1A1A"/>
+      <circle cx="47" cy="50" r="1.5" fill="white"/>
+      <circle cx="77" cy="50" r="1.5" fill="white"/>`;
+    brows = `
+      <path d="M 38 44 Q 45 40 52 44" stroke="#8B5E0A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M 68 44 Q 75 40 82 44" stroke="#8B5E0A" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+    mouth = `<path d="M 50 74 Q 60 81 70 74" stroke="#8B4513" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
   }
-  const eyes = avState === 'sleeping'
-    ? `<line x1="23" y1="19" x2="27" y2="19" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>
-       <line x1="33" y1="19" x2="37" y2="19" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>`
-    : `<circle cx="25" cy="19" r="2.5" fill="#1A1A1A"/>
-       <circle cx="35" cy="19" r="2.5" fill="#1A1A1A"/>
-       <circle cx="26" cy="18" r="0.8" fill="white"/>
-       <circle cx="36" cy="18" r="0.8" fill="white"/>`;
-  const zzz = avState === 'sleeping'
-    ? `<text class="av-zzz-1" x="44" y="10" font-size="8" font-weight="700" fill="#94a3b8" font-family="sans-serif">z</text>
-       <text class="av-zzz-2" x="50" y="4" font-size="6" font-weight="700" fill="#94a3b8" font-family="sans-serif">z</text>
-       <text class="av-zzz-3" x="55" y="0" font-size="5" font-weight="700" fill="#94a3b8" font-family="sans-serif">z</text>` : '';
-  const stars = avState === 'happy'
-    ? `<path class="av-star-1" d="M6,14 L7.2,10 L8.4,14 L4.5,11.5 L10,11.5 Z" fill="#FFD700"/>
-       <path class="av-star-2" d="M53,20 L54.2,16 L55.4,20 L51.5,17.5 L57,17.5 Z" fill="#FFD700"/>
-       <path class="av-star-3" d="M3,40 L4.2,36 L5.4,40 L1.5,37.5 L7,37.5 Z" fill="#FFD700"/>` : '';
-  return `<svg viewBox="0 0 60 90" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
+
+  const stars = avState === 'happy' ? `
+    <path class="av-star-1" d="M 8 32 L 10 26 L 12 32 L 6.5 28.5 L 13.5 28.5 Z" fill="#FFD700"/>
+    <path class="av-star-2" d="M 107 20 L 109 14 L 111 20 L 105.5 16.5 L 112.5 16.5 Z" fill="#FFD700"/>
+    <path class="av-star-3" d="M 6 92 L 8 86 L 10 92 L 4.5 88.5 L 11.5 88.5 Z" fill="#FFD700"/>` : '';
+
+  const zzz = avState === 'sleeping' ? `
+    <text class="av-zzz-1" x="87" y="32" font-size="13" font-weight="700" fill="#C8860A" font-family="'Geist Mono',monospace">z</text>
+    <text class="av-zzz-2" x="98" y="21" font-size="10" font-weight="700" fill="#C8860A" font-family="'Geist Mono',monospace">z</text>
+    <text class="av-zzz-3" x="107" y="13" font-size="8" font-weight="700" fill="#C8860A" font-family="'Geist Mono',monospace">z</text>` : '';
+
+  const arms = avState === 'motivating' ? armsMotivating : armsDefault;
+
+  return `<svg viewBox="0 0 120 140" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
     ${stars}${zzz}
-    <ellipse cx="30" cy="11" rx="15" ry="9" fill="#2D1B00"/>
-    <circle cx="30" cy="20" r="14" fill="#FDBCB4"/>
-    ${eyes}
-    <path d="M25,24 Q30,28 35,24" stroke="#C47B6A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <rect x="16" y="34" width="28" height="26" rx="6" fill="#E8450A"/>
-    ${aL}${aR}
-    <rect x="19" y="60" width="9" height="22" rx="4" fill="#1A1A1A"/>
-    <rect x="32" y="60" width="9" height="22" rx="4" fill="#1A1A1A"/>
-    <ellipse cx="23" cy="83" rx="8" ry="5" fill="#333"/>
-    <ellipse cx="37" cy="83" rx="8" ry="5" fill="#333"/>
+    ${tail}
+    ${mane}${maneTufts}
+    ${ears}
+    ${body}${arms}${paws}
+    ${head}
+    ${nose}${whiskers}
+    ${eyes}${brows}${mouth}
   </svg>`;
 }
 
