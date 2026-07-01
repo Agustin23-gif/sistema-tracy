@@ -2384,6 +2384,7 @@ if (!state.escudoUsado) state.escudoUsado = '';
 if (!state.hitosVistos) state.hitosVistos = [];
 if (state.portadaImagen === undefined) state.portadaImagen = null;
 if (!state.notificacion) state.notificacion = { activa: false };
+if (state.pomodoroVolumen === undefined) state.pomodoroVolumen = 2;
 
 // Clean today's check key for new day
 const todayKey = new Date().toISOString().split('T')[0];
@@ -4022,6 +4023,84 @@ function renderAvatar(section) {
   };
 }
 
+// ── AUDIO POMODORO ──
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+function getVolMult() {
+  const vol = state.pomodoroVolumen !== undefined ? state.pomodoroVolumen : 2;
+  return [0, 0.5, 1.0][vol];
+}
+
+function playTick() {
+  const mult = getVolMult();
+  if (mult === 0) return;
+  try {
+    const ctx  = getAudioContext();
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = 800;
+    gain.gain.setValueAtTime(0.1 * mult, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.03);
+  } catch(e) {}
+}
+
+function playBell() {
+  const mult = getVolMult();
+  if (mult === 0) return;
+  [0, 0.5, 1.0].forEach(delay => {
+    try {
+      const ctx  = getAudioContext();
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = 528;
+      const t = ctx.currentTime + delay;
+      gain.gain.setValueAtTime(0.4 * mult, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 1.5);
+      osc.start(t);
+      osc.stop(t + 1.5);
+    } catch(e) {}
+  });
+}
+
+function playClick() {
+  const mult = getVolMult();
+  if (mult === 0) return;
+  try {
+    const ctx  = getAudioContext();
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = 440;
+    gain.gain.setValueAtTime(0.08 * mult, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.05);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.05);
+  } catch(e) {}
+}
+
+function ciclarVolumen() {
+  state.pomodoroVolumen = ((state.pomodoroVolumen !== undefined ? state.pomodoroVolumen : 2) + 1) % 3;
+  saveState();
+  if (pomoOpen) renderPomoPanel();
+}
+
 // ── POMODORO ──
 const POMO_WORK  = 1500;
 const POMO_BREAK = 300;
@@ -4053,6 +4132,8 @@ function renderPomoPanel() {
   const prog  = (pomoSeconds / total) * circ;
   const modeLabel = pomoMode === 'work' ? 'TRABAJO' : 'PAUSA';
   const playIcon  = pomoRunning ? 'pause' : 'play';
+  const volLevel  = state.pomodoroVolumen !== undefined ? state.pomodoroVolumen : 2;
+  const volIcon   = ['volume-x', 'volume', 'volume-2'][volLevel];
   const dots = [0,1,2,3].map(i =>
     `<div class="pomo-dot${i < pomoCompleted ? ' done' : ''}"></div>`
   ).join('');
@@ -4090,6 +4171,9 @@ function renderPomoPanel() {
         <button class="pomo-icon-btn" onclick="skipPomo()" title="Saltar">
           <i data-lucide="skip-forward"></i>
         </button>
+        <button class="pomo-icon-btn" onclick="ciclarVolumen()" title="Volumen">
+          <i data-lucide="${volIcon}"></i>
+        </button>
       </div>
     </div>`;
   if (window.lucide) lucide.createIcons();
@@ -4117,6 +4201,7 @@ function togglePomoTimer() { pomoRunning ? pausePomo() : startPomo(); }
 
 function startPomo() {
   if (pomoRunning) return;
+  playClick();
   pomoRunning  = true;
   pomoInterval = setInterval(tickPomo, 1000);
   updatePomoDot();
@@ -4125,6 +4210,7 @@ function startPomo() {
 
 function pausePomo() {
   if (!pomoRunning) return;
+  playClick();
   pomoRunning = false;
   clearInterval(pomoInterval);
   pomoInterval = null;
@@ -4134,6 +4220,7 @@ function pausePomo() {
 }
 
 function resetPomo() {
+  playClick();
   pomoRunning = false;
   clearInterval(pomoInterval);
   pomoInterval = null;
@@ -4144,6 +4231,7 @@ function resetPomo() {
 }
 
 function skipPomo() {
+  playClick();
   pomoRunning = false;
   clearInterval(pomoInterval);
   pomoInterval = null;
@@ -4174,6 +4262,7 @@ function tickPomo() {
     pomoDone();
     return;
   }
+  playTick();
   updatePomoDisplay();
 }
 
@@ -4182,6 +4271,7 @@ function pomoDone() {
   pomoInterval = null;
   pomoRunning  = false;
   document.title = 'Sistema Tracy — Metas & Hábitos';
+  playBell();
   if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
 
   let mensaje;
