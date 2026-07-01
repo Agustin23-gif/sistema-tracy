@@ -1703,21 +1703,13 @@
     gap: 12px;
     margin: 20px 0 8px;
   }
-  .avatar-wrap--inicio {
-    justify-content: flex-end;
-    padding-right: 8px;
-  }
-  .avatar-wrap--hoy {
-    justify-content: flex-start;
-    padding-left: 4px;
-    margin-bottom: 20px;
-  }
+  .avatar-wrap--inicio { justify-content: flex-end; padding-right: 8px; }
+  .avatar-wrap--hoy    { justify-content: flex-start; padding-left: 4px; margin-bottom: 20px; }
   .avatar-figure {
     flex-shrink: 0;
     cursor: pointer;
     user-select: none;
     -webkit-user-select: none;
-    line-height: 0;
   }
   .avatar-bubble {
     position: relative;
@@ -1737,45 +1729,72 @@
   }
   .avatar-bubble.hidden { opacity: 0; pointer-events: none; }
   .avatar-wrap--inicio .avatar-bubble::after {
-    content: '';
-    position: absolute;
-    right: -7px;
-    bottom: 18px;
+    content: ''; position: absolute; right: -7px; bottom: 18px;
     width: 0; height: 0;
-    border-top: 7px solid transparent;
-    border-bottom: 7px solid transparent;
+    border-top: 7px solid transparent; border-bottom: 7px solid transparent;
     border-left: 8px solid #fff;
   }
   .avatar-wrap--hoy .avatar-bubble::after {
-    content: '';
-    position: absolute;
-    left: -7px;
-    bottom: 18px;
+    content: ''; position: absolute; left: -7px; bottom: 18px;
     width: 0; height: 0;
-    border-top: 7px solid transparent;
-    border-bottom: 7px solid transparent;
+    border-top: 7px solid transparent; border-bottom: 7px solid transparent;
     border-right: 8px solid #fff;
   }
-  @keyframes av-float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
-  @keyframes av-jump   { 0%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
-  @keyframes av-energy { 0%,100%{transform:translateY(0) rotate(-1deg)} 50%{transform:translateY(-3px) rotate(1deg)} }
-  @keyframes av-sleep  { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-3px) rotate(2deg)} }
-  @keyframes av-bounce { 0%,100%{transform:scale(1)} 40%{transform:scale(0.88)} 70%{transform:scale(1.08)} }
-  @keyframes av-zzz    { 0%{opacity:0;transform:translateY(0) scale(0.7)} 30%{opacity:1} 100%{opacity:0;transform:translateY(-10px) scale(1)} }
-  @keyframes av-star   { 0%{opacity:0;transform:scale(0.3)} 40%{opacity:1;transform:scale(1.2)} 100%{opacity:0;transform:scale(0.8)} }
-  .avatar-figure[data-state="idle"]       svg { animation: av-float  2s ease-in-out infinite; }
-  .avatar-figure[data-state="happy"]      svg { animation: av-jump   0.4s ease-in-out 3; }
-  .avatar-figure[data-state="motivating"] svg { animation: av-energy 0.5s ease-in-out infinite; }
-  .avatar-figure[data-state="sleeping"]   svg { animation: av-sleep  4s ease-in-out infinite; }
-  .avatar-figure.av-bounce                svg { animation: av-bounce 0.35s ease-out !important; }
-  .av-zzz-1 { animation: av-zzz 2s ease-out 0.2s infinite; }
-  .av-zzz-2 { animation: av-zzz 2s ease-out 0.9s infinite; }
-  .av-zzz-3 { animation: av-zzz 2s ease-out 1.6s infinite; }
-  .av-star-1 { animation: av-star 1.5s ease-out 0s 3; }
-  .av-star-2 { animation: av-star 1.5s ease-out 0.35s 3; }
-  .av-star-3 { animation: av-star 1.5s ease-out 0.7s 3; }
+  /* Emoji avatar */
+  .av-emoji-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .av-emoji  { line-height: 1; display: block; }
+  .av-shadow {
+    width: 30px; height: 6px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 50%;
+    margin-top: 2px;
+  }
+  .av-pump { line-height: 1; align-self: center; margin-left: 4px; }
+  .av-zzz-wrap {
+    position: absolute;
+    top: -2px; right: -12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-family: 'Geist Mono', monospace;
+    font-weight: 700;
+    color: #9E9E9E;
+    pointer-events: none;
+    line-height: 1.3;
+  }
+  .av-particle {
+    position: absolute;
+    line-height: 1;
+    pointer-events: none;
+    animation: av-particle-up 1s ease-out forwards;
+  }
+  /* State animations */
+  .av-state-idle .av-emoji       { animation: av-float   2s ease-in-out infinite alternate; }
+  .av-state-idle .av-shadow      { animation: av-shadow-f 2s ease-in-out infinite alternate; }
+  .av-state-happy .av-emoji      { animation: av-wiggle  0.3s ease-in-out 4; }
+  .av-state-motivating .av-emoji { animation: av-pump-a  0.6s ease-in-out infinite; }
+  .av-state-motivating .av-pump  { animation: av-float   2s ease-in-out infinite alternate; }
+  .av-state-sleeping .av-emoji   { animation: av-sway    4s ease-in-out infinite alternate; }
+  .av-clicking .av-emoji         { animation: av-spin    0.4s ease-out forwards !important; }
+  .av-z1 { animation: av-zzz-r 2s ease-out 0.2s infinite; }
+  .av-z2 { animation: av-zzz-r 2s ease-out 0.9s infinite; }
+  .av-z3 { animation: av-zzz-r 2s ease-out 1.6s infinite; }
+  /* Keyframes */
+  @keyframes av-float    { from{transform:translateY(0)}   to{transform:translateY(-6px)} }
+  @keyframes av-shadow-f { from{transform:scaleX(1);opacity:.1} to{transform:scaleX(.65);opacity:.04} }
+  @keyframes av-wiggle   { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-10deg)} 75%{transform:rotate(10deg)} }
+  @keyframes av-pump-a   { 0%,100%{transform:scale(1)}    50%{transform:scale(1.2)} }
+  @keyframes av-sway     { from{transform:rotate(-5deg)}  to{transform:rotate(5deg)} }
+  @keyframes av-spin     { from{transform:rotate(0)}      to{transform:rotate(360deg)} }
+  @keyframes av-zzz-r    { 0%{opacity:0;transform:translateY(0) scale(.8)} 20%{opacity:1} 100%{opacity:0;transform:translateY(-18px) scale(1)} }
+  @keyframes av-particle-up { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-45px) scale(.5)} }
   @media (max-width: 480px) {
-    .avatar-figure { transform: scale(0.75); transform-origin: bottom center; }
     .avatar-bubble { font-size: 12px; max-width: 200px; padding: 8px 11px; }
   }
 
@@ -4064,16 +4083,16 @@ function renderNotifCard() {
 // ── AVATAR ──
 const AVATAR_MSGS = {
   inicio: {
-    idle:       ['¡Hola Agustín! ¿Listo para un gran día? 🦊', '¡Cada día es una nueva oportunidad. ¡Aprovechala!'],
-    happy:      ['¡Increíble! ¡Completaste todo hoy! 🦊', '¡Día perfecto! ¡Sos una máquina! 🔥'],
-    motivating: ['¡Vamos! ¡Todavía podés lograrlo! 💪', '¡Un paso a la vez, podés hacerlo!'],
-    sleeping:   ['Shhh... hora de descansar 😴', 'Mañana es un nuevo día. ¡Recargá energías!'],
+    idle:       ['¡Hola Agustín! ¿Listo para conquistar el día? 🦊', '¡Cada hábito cuenta! ¿Empezamos?', '¡Brian Tracy diría: actúa ahora!'],
+    happy:      ['¡INCREÍBLE! ¡Día perfecto! ¡Sos un campeón! 🏆', '¡Tu racha sigue viva! ¡Imparable!', '¡Así se hace! ¡Orgullo total hoy! 🔥'],
+    motivating: ['¡Vamos! ¡Todavía podés completar tus hábitos!', '¡No pares ahora, ya casi terminás! 💪', '¡Un hábito a la vez! ¡Podés hacerlo!'],
+    sleeping:   ['Shhh... hora de descansar. Mañana seguimos 😴', 'Descansá bien, mañana será un gran día 🌙'],
   },
   hoy: {
-    idle:       ['¡Hola Agustín! ¿Listo para un gran día?', '¡No pares ahora, ya casi llegás!', '¡Recordá tu racha, no la rompas!'],
-    happy:      ['¡Increíble! ¡Completaste todo hoy! 🦊', '¡Tu racha sigue viva! ¡Sos el mejor!'],
-    motivating: ['¡Vamos! ¡Todavía podés lograrlo!', '¡Cada check te acerca más a tu meta!'],
-    sleeping:   ['Shhh... hora de descansar 😴'],
+    idle:       ['¡Hola Agustín! ¿Listo para conquistar el día? 🦊', '¡Cada hábito cuenta! ¿Empezamos?', '¡Brian Tracy diría: actúa ahora!'],
+    happy:      ['¡INCREÍBLE! ¡Día perfecto! ¡Sos un campeón! 🏆', '¡Tu racha sigue viva! ¡Imparable!', '¡Así se hace! ¡Orgullo total hoy! 🔥'],
+    motivating: ['¡Vamos! ¡Todavía podés completar tus hábitos!', '¡No pares ahora, ya casi terminás! 💪', '¡Un hábito a la vez! ¡Podés hacerlo!'],
+    sleeping:   ['Shhh... hora de descansar. Mañana seguimos 😴', 'Descansá bien, mañana será un gran día 🌙'],
   },
 };
 
@@ -4095,110 +4114,49 @@ function getAvatarMsg(section) {
 }
 
 function buildAvatarSVG(avState, small) {
-  const h = small ? 75 : 100;
-  const w = Math.round(h * 100 / 120);
-
-  // COLA (detrás de todo)
-  const tail = `
-    <ellipse cx="76" cy="74" rx="15" ry="27" fill="#F06122" transform="rotate(22 76 74)"/>
-    <ellipse cx="86" cy="46" rx="9" ry="7" fill="#FCCFA9" transform="rotate(22 86 46)"/>`;
-
-  // OREJAS (antes de la cabeza para que la cabeza las tape en la base)
-  const ears = `
-    <path d="M 24 42 L 32 10 L 48 36 Z" fill="#F06122"/>
-    <path d="M 27 40 L 33 18 L 45 35 Z" fill="#FCCFA9"/>
-    <path d="M 76 42 L 68 10 L 52 36 Z" fill="#F06122"/>
-    <path d="M 73 40 L 67 18 L 55 35 Z" fill="#FCCFA9"/>`;
-
-  // CUERPO
-  const body = `
-    <ellipse cx="50" cy="85" rx="24" ry="21" fill="#FF7933"/>
-    <ellipse cx="50" cy="86" rx="13" ry="15" fill="#FCCFA9"/>`;
-
-  // CABEZA
-  const head = `<circle cx="50" cy="48" r="28" fill="#FF7933"/>`;
-
-  // MEJILLAS
-  const cheeks = `
-    <circle cx="34" cy="55" r="8" fill="#FCCFA9" opacity="0.55"/>
-    <circle cx="66" cy="55" r="8" fill="#FCCFA9" opacity="0.55"/>`;
-
-  // NARIZ
-  const nose = `<ellipse cx="50" cy="56" rx="4" ry="3" fill="#39210F"/>`;
-
-  // PATAS
-  const paws = `
-    <ellipse cx="38" cy="106" rx="11" ry="5" fill="#F06122" opacity="0.8"/>
-    <ellipse cx="62" cy="106" rx="11" ry="5" fill="#F06122" opacity="0.8"/>`;
-
-  // BRAZOS por estado
-  const armsDefault = `
-    <ellipse cx="24" cy="86" rx="8" ry="6" fill="#FF7933" transform="rotate(-20 24 86)"/>
-    <ellipse cx="76" cy="86" rx="8" ry="6" fill="#FF7933" transform="rotate(20 76 86)"/>`;
-  const armsHappy = `
-    <ellipse cx="19" cy="73" rx="8" ry="6" fill="#FF7933" transform="rotate(-50 19 73)"/>
-    <ellipse cx="81" cy="73" rx="8" ry="6" fill="#FF7933" transform="rotate(50 81 73)"/>`;
-  const armsMotivating = `
-    <ellipse cx="24" cy="86" rx="8" ry="6" fill="#FF7933" transform="rotate(-20 24 86)"/>
-    <ellipse cx="82" cy="70" rx="6" ry="11" fill="#FF7933" transform="rotate(15 82 70)"/>`;
-
-  let eyes, brows, mouth, arms;
+  const emojiSize = small ? 40 : 52;
+  const happySize = small ? 44 : 56;
+  const pumpSize  = small ? 26 : 32;
+  const h         = small ? 60 : 80;
 
   if (avState === 'sleeping') {
-    eyes = `
-      <path d="M 34 47 Q 40 52 46 47" stroke="#39210F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <path d="M 54 47 Q 60 52 66 47" stroke="#39210F" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
-    brows = '';
-    mouth = `<ellipse cx="50" cy="62" rx="3" ry="2.5" fill="none" stroke="#39210F" stroke-width="1.5"/>`;
-    arms = armsDefault;
-  } else if (avState === 'happy') {
-    eyes = `
-      <path d="M 33 48 Q 40 42 47 48" stroke="#39210F" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-      <path d="M 53 48 Q 60 42 67 48" stroke="#39210F" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-      <circle cx="43" cy="47" r="1.5" fill="#39210F" opacity="0.4"/>
-      <circle cx="63" cy="47" r="1.5" fill="#39210F" opacity="0.4"/>`;
-    brows = '';
-    mouth = `<path d="M 41 61 Q 50 69 59 61" stroke="#39210F" stroke-width="2" fill="none" stroke-linecap="round"/>`;
-    arms = armsHappy;
-  } else if (avState === 'motivating') {
-    eyes = `
-      <circle cx="40" cy="46" r="5" fill="#39210F"/>
-      <circle cx="60" cy="46" r="5" fill="#39210F"/>
-      <circle cx="42" cy="44" r="1.5" fill="white"/>
-      <circle cx="62" cy="44" r="1.5" fill="white"/>`;
-    brows = `<path d="M 34 40 Q 40 36 46 40" stroke="#39210F" stroke-width="2" fill="none" stroke-linecap="round"/>`;
-    mouth = `<path d="M 44 61 Q 50 66 56 61" stroke="#39210F" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
-    arms = armsMotivating;
-  } else {
-    // IDLE
-    eyes = `
-      <circle cx="40" cy="46" r="4" fill="#39210F"/>
-      <circle cx="60" cy="46" r="4" fill="#39210F"/>
-      <circle cx="42" cy="44" r="1.5" fill="white"/>
-      <circle cx="62" cy="44" r="1.5" fill="white"/>`;
-    brows = '';
-    mouth = `<path d="M 44 61 Q 50 66 56 61" stroke="#39210F" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
-    arms = armsDefault;
+    return `
+      <div class="av-emoji-wrap av-state-sleeping" style="height:${h}px">
+        <div class="av-zzz-wrap">
+          <span class="av-z1" style="font-size:14px;margin-left:10px">z</span>
+          <span class="av-z2" style="font-size:11px;margin-left:16px">z</span>
+          <span class="av-z3" style="font-size:9px;margin-left:20px">z</span>
+        </div>
+        <span class="av-emoji" style="font-size:${emojiSize}px">😴</span>
+      </div>`;
   }
-
-  const stars = avState === 'happy' ? `
-    <path class="av-star-1" d="M 5 28 L 7 22 L 9 28 L 3.5 24.5 L 10.5 24.5 Z" fill="#FFD700"/>
-    <path class="av-star-2" d="M 89 14 L 91 8 L 93 14 L 87.5 10.5 L 94.5 10.5 Z" fill="#FFD700"/>
-    <path class="av-star-3" d="M 3 84 L 5 78 L 7 84 L 1.5 80.5 L 8.5 80.5 Z" fill="#FFD700"/>` : '';
-
-  const zzz = avState === 'sleeping' ? `
-    <text class="av-zzz-1" x="70" y="26" font-size="12" font-weight="700" fill="#FF7933" font-family="'Geist Mono',monospace">z</text>
-    <text class="av-zzz-2" x="80" y="17" font-size="9" font-weight="700" fill="#FF7933" font-family="'Geist Mono',monospace">z</text>
-    <text class="av-zzz-3" x="88" y="10" font-size="7" font-weight="700" fill="#FF7933" font-family="'Geist Mono',monospace">z</text>` : '';
-
-  return `<svg viewBox="0 0 100 120" width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">
-    ${stars}${zzz}
-    ${tail}
-    ${ears}
-    ${body}${arms}${paws}
-    ${head}${cheeks}
-    ${nose}${eyes}${brows}${mouth}
-  </svg>`;
+  if (avState === 'happy') {
+    const pPos = [
+      'left:8%;top:22%', 'left:70%;top:8%', 'left:44%;top:0%',
+      'left:82%;top:32%', 'left:2%;top:38%'
+    ];
+    const pts = pPos.map((p, i) =>
+      `<span class="av-particle" style="${p};font-size:16px;animation-delay:${(i * 0.15).toFixed(2)}s">⭐</span>`
+    ).join('');
+    return `
+      <div class="av-emoji-wrap av-state-happy" style="height:${h}px">
+        ${pts}
+        <span class="av-emoji" style="font-size:${happySize}px">🦊</span>
+        <div class="av-shadow"></div>
+      </div>`;
+  }
+  if (avState === 'motivating') {
+    return `
+      <div class="av-emoji-wrap av-state-motivating" style="height:${h}px;flex-direction:row;align-items:center;justify-content:center;gap:6px">
+        <span class="av-emoji" style="font-size:${emojiSize}px">🦊</span>
+        <span class="av-pump" style="font-size:${pumpSize}px">💪</span>
+      </div>`;
+  }
+  return `
+    <div class="av-emoji-wrap av-state-idle" style="height:${h}px">
+      <span class="av-emoji" style="font-size:${emojiSize}px">🦊</span>
+      <div class="av-shadow"></div>
+    </div>`;
 }
 
 const _avatarTimers = {};
@@ -4218,8 +4176,11 @@ function renderAvatar(section) {
   fig.setAttribute('data-state', avState);
   fig.innerHTML = buildAvatarSVG(avState, section === 'hoy');
   fig.onclick = () => {
-    fig.classList.add('av-bounce');
-    setTimeout(() => fig.classList.remove('av-bounce'), 350);
+    const wrap = fig.querySelector('.av-emoji-wrap');
+    if (wrap && !wrap.classList.contains('av-clicking')) {
+      wrap.classList.add('av-clicking');
+      setTimeout(() => wrap.classList.remove('av-clicking'), 430);
+    }
     showAvatarBubble(section);
   };
 }
