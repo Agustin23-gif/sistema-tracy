@@ -1778,6 +1778,203 @@
     .avatar-figure { transform: scale(0.75); transform-origin: bottom center; }
     .avatar-bubble { font-size: 12px; max-width: 200px; padding: 8px 11px; }
   }
+
+  /* ── POMODORO ── */
+  .fab-pomo {
+    position: fixed;
+    bottom: 28px;
+    left: 90px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #1A1A2E;
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.38);
+    z-index: 300;
+    transition: transform 0.2s, box-shadow 0.2s;
+    line-height: 1;
+  }
+  .fab-pomo:hover  { transform: scale(1.08); box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
+  .fab-pomo:active { transform: scale(0.95); }
+  .fab-pomo svg, .fab-pomo i { width: 20px; height: 20px; }
+  .fab-pomo-dot {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #E8450A;
+    border: 2px solid #1A1A2E;
+    display: none;
+  }
+  .fab-pomo-dot.visible { display: block; animation: pomo-dot-pulse 1.5s ease-in-out infinite; }
+  @keyframes pomo-dot-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.6; transform: scale(0.82); }
+  }
+
+  .pomo-panel {
+    position: fixed;
+    bottom: 100px;
+    left: 16px;
+    width: 300px;
+    background: #1A1A2E;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+    z-index: 300;
+    transform: scale(0.92) translateY(12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    overflow: hidden;
+  }
+  .pomo-panel.open {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    pointer-events: all;
+  }
+  .pomo-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px 0;
+  }
+  .pomo-mode-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.5);
+  }
+  .pomo-close {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 2px 6px;
+    transition: color 0.15s;
+  }
+  .pomo-close:hover { color: rgba(255,255,255,0.85); }
+  .pomo-pills {
+    display: flex;
+    gap: 6px;
+    padding: 12px 18px 0;
+  }
+  .pomo-pill {
+    flex: 1;
+    padding: 6px 0;
+    border-radius: 99px;
+    border: none;
+    font-family: 'Geist', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.5);
+    transition: background 0.15s, color 0.15s;
+  }
+  .pomo-pill.active { background: #FFFFFF; color: #1A1A2E; }
+  .pomo-ring-wrap {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 16px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pomo-ring-svg { position: absolute; top: 0; left: 0; }
+  .pomo-timer-center { position: relative; z-index: 1; text-align: center; }
+  .pomo-timer-num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 64px;
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+  .pomo-dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 14px 0 0;
+    padding: 0 18px;
+  }
+  .pomo-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.25s;
+  }
+  .pomo-dot.done { background: #FFFFFF; }
+  .pomo-controls {
+    padding: 16px 18px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .pomo-play-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .pomo-play-btn:hover  { background: rgba(255,255,255,0.25); }
+  .pomo-play-btn:active { transform: scale(0.92); }
+  .pomo-play-btn svg, .pomo-play-btn i { width: 24px; height: 24px; }
+  .pomo-secondary { display: flex; gap: 20px; }
+  .pomo-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .pomo-icon-btn:hover { background: rgba(255,255,255,0.16); color: #FFFFFF; }
+  .pomo-icon-btn svg, .pomo-icon-btn i { width: 16px; height: 16px; }
+
+  @media (max-width: 480px) {
+    .fab-pomo {
+      bottom: calc(24px + env(safe-area-inset-bottom));
+      left: 76px;
+      width: 48px;
+      height: 48px;
+    }
+    .pomo-panel {
+      width: 100vw;
+      left: 0;
+      bottom: 0;
+      border-radius: 20px 20px 0 0;
+      transform: translateY(100%);
+      opacity: 1;
+    }
+    .pomo-panel.open { transform: translateY(0); opacity: 1; }
+  }
 </style>
 </head>
 <body>
@@ -2148,6 +2345,17 @@
   </div>
 
   <div class="panel-tasks" id="panel-tasks-list"></div>
+</div>
+
+<!-- ══ POMODORO FAB ══ -->
+<button class="fab-pomo" id="fabPomo" onclick="togglePomoPanel()" title="Pomodoro">
+  <i data-lucide="timer"></i>
+  <span class="fab-pomo-dot" id="pomoDot"></span>
+</button>
+
+<!-- ══ POMODORO PANEL ══ -->
+<div class="pomo-panel" id="pomoPanel">
+  <div id="pomoPanelContent"></div>
 </div>
 
 <script>
@@ -3780,6 +3988,189 @@ function renderAvatar(section) {
     setTimeout(() => fig.classList.remove('av-bounce'), 350);
     showAvatarBubble(section);
   };
+}
+
+// ── POMODORO ──
+const POMO_WORK  = 1500;
+const POMO_BREAK = 300;
+
+let pomoOpen      = false;
+let pomoMode      = 'work';
+let pomoSeconds   = POMO_WORK;
+let pomoRunning   = false;
+let pomoInterval  = null;
+let pomoCompleted = 0;
+
+function togglePomoPanel() { pomoOpen ? closePomoPanel() : openPomoPanel(); }
+
+function openPomoPanel() {
+  pomoOpen = true;
+  document.getElementById('pomoPanel').classList.add('open');
+  renderPomoPanel();
+}
+function closePomoPanel() {
+  pomoOpen = false;
+  document.getElementById('pomoPanel').classList.remove('open');
+}
+
+function renderPomoPanel() {
+  const total = pomoMode === 'work' ? POMO_WORK : POMO_BREAK;
+  const mins  = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
+  const secs  = String(pomoSeconds % 60).padStart(2, '0');
+  const circ  = 2 * Math.PI * 80;
+  const prog  = (pomoSeconds / total) * circ;
+  const modeLabel = pomoMode === 'work' ? 'TRABAJO' : 'PAUSA';
+  const playIcon  = pomoRunning ? 'pause' : 'play';
+  const dots = [0,1,2,3].map(i =>
+    `<div class="pomo-dot${i < pomoCompleted ? ' done' : ''}"></div>`
+  ).join('');
+
+  document.getElementById('pomoPanelContent').innerHTML = `
+    <div class="pomo-header">
+      <span class="pomo-mode-label">${modeLabel}</span>
+      <button class="pomo-close" onclick="closePomoPanel()">✕</button>
+    </div>
+    <div class="pomo-pills">
+      <button class="pomo-pill${pomoMode === 'work'  ? ' active' : ''}" onclick="switchPomoMode('work')">Trabajo</button>
+      <button class="pomo-pill${pomoMode === 'break' ? ' active' : ''}" onclick="switchPomoMode('break')">Pausa</button>
+    </div>
+    <div class="pomo-ring-wrap">
+      <svg class="pomo-ring-svg" viewBox="0 0 180 180" width="180" height="180">
+        <circle cx="90" cy="90" r="80" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="4"/>
+        <circle cx="90" cy="90" r="80" fill="none" stroke="#E8450A" stroke-width="4"
+                stroke-linecap="round"
+                stroke-dasharray="${prog.toFixed(2)} ${circ.toFixed(2)}"
+                transform="rotate(-90 90 90)" id="pomoRingArc"/>
+      </svg>
+      <div class="pomo-timer-center">
+        <div class="pomo-timer-num" id="pomoTimerNum">${mins}:${secs}</div>
+      </div>
+    </div>
+    <div class="pomo-dots">${dots}</div>
+    <div class="pomo-controls">
+      <button class="pomo-play-btn" onclick="togglePomoTimer()">
+        <i data-lucide="${playIcon}" style="width:24px;height:24px"></i>
+      </button>
+      <div class="pomo-secondary">
+        <button class="pomo-icon-btn" onclick="resetPomo()" title="Reiniciar">
+          <i data-lucide="rotate-ccw"></i>
+        </button>
+        <button class="pomo-icon-btn" onclick="skipPomo()" title="Saltar">
+          <i data-lucide="skip-forward"></i>
+        </button>
+      </div>
+    </div>`;
+  if (window.lucide) lucide.createIcons();
+}
+
+function updatePomoDisplay() {
+  const total = pomoMode === 'work' ? POMO_WORK : POMO_BREAK;
+  const mins  = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
+  const secs  = String(pomoSeconds % 60).padStart(2, '0');
+  const circ  = 2 * Math.PI * 80;
+  const prog  = (pomoSeconds / total) * circ;
+  const numEl = document.getElementById('pomoTimerNum');
+  if (numEl) numEl.textContent = `${mins}:${secs}`;
+  const arc = document.getElementById('pomoRingArc');
+  if (arc) arc.setAttribute('stroke-dasharray', `${prog.toFixed(2)} ${circ.toFixed(2)}`);
+  document.title = `${mins}:${secs} — Sistema Tracy`;
+}
+
+function updatePomoDot() {
+  const dot = document.getElementById('pomoDot');
+  if (dot) dot.classList.toggle('visible', pomoRunning);
+}
+
+function togglePomoTimer() { pomoRunning ? pausePomo() : startPomo(); }
+
+function startPomo() {
+  if (pomoRunning) return;
+  pomoRunning  = true;
+  pomoInterval = setInterval(tickPomo, 1000);
+  updatePomoDot();
+  if (pomoOpen) renderPomoPanel();
+}
+
+function pausePomo() {
+  if (!pomoRunning) return;
+  pomoRunning = false;
+  clearInterval(pomoInterval);
+  pomoInterval = null;
+  document.title = 'Sistema Tracy — Metas & Hábitos';
+  updatePomoDot();
+  if (pomoOpen) renderPomoPanel();
+}
+
+function resetPomo() {
+  pomoRunning = false;
+  clearInterval(pomoInterval);
+  pomoInterval = null;
+  pomoSeconds  = pomoMode === 'work' ? POMO_WORK : POMO_BREAK;
+  document.title = 'Sistema Tracy — Metas & Hábitos';
+  updatePomoDot();
+  if (pomoOpen) renderPomoPanel();
+}
+
+function skipPomo() {
+  pomoRunning = false;
+  clearInterval(pomoInterval);
+  pomoInterval = null;
+  pomoMode     = pomoMode === 'work' ? 'break' : 'work';
+  pomoSeconds  = pomoMode === 'work' ? POMO_WORK : POMO_BREAK;
+  document.title = 'Sistema Tracy — Metas & Hábitos';
+  updatePomoDot();
+  if (pomoOpen) renderPomoPanel();
+}
+
+function switchPomoMode(mode) {
+  if (pomoMode === mode) return;
+  pomoRunning = false;
+  clearInterval(pomoInterval);
+  pomoInterval = null;
+  pomoMode     = mode;
+  pomoSeconds  = mode === 'work' ? POMO_WORK : POMO_BREAK;
+  document.title = 'Sistema Tracy — Metas & Hábitos';
+  updatePomoDot();
+  if (pomoOpen) renderPomoPanel();
+}
+
+function tickPomo() {
+  pomoSeconds--;
+  if (pomoSeconds <= 0) {
+    pomoSeconds = 0;
+    updatePomoDisplay();
+    pomoDone();
+    return;
+  }
+  updatePomoDisplay();
+}
+
+function pomoDone() {
+  clearInterval(pomoInterval);
+  pomoInterval = null;
+  pomoRunning  = false;
+  document.title = 'Sistema Tracy — Metas & Hábitos';
+  if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+
+  let mensaje;
+  if (pomoMode === 'work') {
+    pomoCompleted = (pomoCompleted + 1) % 4;
+    mensaje  = '🍅 ¡Pomodoro completado! Tomá un descanso de 5 minutos';
+    pomoMode = 'break';
+  } else {
+    mensaje  = '💪 ¡Pausa terminada! A trabajar otros 25 minutos';
+    pomoMode = 'work';
+  }
+  pomoSeconds = pomoMode === 'work' ? POMO_WORK : POMO_BREAK;
+
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', mensaje });
+  } else if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('Sistema Tracy', { body: mensaje, icon: './icon-192.png' });
+  }
+
+  updatePomoDot();
+  if (pomoOpen) renderPomoPanel();
 }
 
 // ── INIT ──
