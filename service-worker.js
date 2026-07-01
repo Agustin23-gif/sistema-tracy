@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sistema-tracy-v1';
+const CACHE_NAME = 'sistema-tracy-v2';
 const urlsToCache = ['./tracy-system.html'];
 
 // Instalar SW y cachear recursos
