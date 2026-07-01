@@ -4188,6 +4188,22 @@ showAvatarBubble('inicio');
 fetchWeather();
 iniciarNotificacionesSiActivas();
 if (window.lucide) lucide.createIcons();
+
+// Pedir permiso de notificaciones al cargar
+async function solicitarPermisoNotificaciones() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    const permiso = await Notification.requestPermission();
+    if (permiso === 'granted') {
+      new Notification('Sistema Tracy', {
+        body: '✅ Notificaciones activadas correctamente',
+        icon: './icon-192.png'
+      });
+    }
+  }
+}
+
+// Llamar después de 2 segundos para no interrumpir la carga
+setTimeout(solicitarPermisoNotificaciones, 2000);
 </script>
 
 <script>
