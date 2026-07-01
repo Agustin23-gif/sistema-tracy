@@ -4024,13 +4024,36 @@ function renderAvatar(section) {
 }
 
 // ── AUDIO POMODORO ──
+console.log('AudioContext:', typeof AudioContext, typeof webkitAudioContext);
 let audioCtx = null;
 
 function getAudioContext() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
   return audioCtx;
+}
+
+function probarSonido() {
+  try {
+    const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = 528;
+    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 1.5);
+    console.log('Sonido ejecutado correctamente');
+  } catch(e) {
+    console.error('Error de audio:', e);
+    alert('Error: ' + e.message);
+  }
 }
 
 function getVolMult() {
@@ -4175,6 +4198,7 @@ function renderPomoPanel() {
           <i data-lucide="${volIcon}"></i>
         </button>
       </div>
+      <button onclick="probarSonido()" style="margin-top:4px;background:rgba(255,255,255,0.08);border:none;border-radius:8px;color:rgba(255,255,255,0.65);font-family:'Geist',sans-serif;font-size:12px;padding:6px 14px;cursor:pointer">🔊 Probar sonido</button>
     </div>`;
   if (window.lucide) lucide.createIcons();
 }
