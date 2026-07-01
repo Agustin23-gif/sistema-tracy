@@ -3840,18 +3840,47 @@ function desactivarRecordatorio() {
   if (window.lucide) lucide.createIcons();
 }
 
+async function activarNotificacionesSafari() {
+  if (!('Notification' in window)) {
+    alert('Tu navegador no soporta notificaciones.');
+    return;
+  }
+  const permiso = await Notification.requestPermission();
+  if (permiso === 'granted') {
+    new Notification('Sistema Tracy', {
+      body: '✅ ¡Notificaciones activadas! Te avisaremos cuando termine el Pomodoro.',
+      icon: './icon-192.png'
+    });
+  } else if (permiso === 'denied') {
+    alert('Para activar notificaciones: Safari → Configuración → Sitios web → Notificaciones → agustin23-gif.github.io → Permitir');
+  }
+  renderNotifCard();
+  if (window.lucide) lucide.createIcons();
+}
+
 function renderNotifCard() {
   const el = document.getElementById('inicioNotifCard');
   if (!el) return;
-  const cfg    = state.notificacion || {};
-  const perm   = ('Notification' in window) ? Notification.permission : 'unsupported';
+  const cfg      = state.notificacion || {};
+  const perm     = ('Notification' in window) ? Notification.permission : 'unsupported';
   const swActivo = ('serviceWorker' in navigator && navigator.serviceWorker.controller) ? 'Activo ✓' : 'No activo';
-  const activo = cfg.activa && perm === 'granted';
+  const activo   = cfg.activa && perm === 'granted';
 
   const diagHtml = `
     <div class="notif-hint" style="margin-top:8px;line-height:1.8">
       Permiso: <strong>${perm}</strong> &nbsp;·&nbsp; SW: <strong>${swActivo}</strong>
     </div>`;
+
+  const estadoPerm = perm === 'granted'
+    ? '<span style="font-size:13px;color:#16a34a">✅ Notificaciones activas</span>'
+    : perm === 'denied'
+      ? '<span style="font-size:13px;color:#dc2626">❌ Notificaciones bloqueadas</span>'
+      : '<span style="font-size:13px;color:#6B6B6B">⚪ Sin configurar</span>';
+
+  const activarBtnHtml = perm !== 'granted' ? `
+    <div class="notif-card-row" style="margin-top:12px">
+      <button class="notif-btn-primary" style="width:100%" onclick="activarNotificacionesSafari()">🔔 Activar notificaciones</button>
+    </div>` : '';
 
   if (activo) {
     el.innerHTML = `
@@ -3868,6 +3897,8 @@ function renderNotifCard() {
           <button class="notif-btn-primary" onclick="mostrarNotificacion()">🔔 Probar ahora</button>
         </div>
         <div class="notif-hint" style="margin-top:6px">Solo se notifica si no completaste todos tus hábitos</div>
+        ${activarBtnHtml}
+        <div style="margin-top:8px">${estadoPerm}</div>
         ${diagHtml}
         <div class="notif-msg" id="notifCardMsg"></div>
       </div>`;
@@ -3884,7 +3915,8 @@ function renderNotifCard() {
           </div>
           <button class="notif-btn-primary" onclick="activarRecordatorio()">Activar</button>
         </div>
-        ${perm === 'denied' ? '<div class="notif-hint" style="color:#dc2626;margin-top:6px">Notificaciones bloqueadas — habilitá en Ajustes → Safari.</div>' : ''}
+        ${activarBtnHtml}
+        <div style="margin-top:8px">${estadoPerm}</div>
         ${diagHtml}
         <div class="notif-msg" id="notifCardMsg"></div>
       </div>`;
