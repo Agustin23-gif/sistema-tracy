@@ -12,6 +12,35 @@
 <link rel="manifest" href="./manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script type="module">
+  import { initializeApp }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+  import { getFirestore, doc, setDoc, getDoc }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBk3rAYyAIHu9Rna6fOycCEJVjx6fs7cxg",
+    authDomain: "sistema-tracy.firebaseapp.com",
+    projectId: "sistema-tracy",
+    storageBucket: "sistema-tracy.firebasestorage.app",
+    messagingSenderId: "245671404273",
+    appId: "1:245671404273:web:6aa60f32ac1b0960463f50"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  window.firebaseAuth     = auth;
+  window.firebaseDb       = db;
+  window.firebaseProvider = provider;
+  window.firebaseFns      = { signInWithPopup, signOut, onAuthStateChanged, doc, setDoc, getDoc };
+  window.firebaseReady    = true;
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -1225,6 +1254,84 @@
     padding: 4px 10px; font-size: 0.78rem; font-weight: 700;
     color: #E8450A; white-space: nowrap;
   }
+  /* ── AUTH ── */
+  .auth-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 99px;
+    padding: 5px 12px 5px 8px;
+    font-family: 'Geist', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1A1A1A;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: box-shadow .15s;
+  }
+  .auth-btn:hover { box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+  .auth-avatar-wrap {
+    position: relative;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+  }
+  .auth-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    object-fit: cover;
+  }
+  .sync-dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -1px; right: -1px;
+    border: 1.5px solid var(--bg);
+  }
+  .sync-dot.green  { background: #22c55e; }
+  .sync-dot.yellow { background: #f59e0b; animation: pulse-dot .9s infinite; }
+  .sync-dot.red    { background: #ef4444; }
+  @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.35} }
+  .auth-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.13);
+    min-width: 190px;
+    z-index: 300;
+    overflow: hidden;
+    display: none;
+  }
+  .auth-dropdown.open { display: block; }
+  .auth-dropdown-info {
+    padding: 12px 14px 8px;
+    font-size: 12px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .auth-dropdown-email { font-weight: 600; color: var(--text); font-size: 13px; margin-bottom: 2px; }
+  .auth-dropdown-status { font-size: 11px; }
+  .auth-dropdown-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 11px 14px;
+    font-family: 'Geist', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .auth-dropdown-item:hover { background: rgba(0,0,0,.04); }
+  .auth-dropdown-item.danger { color: #ef4444; }
   .racha-chip svg, .racha-chip i { width: 13px; height: 13px; }
   #headerRachaDias { font-family: 'Geist Mono', monospace; font-weight: 700; }
 
@@ -2470,6 +2577,28 @@
       </div>
       <span class="meter-pct" id="meterPct">0%</span>
     </div>
+    <div id="authZone" style="position:relative">
+      <button class="auth-btn" id="authLoginBtn" onclick="loginConGoogle()" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M43.611 20.083H42V20H24v8h11.303C33.973 32.444 29.418 35 24 35c-6.075 0-11-4.925-11-11s4.925-11 11-11c2.801 0 5.349 1.056 7.28 2.78l5.657-5.657C33.306 7.636 28.855 6 24 6 13.507 6 5 14.507 5 25s8.507 19 19 19c9.954 0 18.544-7.695 18.977-17.669.03-.44.023-.883.023-1.331 0-.592-.023-1.177-.389-1.917z" fill="#FBC02D"/>
+          <path d="M6.306 14.691l6.571 4.819C14.655 15.108 19.001 12 24 12c2.801 0 5.349 1.056 7.28 2.78l5.657-5.657C33.306 7.636 28.855 6 24 6 16.318 6 9.656 9.557 6.306 14.691z" fill="#E53935"/>
+          <path d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.402 0-9.956-3.548-11.29-8.413l-6.522 5.025C9.505 39.556 16.227 44 24 44z" fill="#4CAF50"/>
+          <path d="M43.611 20.083H42V20H24v8h11.303a11.966 11.966 0 01-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 25c0-.592-.023-1.177-.389-1.917z" fill="#1565C0"/>
+        </svg>
+        Iniciar sesión
+      </button>
+      <div class="auth-avatar-wrap" id="authAvatarWrap" style="display:none" onclick="toggleAuthDropdown()">
+        <img class="auth-avatar" id="authAvatarImg" src="" alt="foto">
+        <div class="sync-dot green" id="syncDot"></div>
+      </div>
+      <div class="auth-dropdown" id="authDropdown">
+        <div class="auth-dropdown-info">
+          <div class="auth-dropdown-email" id="authDropdownEmail"></div>
+          <div class="auth-dropdown-status" id="authDropdownStatus">✅ Sincronizado</div>
+        </div>
+        <button class="auth-dropdown-item danger" onclick="logoutGoogle()">Cerrar sesión</button>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -2904,6 +3033,8 @@ function loadState() {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localStorage.setItem(STORAGE_KEY + '_ts', new Date().toISOString());
+  saveToFirestore();
 }
 
 let state = loadState();
@@ -5287,6 +5418,149 @@ function renderRanaDelDia() {
       }
     </div>`;
   if (window.lucide) lucide.createIcons();
+}
+
+// ── FIREBASE AUTH & SYNC ──
+window.currentUser = null;
+let _syncStatus = 'idle'; // idle | syncing | ok | error
+
+function setSyncStatus(s) {
+  _syncStatus = s;
+  const dot = document.getElementById('syncDot');
+  const txt = document.getElementById('authDropdownStatus');
+  if (!dot) return;
+  dot.className = 'sync-dot ' + (s === 'syncing' ? 'yellow' : s === 'error' ? 'red' : 'green');
+  if (txt) txt.textContent = s === 'syncing' ? '🔄 Sincronizando...' : s === 'error' ? '🔴 Sin conexión' : '✅ Sincronizado';
+}
+
+async function saveToFirestore() {
+  if (!window.currentUser || !window.firebaseFns) return;
+  setSyncStatus('syncing');
+  try {
+    const { doc, setDoc } = window.firebaseFns;
+    await setDoc(
+      doc(window.firebaseDb, 'usuarios', window.currentUser.uid),
+      { state: JSON.stringify(state), updatedAt: new Date().toISOString() }
+    );
+    setSyncStatus('ok');
+  } catch (e) {
+    setSyncStatus('error');
+    console.error('Firestore save error:', e);
+  }
+}
+
+async function loadFromFirestore(uid) {
+  if (!window.firebaseFns) return;
+  try {
+    const { doc, getDoc } = window.firebaseFns;
+    const snap = await getDoc(doc(window.firebaseDb, 'usuarios', uid));
+    if (!snap.exists()) { await saveToFirestore(); return; }
+    const data = snap.data();
+    const remoteState = JSON.parse(data.state);
+    const localTs  = localStorage.getItem(STORAGE_KEY + '_ts') || '0';
+    const remoteTs = data.updatedAt || '0';
+    if (remoteTs > localTs) {
+      state = Object.assign(state, remoteState);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(STORAGE_KEY + '_ts', remoteTs);
+      renderAll();
+    } else {
+      await saveToFirestore();
+    }
+    setSyncStatus('ok');
+  } catch (e) {
+    setSyncStatus('error');
+    console.error('Firestore load error:', e);
+  }
+}
+
+function renderAll() {
+  renderInicio();
+  renderHabitos();
+  renderMetas();
+  renderVision();
+  renderCalendario();
+  renderPaginaTareas();
+  if (window.lucide) lucide.createIcons();
+}
+
+function actualizarUILogin(user) {
+  const loginBtn  = document.getElementById('authLoginBtn');
+  const avatarWrap = document.getElementById('authAvatarWrap');
+  const avatarImg  = document.getElementById('authAvatarImg');
+  const emailEl    = document.getElementById('authDropdownEmail');
+  if (loginBtn)   loginBtn.style.display   = 'none';
+  if (avatarWrap) avatarWrap.style.display = 'inline-flex';
+  if (avatarImg && user.photoURL)  avatarImg.src = user.photoURL;
+  if (emailEl)  emailEl.textContent = user.email || '';
+  setSyncStatus('ok');
+}
+
+function actualizarUILogout() {
+  const loginBtn   = document.getElementById('authLoginBtn');
+  const avatarWrap = document.getElementById('authAvatarWrap');
+  const dropdown   = document.getElementById('authDropdown');
+  if (loginBtn)   loginBtn.style.display   = 'inline-flex';
+  if (avatarWrap) avatarWrap.style.display = 'none';
+  if (dropdown)   dropdown.classList.remove('open');
+}
+
+function toggleAuthDropdown() {
+  const dd = document.getElementById('authDropdown');
+  if (dd) dd.classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  const zone = document.getElementById('authZone');
+  if (zone && !zone.contains(e.target)) {
+    const dd = document.getElementById('authDropdown');
+    if (dd) dd.classList.remove('open');
+  }
+});
+
+async function loginConGoogle() {
+  if (!window.firebaseFns) return;
+  try {
+    const { signInWithPopup } = window.firebaseFns;
+    await signInWithPopup(window.firebaseAuth, window.firebaseProvider);
+  } catch (e) {
+    if (e.code !== 'auth/popup-closed-by-user') console.error('Login error:', e);
+  }
+}
+
+async function logoutGoogle() {
+  if (!window.firebaseFns) return;
+  const { signOut } = window.firebaseFns;
+  await signOut(window.firebaseAuth);
+  actualizarUILogout();
+  window.currentUser = null;
+}
+
+function _initAuthListener() {
+  if (!window.firebaseFns) return;
+  const { onAuthStateChanged } = window.firebaseFns;
+  onAuthStateChanged(window.firebaseAuth, async (user) => {
+    window.currentUser = user;
+    if (user) {
+      actualizarUILogin(user);
+      await loadFromFirestore(user.uid);
+    } else {
+      actualizarUILogout();
+    }
+  });
+}
+
+function _showAuthBtn() {
+  if (window.currentUser) return;
+  const btn = document.getElementById('authLoginBtn');
+  if (btn) btn.style.display = 'inline-flex';
+}
+
+if (window.firebaseReady) {
+  _initAuthListener();
+} else {
+  window.addEventListener('firebase-ready', _initAuthListener, { once: true });
+  setTimeout(_showAuthBtn, 2000);
 }
 
 // ── INIT ──
