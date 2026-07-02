@@ -18,7 +18,7 @@
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-  import { getFirestore, doc, setDoc, getDoc }
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot }
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
   const firebaseConfig = {
@@ -38,7 +38,7 @@
   window.firebaseAuth     = auth;
   window.firebaseDb       = db;
   window.firebaseProvider = provider;
-  window.firebaseFns      = { signInWithPopup, signOut, onAuthStateChanged, doc, setDoc, getDoc };
+  window.firebaseFns      = { signInWithPopup, signOut, onAuthStateChanged, doc, setDoc, getDoc, onSnapshot };
   window.firebaseReady    = true;
   window.dispatchEvent(new Event('firebase-ready'));
 </script>
@@ -6106,6 +6106,7 @@ function renderRanaDelDia() {
 
 // ── FIREBASE AUTH & SYNC ──
 window.currentUser = null;
+window.firestoreUnsubscribe = null;
 let _syncStatus = 'idle'; // idle | syncing | ok | error
 
 function setSyncStatus(s) {
@@ -6119,13 +6120,16 @@ function setSyncStatus(s) {
 
 async function saveToFirestore() {
   if (!window.currentUser || !window.firebaseFns) return;
+  console.log('Guardando en Firestore para usuario:', window.currentUser?.uid);
   setSyncStatus('syncing');
   try {
     const { doc, setDoc } = window.firebaseFns;
+    const updatedAt = new Date().toISOString();
     await setDoc(
       doc(window.firebaseDb, 'usuarios', window.currentUser.uid),
-      { state: JSON.stringify(state), updatedAt: new Date().toISOString() }
+      { state: JSON.stringify(state), updatedAt }
     );
+    localStorage.setItem(STORAGE_KEY + '_ts', updatedAt);
     setSyncStatus('ok');
   } catch (e) {
     setSyncStatus('error');
@@ -6133,29 +6137,36 @@ async function saveToFirestore() {
   }
 }
 
-async function loadFromFirestore(uid) {
+// Escucha cambios en tiempo real (otro dispositivo guarda → este dispositivo se actualiza solo)
+function attachFirestoreListener(uid) {
   if (!window.firebaseFns) return;
-  try {
-    const { doc, getDoc } = window.firebaseFns;
-    const snap = await getDoc(doc(window.firebaseDb, 'usuarios', uid));
-    if (!snap.exists()) { await saveToFirestore(); return; }
-    const data = snap.data();
-    const remoteState = JSON.parse(data.state);
-    const localTs  = localStorage.getItem(STORAGE_KEY + '_ts') || '0';
-    const remoteTs = data.updatedAt || '0';
-    if (remoteTs > localTs) {
-      state = Object.assign(state, remoteState);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      localStorage.setItem(STORAGE_KEY + '_ts', remoteTs);
-      renderAll();
-    } else {
-      await saveToFirestore();
+  const { doc, onSnapshot } = window.firebaseFns;
+  if (window.firestoreUnsubscribe) window.firestoreUnsubscribe();
+  window.firestoreUnsubscribe = onSnapshot(
+    doc(window.firebaseDb, 'usuarios', uid),
+    (snap) => {
+      console.log('Cargando desde Firestore, datos:', snap.data());
+      if (!snap.exists()) { saveToFirestore(); return; }
+      // Ignorar el eco del propio guardado local (evita loop de escrituras)
+      if (snap.metadata.hasPendingWrites) return;
+      const data = snap.data();
+      const remoteState = JSON.parse(data.state);
+      const localTs  = localStorage.getItem(STORAGE_KEY + '_ts') || '0';
+      const remoteTs = data.updatedAt || '0';
+      if (remoteTs > localTs) {
+        state = Object.assign(state, remoteState);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        localStorage.setItem(STORAGE_KEY + '_ts', remoteTs);
+        renderAll();
+        console.log('Estado actualizado desde Firestore (otro dispositivo)');
+      }
+      setSyncStatus('ok');
+    },
+    (error) => {
+      setSyncStatus('error');
+      console.error('Error en onSnapshot:', error);
     }
-    setSyncStatus('ok');
-  } catch (e) {
-    setSyncStatus('error');
-    console.error('Firestore load error:', e);
-  }
+  );
 }
 
 function renderAll() {
@@ -6215,6 +6226,10 @@ async function loginConGoogle() {
 async function logoutGoogle() {
   if (!window.firebaseFns) return;
   const { signOut } = window.firebaseFns;
+  if (window.firestoreUnsubscribe) {
+    window.firestoreUnsubscribe();
+    window.firestoreUnsubscribe = null;
+  }
   await signOut(window.firebaseAuth);
   actualizarUILogout();
   window.currentUser = null;
@@ -6227,7 +6242,7 @@ function _initAuthListener() {
     window.currentUser = user;
     if (user) {
       actualizarUILogin(user);
-      await loadFromFirestore(user.uid);
+      attachFirestoreListener(user.uid);
     } else {
       actualizarUILogout();
     }
