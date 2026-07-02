@@ -1014,6 +1014,87 @@
   }
   .etiqueta-dropdown-item:hover { opacity: 0.7; }
 
+  /* ── GESTIÓN DE ETIQUETAS ── */
+  .etiqueta-manage-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Geist', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 2px;
+    opacity: 0.7;
+    text-align: left;
+    transition: opacity 0.15s, color 0.15s;
+  }
+  .etiqueta-manage-btn:hover { opacity: 1; color: var(--text); }
+  .etiqueta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .etiqueta-row:last-child { border-bottom: none; }
+  .etiqueta-row-pill { flex-shrink: 0; white-space: nowrap; }
+  .etiqueta-row-nombre-input {
+    flex-shrink: 0;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    color: var(--text);
+    font-family: 'Geist', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    outline: none;
+    width: 90px;
+  }
+  .etiqueta-color-row-mini { display: flex; gap: 6px; flex: 1; flex-wrap: wrap; }
+  .etiqueta-color-dot-sm {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    outline: 2px solid transparent;
+    outline-offset: 1px;
+    transition: outline-color 0.15s, transform 0.15s;
+    flex-shrink: 0;
+  }
+  .etiqueta-color-dot-sm:hover { transform: scale(1.15); }
+  .etiqueta-color-dot-sm.selected { outline-color: var(--text); }
+  .etiqueta-row-actions { display: flex; gap: 2px; flex-shrink: 0; margin-left: auto; }
+  .etiqueta-icon-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    opacity: 0.55;
+    transition: opacity 0.2s, color 0.2s;
+    flex-shrink: 0;
+  }
+  .etiqueta-icon-btn svg, .etiqueta-icon-btn i { width: 14px; height: 14px; }
+  .etiqueta-icon-btn:hover { opacity: 1; color: var(--text); }
+  .etiqueta-icon-btn.danger:hover { color: var(--danger); }
+  .etiqueta-nueva-block {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .etiqueta-nueva-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 10px;
+  }
+
   /* ── PÁGINA INICIO ── */
   .inicio-hero {
     background: #1A1A2E;
@@ -3023,15 +3104,7 @@
 
     <!-- Filtros -->
     <div class="tareas-filters">
-      <div class="filter-group">
-        <span class="filter-group-label">Etiqueta</span>
-        <button class="filter-pill filter-etiqueta active" onclick="setFiltroEtiqueta('todas',this)">Todas</button>
-        <button class="filter-pill filter-etiqueta" onclick="setFiltroEtiqueta('Personal',this)">Personal</button>
-        <button class="filter-pill filter-etiqueta" onclick="setFiltroEtiqueta('Diseño',this)">Diseño</button>
-        <button class="filter-pill filter-etiqueta" onclick="setFiltroEtiqueta('Trabajo',this)">Trabajo</button>
-        <button class="filter-pill filter-etiqueta" onclick="setFiltroEtiqueta('Iglesia',this)">Iglesia</button>
-        <button class="filter-pill filter-etiqueta" onclick="setFiltroEtiqueta('Urgente',this)">Urgente</button>
-      </div>
+      <div class="filter-group" id="filtroEtiquetaGroup"></div>
       <div class="filter-group">
         <span class="filter-group-label">Estado</span>
         <button class="filter-pill filter-estado active" onclick="setFiltroEstado('todas',this)">Todos</button>
@@ -3039,6 +3112,7 @@
         <button class="filter-pill filter-estado" onclick="setFiltroEstado('en_curso',this)">En curso</button>
         <button class="filter-pill filter-estado" onclick="setFiltroEstado('completada',this)">Completadas</button>
       </div>
+      <button class="etiqueta-manage-btn" onclick="openEtiquetasModal()">⚙️ Gestionar etiquetas</button>
     </div>
 
     <!-- Agregar tarea -->
@@ -3048,13 +3122,7 @@
                onkeydown="if(event.key==='Enter') addTareaPage()"/>
         <button class="panel-add-btn" onclick="addTareaPage()">+</button>
       </div>
-      <div class="tag-pills" id="tagPillsPage">
-        <span class="tag-pill tag-personal selected" data-tag="Personal" onclick="selectTagPage(this)">Personal</span>
-        <span class="tag-pill tag-diseno" data-tag="Diseño" onclick="selectTagPage(this)">Diseño</span>
-        <span class="tag-pill tag-trabajo" data-tag="Trabajo" onclick="selectTagPage(this)">Trabajo</span>
-        <span class="tag-pill tag-iglesia" data-tag="Iglesia" onclick="selectTagPage(this)">Iglesia</span>
-        <span class="tag-pill tag-urgente" data-tag="Urgente" onclick="selectTagPage(this)">Urgente</span>
-      </div>
+      <div class="tag-pills" id="tagPillsPage"></div>
     </div>
 
     <!-- Lista de tareas -->
@@ -3152,6 +3220,32 @@
   </div>
 </div>
 
+<!-- ══ MODAL ETIQUETAS ══ -->
+<div class="modal-overlay" id="etiquetasModal">
+  <div class="modal" style="max-width:420px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h2 style="margin-bottom:0">Mis Etiquetas</h2>
+      <button class="btn btn-ghost btn-sm" onclick="closeEtiquetasModal()">×</button>
+    </div>
+    <div id="etiquetasList"></div>
+    <div class="etiqueta-nueva-block" id="etiquetaNuevaBlock">
+      <div class="etiqueta-nueva-label">+ Nueva etiqueta</div>
+      <div class="form-group" style="margin-bottom:10px">
+        <input type="text" id="nuevaEtiquetaNombre" placeholder="Nombre de la etiqueta" maxlength="20"/>
+      </div>
+      <div class="etiqueta-color-row-mini" id="nuevaEtiquetaColorRow">
+        <div class="etiqueta-color-dot-sm selected" style="background:#E8450A" data-color="#E8450A" onclick="selectNuevaEtiquetaColor(this)"></div>
+        <div class="etiqueta-color-dot-sm" style="background:#5B8CFF" data-color="#5B8CFF" onclick="selectNuevaEtiquetaColor(this)"></div>
+        <div class="etiqueta-color-dot-sm" style="background:#A64CC9" data-color="#A64CC9" onclick="selectNuevaEtiquetaColor(this)"></div>
+        <div class="etiqueta-color-dot-sm" style="background:#4CAF87" data-color="#4CAF87" onclick="selectNuevaEtiquetaColor(this)"></div>
+        <div class="etiqueta-color-dot-sm" style="background:#C94C4C" data-color="#C94C4C" onclick="selectNuevaEtiquetaColor(this)"></div>
+        <div class="etiqueta-color-dot-sm" style="background:#F4A340" data-color="#F4A340" onclick="selectNuevaEtiquetaColor(this)"></div>
+      </div>
+      <button class="btn btn-gold btn-sm" style="width:100%;margin-top:12px" onclick="agregarEtiqueta()">Agregar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ MODAL AFIRMACIÓN ══ -->
 <div class="modal-overlay" id="afirmacionModal">
   <div class="modal" style="max-width:460px">
@@ -3199,13 +3293,7 @@
              onkeydown="if(event.key==='Enter') addTarea()"/>
       <button class="panel-add-btn" onclick="addTarea()">+</button>
     </div>
-    <div class="tag-pills" id="tagPills">
-      <span class="tag-pill tag-personal selected" data-tag="Personal" onclick="selectTag(this)">Personal</span>
-      <span class="tag-pill tag-diseno"   data-tag="Diseño"   onclick="selectTag(this)">Diseño</span>
-      <span class="tag-pill tag-trabajo"  data-tag="Trabajo"  onclick="selectTag(this)">Trabajo</span>
-      <span class="tag-pill tag-iglesia"  data-tag="Iglesia"  onclick="selectTag(this)">Iglesia</span>
-      <span class="tag-pill tag-urgente"  data-tag="Urgente"  onclick="selectTag(this)">Urgente</span>
-    </div>
+    <div class="tag-pills" id="tagPills"></div>
   </div>
 
   <div class="panel-tasks" id="panel-tasks-list"></div>
@@ -3326,6 +3414,44 @@ if (!state.rachaVisualizacion) state.rachaVisualizacion = { dias: 0, ultimaFecha
 if (!state.notificacionVisualizacion) state.notificacionVisualizacion = { activa: false, horaStr: '07:00' };
 if (state.modoOscuro === undefined) state.modoOscuro = false;
 if (state.onboardingCompletado === undefined) state.onboardingCompletado = !primeraVez;
+
+// ── ETIQUETAS: migración de tareas.etiqueta (string) a tareas.etiquetaId (número) ──
+const ETIQUETA_COLORES = ['#E8450A', '#5B8CFF', '#A64CC9', '#4CAF87', '#C94C4C', '#F4A340'];
+function migrarEtiquetas() {
+  if (!state.etiquetas) {
+    state.etiquetas = [
+      { id: 1, nombre: "Personal", color: "#E8450A" },
+      { id: 2, nombre: "Diseño", color: "#5B8CFF" },
+      { id: 3, nombre: "Trabajo", color: "#A64CC9" },
+      { id: 4, nombre: "Iglesia", color: "#4CAF87" },
+      { id: 5, nombre: "Urgente", color: "#C94C4C" }
+    ];
+  }
+  state.tareas.forEach(tarea => {
+    if (tarea.etiqueta && !tarea.etiquetaId) {
+      const etiqueta = state.etiquetas.find(
+        e => e.nombre.toLowerCase() === tarea.etiqueta.toLowerCase()
+      );
+      if (etiqueta) tarea.etiquetaId = etiqueta.id;
+      delete tarea.etiqueta;
+    }
+  });
+  saveState();
+}
+migrarEtiquetas();
+
+function getEtiqueta(etiquetaId) {
+  if (!etiquetaId) return null;
+  return state.etiquetas.find(e => e.id === etiquetaId) || null;
+}
+
+function tagPillHtml(etiquetaId, taskId) {
+  const et = getEtiqueta(etiquetaId);
+  if (et) {
+    return `<span class="task-tag" style="background:${et.color}1A;color:${et.color}" onclick="mostrarDropdownEtiqueta(event, ${taskId})">${escHtml(et.nombre)}</span>`;
+  }
+  return `<span class="task-tag" style="background:rgba(0,0,0,0.06);color:var(--muted)" onclick="mostrarDropdownEtiqueta(event, ${taskId})">Sin etiqueta</span>`;
+}
 
 // Clean today's check key for new day
 const todayKey = new Date().toISOString().split('T')[0];
@@ -3638,12 +3764,11 @@ function renderInicio() {
     enCursoEl.innerHTML = '<p class="inicio-en-curso-empty">Sin tareas en curso por ahora.</p>';
   } else {
     enCursoEl.innerHTML = enCurso.map(t => {
-      const tagCls = TAG_CLASSES[t.etiqueta] || 'tag-personal';
       return `
         <div class="inicio-en-curso-item" onclick="openTaskPanel()">
           <div class="inicio-en-curso-dot"></div>
           <span class="inicio-en-curso-texto">${escHtml(t.texto)}</span>
-          <span class="task-tag ${tagCls}">${escHtml(t.etiqueta)}</span>
+          ${tagPillHtml(t.etiquetaId, t.id)}
         </div>`;
     }).join('');
   }
@@ -4096,16 +4221,8 @@ function calNavNext() {
 }
 
 // ── TASK PANEL ──
-let selectedTag = 'Personal';
+let selectedTag = state.etiquetas[0] ? state.etiquetas[0].id : null;
 let panelOpen = false;
-
-const TAG_CLASSES = {
-  'Personal': 'tag-personal',
-  'Diseño':   'tag-diseno',
-  'Trabajo':  'tag-trabajo',
-  'Iglesia':  'tag-iglesia',
-  'Urgente':  'tag-urgente',
-};
 
 function toggleTaskPanel() { panelOpen ? closeTaskPanel() : openTaskPanel(); }
 
@@ -4124,17 +4241,25 @@ function closeTaskPanel() {
   document.getElementById('fabBtn').textContent = '✎';
 }
 
+function renderTagPillsPanel() {
+  const el = document.getElementById('tagPills');
+  if (!el) return;
+  el.innerHTML = state.etiquetas.map(e =>
+    `<span class="tag-pill${e.id === selectedTag ? ' selected' : ''}" style="background:${e.color}1A;color:${e.color}" data-etiqueta-id="${e.id}" onclick="selectTag(this)">${escHtml(e.nombre)}</span>`
+  ).join('');
+}
+
 function selectTag(el) {
   document.querySelectorAll('#tagPills .tag-pill').forEach(p => p.classList.remove('selected'));
   el.classList.add('selected');
-  selectedTag = el.dataset.tag;
+  selectedTag = Number(el.dataset.etiquetaId);
 }
 
 function addTarea() {
   const input = document.getElementById('tarea-input');
   const texto = input.value.trim();
   if (!texto) return;
-  state.tareas.push({ id: Date.now(), texto, etiqueta: selectedTag, estado: 'sin_empezar' });
+  state.tareas.push({ id: Date.now(), texto, etiquetaId: selectedTag, estado: 'sin_empezar' });
   saveState();
   input.value = '';
   renderTareas();
@@ -4188,7 +4313,6 @@ function renderTareas() {
   }
 
   function itemHtml(t) {
-    const tagCls = TAG_CLASSES[t.etiqueta] || 'tag-personal';
     const esRana = state.ranaDelDia && state.ranaDelDia.tareaId === t.id && state.ranaDelDia.fecha === todayKey;
     return `
       <div class="task-item${t.estado === 'completada' ? ' done' : ''}${esRana ? ' es-rana' : ''}">
@@ -4196,7 +4320,7 @@ function renderTareas() {
         <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana(${t.id})" title="Rana del día">🐸</button>
         <span class="task-text" id="tarea-texto-${t.id}-panel">${escHtml(t.texto)}</span>
         ${estadoPill(t)}
-        <span class="task-tag ${tagCls}" onclick="mostrarDropdownEtiqueta(event, ${t.id})">${escHtml(t.etiqueta)}</span>
+        ${tagPillHtml(t.etiquetaId, t.id)}
         <button class="task-del task-edit" onclick="editarTarea(${t.id}, 'panel')"><i data-lucide="pencil"></i></button>
         <button class="task-del" onclick="deleteTarea(${t.id})">×</button>
       </div>`;
@@ -4224,6 +4348,7 @@ function renderTareas() {
   }
 
   document.getElementById('panel-tasks-list').innerHTML = html;
+  renderTagPillsPanel();
   if (window.lucide) lucide.createIcons();
 }
 
@@ -4315,7 +4440,17 @@ function buildPortadaPanel() {
 let filtroEtiqueta = 'todas';
 let filtroEstado   = 'todas';
 let pagCompletadasCollapsed = true;
-let selectedTagPage = 'Personal';
+let selectedTagPage = state.etiquetas[0] ? state.etiquetas[0].id : null;
+
+function renderFiltrosEtiqueta() {
+  const el = document.getElementById('filtroEtiquetaGroup');
+  if (!el) return;
+  const todasBtn = `<button class="filter-pill filter-etiqueta${filtroEtiqueta === 'todas' ? ' active' : ''}" onclick="setFiltroEtiqueta('todas',this)">Todas</button>`;
+  const pills = state.etiquetas.map(e =>
+    `<button class="filter-pill filter-etiqueta${filtroEtiqueta === e.id ? ' active' : ''}" onclick="setFiltroEtiqueta(${e.id},this)">${escHtml(e.nombre)}</button>`
+  ).join('');
+  el.innerHTML = `<span class="filter-group-label">Etiqueta</span>${todasBtn}${pills}`;
+}
 
 function setFiltroEtiqueta(val, el) {
   filtroEtiqueta = val;
@@ -4331,17 +4466,25 @@ function setFiltroEstado(val, el) {
   renderTareasLista();
 }
 
+function renderTagPillsPage() {
+  const el = document.getElementById('tagPillsPage');
+  if (!el) return;
+  el.innerHTML = state.etiquetas.map(e =>
+    `<span class="tag-pill${e.id === selectedTagPage ? ' selected' : ''}" style="background:${e.color}1A;color:${e.color}" data-etiqueta-id="${e.id}" onclick="selectTagPage(this)">${escHtml(e.nombre)}</span>`
+  ).join('');
+}
+
 function selectTagPage(el) {
   document.querySelectorAll('#tagPillsPage .tag-pill').forEach(p => p.classList.remove('selected'));
   el.classList.add('selected');
-  selectedTagPage = el.dataset.tag;
+  selectedTagPage = Number(el.dataset.etiquetaId);
 }
 
 function addTareaPage() {
   const input = document.getElementById('tarea-page-input');
   const texto = input.value.trim();
   if (!texto) return;
-  state.tareas.push({ id: Date.now(), texto, etiqueta: selectedTagPage, estado: 'sin_empezar' });
+  state.tareas.push({ id: Date.now(), texto, etiquetaId: selectedTagPage, estado: 'sin_empezar' });
   saveState();
   input.value = '';
   renderTareasLista();
@@ -4381,7 +4524,7 @@ function renderTareasLista() {
     `${sinEmpAll.length} sin empezar · ${enCursoAll.length} en curso · ${compAll.length} completadas`;
 
   const filtered = state.tareas.filter(t => {
-    const mE = filtroEtiqueta === 'todas' || t.etiqueta === filtroEtiqueta;
+    const mE = filtroEtiqueta === 'todas' || t.etiquetaId === filtroEtiqueta;
     const mS = filtroEstado   === 'todas' || t.estado === filtroEstado ||
                (!t.estado && filtroEstado === 'sin_empezar');
     return mE && mS;
@@ -4402,7 +4545,6 @@ function renderTareasLista() {
     return '';
   }
   function itemHtml(t) {
-    const tagCls = TAG_CLASSES[t.etiqueta] || 'tag-personal';
     const esRana = state.ranaDelDia && state.ranaDelDia.tareaId === t.id && state.ranaDelDia.fecha === todayKey;
     return `
       <div class="task-item tarea-page-item${t.estado === 'completada' ? ' done' : ''}${esRana ? ' es-rana' : ''}">
@@ -4410,7 +4552,7 @@ function renderTareasLista() {
         <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana(${t.id})" title="Rana del día">🐸</button>
         <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
         ${estadoPill(t)}
-        <span class="task-tag ${tagCls}" onclick="mostrarDropdownEtiqueta(event, ${t.id})">${escHtml(t.etiqueta)}</span>
+        ${tagPillHtml(t.etiquetaId, t.id)}
         <button class="task-del task-edit" onclick="editarTarea(${t.id}, 'pagina')"><i data-lucide="pencil"></i></button>
         <button class="task-del" onclick="deleteTareaPage(${t.id})">×</button>
       </div>`;
@@ -4439,6 +4581,8 @@ function renderTareasLista() {
     }
   }
   document.getElementById('tareas-page-list').innerHTML = html;
+  renderFiltrosEtiqueta();
+  renderTagPillsPage();
   if (window.lucide) lucide.createIcons();
 }
 
@@ -4504,8 +4648,8 @@ function mostrarDropdownEtiqueta(e, id) {
   dropdown.id = 'etiquetaDropdown';
   dropdown.style.top = (rect.bottom + window.scrollY + 4) + 'px';
   dropdown.style.left = (rect.left + window.scrollX) + 'px';
-  dropdown.innerHTML = Object.keys(TAG_CLASSES).map(tag =>
-    `<div class="etiqueta-dropdown-item ${TAG_CLASSES[tag]}" onclick="cambiarEtiquetaTarea(${id}, '${tag}')">${tag}</div>`
+  dropdown.innerHTML = state.etiquetas.map(et =>
+    `<div class="etiqueta-dropdown-item" style="color:${et.color}" onclick="cambiarEtiquetaTarea(${id}, ${et.id})">${escHtml(et.nombre)}</div>`
   ).join('');
   document.body.appendChild(dropdown);
 }
@@ -4515,10 +4659,10 @@ function cerrarDropdownEtiqueta() {
   if (existing) existing.remove();
 }
 
-function cambiarEtiquetaTarea(id, etiqueta) {
+function cambiarEtiquetaTarea(id, etiquetaId) {
   const t = state.tareas.find(t => t.id === id);
   if (!t) return;
-  t.etiqueta = etiqueta;
+  t.etiquetaId = etiquetaId;
   saveState();
   cerrarDropdownEtiqueta();
   renderTareas();
@@ -4527,6 +4671,126 @@ function cambiarEtiquetaTarea(id, etiqueta) {
 
 document.addEventListener('click', function(e) {
   if (!e.target.closest('.etiqueta-dropdown') && !e.target.closest('.task-tag')) cerrarDropdownEtiqueta();
+});
+
+// ── GESTIÓN DE ETIQUETAS (modal) ──
+let nuevaEtiquetaColorSel = ETIQUETA_COLORES[0];
+
+function refrescarTodoEtiquetas() {
+  renderEtiquetas();
+  renderFiltrosEtiqueta();
+  renderTagPillsPanel();
+  renderTagPillsPage();
+  renderTareas();
+  renderTareasLista();
+  if (window.lucide) lucide.createIcons();
+}
+
+function openEtiquetasModal() {
+  renderEtiquetas();
+  document.getElementById('etiquetasModal').classList.add('open');
+  if (window.lucide) lucide.createIcons();
+}
+function closeEtiquetasModal() {
+  document.getElementById('etiquetasModal').classList.remove('open');
+}
+
+function renderEtiquetas() {
+  const el = document.getElementById('etiquetasList');
+  if (!el) return;
+  el.innerHTML = state.etiquetas.map(e => `
+    <div class="etiqueta-row">
+      <span class="tag-pill etiqueta-row-pill" style="background:${e.color}1A;color:${e.color}" id="etiqueta-nombre-${e.id}">${escHtml(e.nombre)}</span>
+      <div class="etiqueta-color-row-mini">
+        ${ETIQUETA_COLORES.map(c => `<div class="etiqueta-color-dot-sm${c === e.color ? ' selected' : ''}" style="background:${c}" onclick="cambiarColorEtiqueta(${e.id}, '${c}')"></div>`).join('')}
+      </div>
+      <div class="etiqueta-row-actions">
+        <button class="etiqueta-icon-btn" onclick="editarNombreEtiqueta(${e.id})"><i data-lucide="pencil"></i></button>
+        <button class="etiqueta-icon-btn danger" onclick="eliminarEtiqueta(${e.id})"><i data-lucide="trash-2"></i></button>
+      </div>
+    </div>
+  `).join('');
+  const nuevoBloque = document.getElementById('etiquetaNuevaBlock');
+  if (nuevoBloque) nuevoBloque.style.display = state.etiquetas.length >= 10 ? 'none' : 'block';
+  if (window.lucide) lucide.createIcons();
+}
+
+function editarNombreEtiqueta(id) {
+  const etiqueta = state.etiquetas.find(e => e.id === id);
+  if (!etiqueta) return;
+  const elementoTexto = document.getElementById(`etiqueta-nombre-${id}`);
+  if (!elementoTexto) return;
+  const nombreOriginal = etiqueta.nombre;
+  let finalizado = false;
+
+  const input = document.createElement('input');
+  input.value = nombreOriginal;
+  input.className = 'etiqueta-row-nombre-input';
+  input.maxLength = 20;
+
+  function finalizarEdicion(guardar) {
+    if (finalizado) return;
+    finalizado = true;
+    if (guardar && input.value.trim()) {
+      etiqueta.nombre = input.value.trim();
+      saveState();
+    }
+    refrescarTodoEtiquetas();
+  }
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') finalizarEdicion(true);
+    if (e.key === 'Escape') finalizarEdicion(false);
+  });
+  input.addEventListener('blur', () => finalizarEdicion(true));
+
+  elementoTexto.replaceWith(input);
+  input.focus();
+  input.select();
+}
+
+function cambiarColorEtiqueta(id, color) {
+  const etiqueta = state.etiquetas.find(e => e.id === id);
+  if (!etiqueta) return;
+  etiqueta.color = color;
+  saveState();
+  refrescarTodoEtiquetas();
+}
+
+function selectNuevaEtiquetaColor(el) {
+  document.querySelectorAll('#nuevaEtiquetaColorRow .etiqueta-color-dot-sm').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  nuevaEtiquetaColorSel = el.dataset.color;
+}
+
+function agregarEtiqueta() {
+  if (state.etiquetas.length >= 10) { alert('Máximo 10 etiquetas.'); return; }
+  const input = document.getElementById('nuevaEtiquetaNombre');
+  const nombre = input.value.trim();
+  if (!nombre) return;
+  state.etiquetas.push({ id: Date.now(), nombre, color: nuevaEtiquetaColorSel });
+  saveState();
+  input.value = '';
+  nuevaEtiquetaColorSel = ETIQUETA_COLORES[0];
+  document.querySelectorAll('#nuevaEtiquetaColorRow .etiqueta-color-dot-sm').forEach((d, i) => d.classList.toggle('selected', i === 0));
+  refrescarTodoEtiquetas();
+}
+
+function eliminarEtiqueta(id) {
+  const tareasAfectadas = state.tareas.filter(t => t.etiquetaId === id);
+  if (tareasAfectadas.length > 0) {
+    if (!confirm(`Esta etiqueta tiene ${tareasAfectadas.length} tarea(s). ¿Eliminar igual?`)) return;
+    state.tareas.forEach(t => {
+      if (t.etiquetaId === id) t.etiquetaId = null;
+    });
+  }
+  state.etiquetas = state.etiquetas.filter(e => e.id !== id);
+  saveState();
+  refrescarTodoEtiquetas();
+}
+
+document.getElementById('etiquetasModal').addEventListener('click', function(e) {
+  if (e.target === this) closeEtiquetasModal();
 });
 
 document.addEventListener('click', function(e) {
@@ -4546,7 +4810,7 @@ document.getElementById('habitoModal').addEventListener('click', function(e) {
   if (e.target === this) closeHabitoModal();
 });
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') { closeMetaModal(); closeHabitoModal(); closeTaskPanel(); }
+  if (e.key === 'Escape') { closeMetaModal(); closeHabitoModal(); closeTaskPanel(); closeEtiquetasModal(); }
 });
 
 // ── BACKUP ──
@@ -5822,7 +6086,6 @@ function renderRanaDelDia() {
       </div>`;
     return;
   }
-  const tagCls = TAG_CLASSES[rana.etiqueta] || 'tag-personal';
   const completada = rana.estado === 'completada';
   el.innerHTML = `
     <div class="rana-dia-block${completada ? ' completada' : ''}">
@@ -5832,7 +6095,7 @@ function renderRanaDelDia() {
       ${completada
         ? `<div class="rana-dia-completada-msg">✅ ¡Rana completada! Gran trabajo hoy.</div>`
         : `<div class="rana-dia-row">
-             <span class="task-tag ${tagCls}">${escHtml(rana.etiqueta)}</span>
+             ${tagPillHtml(rana.etiquetaId, rana.id)}
              ${rana.estado === 'en_curso' ? '<span class="estado-pill estado-en-curso">En curso</span>' : ''}
              <button class="rana-dia-completar" onclick="completarRana()">✅ Marcar como completada</button>
            </div>`
