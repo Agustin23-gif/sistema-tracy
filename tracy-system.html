@@ -3031,6 +3031,13 @@ function loadState() {
   return { metas: [], habitos: [], habitoChecks: {}, tareas: [] };
 }
 
+function obtenerNombreUsuario() {
+  if (window.currentUser && window.currentUser.displayName) {
+    return window.currentUser.displayName.split(' ')[0];
+  }
+  return 'Agustín';
+}
+
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   localStorage.setItem(STORAGE_KEY + '_ts', new Date().toISOString());
@@ -3196,7 +3203,7 @@ function renderInicio() {
                  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
   // Saludo y frase
-  document.getElementById('inicioGreeting').textContent = `${getSaludo()}, Agustín`;
+  document.getElementById('inicioGreeting').textContent = `${getSaludo()}, ${obtenerNombreUsuario()}`;
   const fraseRaw = getFraseDelDia();
   const fraseParts = fraseRaw.split(' — ');
   const fraseTexto = fraseParts[0];
@@ -4601,13 +4608,13 @@ function renderNotifCard() {
 // ── AVATAR ──
 const AVATAR_MSGS = {
   inicio: {
-    idle:       ['¡Hola Agustín! ¿Listo para conquistar el día? 🦊', '¡Cada hábito cuenta! ¿Empezamos?', '¡Brian Tracy diría: actúa ahora!'],
+    idle:       ['¡Hola {nombre}! ¿Listo para conquistar el día? 🦊', '¡Cada hábito cuenta! ¿Empezamos?', '¡Brian Tracy diría: actúa ahora!'],
     happy:      ['¡INCREÍBLE! ¡Día perfecto! ¡Sos un campeón! 🏆', '¡Tu racha sigue viva! ¡Imparable!', '¡Así se hace! ¡Orgullo total hoy! 🔥'],
     motivating: ['¡Vamos! ¡Todavía podés completar tus hábitos!', '¡No pares ahora, ya casi terminás! 💪', '¡Un hábito a la vez! ¡Podés hacerlo!'],
     sleeping:   ['Shhh... hora de descansar. Mañana seguimos 😴', 'Descansá bien, mañana será un gran día 🌙'],
   },
   hoy: {
-    idle:       ['¡Hola Agustín! ¿Listo para conquistar el día? 🦊', '¡Cada hábito cuenta! ¿Empezamos?', '¡Brian Tracy diría: actúa ahora!'],
+    idle:       ['¡Hola {nombre}! ¿Listo para conquistar el día? 🦊', '¡Cada hábito cuenta! ¿Empezamos?', '¡Brian Tracy diría: actúa ahora!'],
     happy:      ['¡INCREÍBLE! ¡Día perfecto! ¡Sos un campeón! 🏆', '¡Tu racha sigue viva! ¡Imparable!', '¡Así se hace! ¡Orgullo total hoy! 🔥'],
     motivating: ['¡Vamos! ¡Todavía podés completar tus hábitos!', '¡No pares ahora, ya casi terminás! 💪', '¡Un hábito a la vez! ¡Podés hacerlo!'],
     sleeping:   ['Shhh... hora de descansar. Mañana seguimos 😴', 'Descansá bien, mañana será un gran día 🌙'],
@@ -4628,7 +4635,8 @@ function getAvatarState() {
 function getAvatarMsg(section) {
   const avState = getAvatarState();
   const pool = (AVATAR_MSGS[section] || {})[avState] || AVATAR_MSGS[section].idle;
-  return pool[Math.floor(Math.random() * pool.length)];
+  const msg = pool[Math.floor(Math.random() * pool.length)];
+  return msg.replace('{nombre}', obtenerNombreUsuario());
 }
 
 function buildAvatarSVG(avState, small) {
