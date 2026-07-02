@@ -981,6 +981,7 @@
   .task-tag {
     padding: 2px 8px; border-radius: 99px;
     font-size: 0.65rem; font-weight: 600; flex-shrink: 0;
+    cursor: pointer;
   }
   .task-del {
     background: none; border: none;
@@ -990,6 +991,28 @@
     flex-shrink: 0; line-height: 1;
   }
   .task-del:hover { opacity: 1; color: var(--danger); }
+  .task-edit { display: flex; align-items: center; justify-content: center; }
+  .task-edit svg, .task-edit i { width: 14px; height: 14px; }
+  .task-edit:hover { color: var(--text); }
+  .tarea-edit-input { min-width: 0; }
+  .etiqueta-dropdown {
+    position: absolute;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    z-index: 600;
+    overflow: hidden;
+    min-width: 110px;
+  }
+  .etiqueta-dropdown-item {
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .etiqueta-dropdown-item:hover { opacity: 0.7; }
 
   /* ── PÁGINA INICIO ── */
   .inicio-hero {
@@ -4171,9 +4194,10 @@ function renderTareas() {
       <div class="task-item${t.estado === 'completada' ? ' done' : ''}${esRana ? ' es-rana' : ''}">
         ${checkHtml(t)}
         <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana(${t.id})" title="Rana del día">🐸</button>
-        <span class="task-text">${escHtml(t.texto)}</span>
+        <span class="task-text" id="tarea-texto-${t.id}-panel">${escHtml(t.texto)}</span>
         ${estadoPill(t)}
-        <span class="task-tag ${tagCls}">${escHtml(t.etiqueta)}</span>
+        <span class="task-tag ${tagCls}" onclick="mostrarDropdownEtiqueta(event, ${t.id})">${escHtml(t.etiqueta)}</span>
+        <button class="task-del task-edit" onclick="editarTarea(${t.id}, 'panel')"><i data-lucide="pencil"></i></button>
         <button class="task-del" onclick="deleteTarea(${t.id})">×</button>
       </div>`;
   }
@@ -4384,9 +4408,10 @@ function renderTareasLista() {
       <div class="task-item tarea-page-item${t.estado === 'completada' ? ' done' : ''}${esRana ? ' es-rana' : ''}">
         ${checkHtml(t)}
         <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana(${t.id})" title="Rana del día">🐸</button>
-        <span class="task-text">${escHtml(t.texto)}</span>
+        <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
         ${estadoPill(t)}
-        <span class="task-tag ${tagCls}">${escHtml(t.etiqueta)}</span>
+        <span class="task-tag ${tagCls}" onclick="mostrarDropdownEtiqueta(event, ${t.id})">${escHtml(t.etiqueta)}</span>
+        <button class="task-del task-edit" onclick="editarTarea(${t.id}, 'pagina')"><i data-lucide="pencil"></i></button>
         <button class="task-del" onclick="deleteTareaPage(${t.id})">×</button>
       </div>`;
   }
@@ -4421,6 +4446,88 @@ function renderPaginaTareas() {
   applyPortadaBanner();
   renderTareasLista();
 }
+
+// ── EDITAR TAREA (inline) ──
+function editarTarea(id, origen) {
+  const tarea = state.tareas.find(t => t.id === id);
+  if (!tarea) return;
+  const elementoTexto = document.getElementById(`tarea-texto-${id}-${origen}`);
+  if (!elementoTexto) return;
+  const textoOriginal = tarea.texto;
+  let finalizado = false;
+
+  const input = document.createElement('input');
+  input.value = textoOriginal;
+  input.className = 'tarea-edit-input';
+  input.style.cssText = `
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid #E8450A;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    width: 100%;
+    outline: none;
+    padding: 0;
+  `;
+
+  function finalizarEdicion(guardar) {
+    if (finalizado) return;
+    finalizado = true;
+    if (guardar && input.value.trim()) {
+      tarea.texto = input.value.trim();
+      saveState();
+    }
+    renderTareas();
+    renderTareasLista();
+  }
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') finalizarEdicion(true);
+    if (e.key === 'Escape') finalizarEdicion(false);
+  });
+  input.addEventListener('blur', () => finalizarEdicion(true));
+
+  elementoTexto.replaceWith(input);
+  input.focus();
+  input.select();
+}
+
+// ── EDITAR ETIQUETA (dropdown inline) ──
+function mostrarDropdownEtiqueta(e, id) {
+  e.stopPropagation();
+  cerrarDropdownEtiqueta();
+  const pillEl = e.currentTarget;
+  const rect = pillEl.getBoundingClientRect();
+  const dropdown = document.createElement('div');
+  dropdown.className = 'etiqueta-dropdown';
+  dropdown.id = 'etiquetaDropdown';
+  dropdown.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+  dropdown.style.left = (rect.left + window.scrollX) + 'px';
+  dropdown.innerHTML = Object.keys(TAG_CLASSES).map(tag =>
+    `<div class="etiqueta-dropdown-item ${TAG_CLASSES[tag]}" onclick="cambiarEtiquetaTarea(${id}, '${tag}')">${tag}</div>`
+  ).join('');
+  document.body.appendChild(dropdown);
+}
+
+function cerrarDropdownEtiqueta() {
+  const existing = document.getElementById('etiquetaDropdown');
+  if (existing) existing.remove();
+}
+
+function cambiarEtiquetaTarea(id, etiqueta) {
+  const t = state.tareas.find(t => t.id === id);
+  if (!t) return;
+  t.etiqueta = etiqueta;
+  saveState();
+  cerrarDropdownEtiqueta();
+  renderTareas();
+  renderTareasLista();
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.etiqueta-dropdown') && !e.target.closest('.task-tag')) cerrarDropdownEtiqueta();
+});
 
 document.addEventListener('click', function(e) {
   const sel = document.getElementById('portadaSelector');
