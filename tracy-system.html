@@ -56,7 +56,18 @@
     --danger:    #D94040;
     --success:   #2E9B6B;
     --border:    #E8E0D8;
+    --input-bg:  rgba(0,0,0,0.04);
     --radius:    12px;
+  }
+
+  body.dark-mode {
+    --bg:        #0F1A2E;
+    --surface:   #1A2744;
+    --card:      #1E2D40;
+    --text:      #F0EDE6;
+    --muted:     #7A8FA6;
+    --border:    rgba(255,255,255,0.08);
+    --input-bg:  rgba(255,255,255,0.06);
   }
 
   html, body {
@@ -65,6 +76,7 @@
     font-family: 'Geist', sans-serif;
     min-height: 100vh;
     padding-bottom: env(safe-area-inset-bottom);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   /* ── HEADER ── */
@@ -380,7 +392,7 @@
   .form-group textarea,
   .form-group select {
     width: 100%;
-    background: var(--bg);
+    background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text);
@@ -476,6 +488,9 @@
     line-height: 1;
   }
   .habit-del:hover { opacity: 1; color: var(--danger); }
+  .habit-edit { display: flex; align-items: center; justify-content: center; }
+  .habit-edit svg, .habit-edit i { width: 14px; height: 14px; }
+  .habit-edit:hover { color: var(--text); }
   .habit-check-big {
     width: 32px; height: 32px;
     border: 2px solid var(--hcolor, var(--gold-dim));
@@ -808,7 +823,7 @@
     left: 0;
     width: 320px;
     height: 100vh;
-    background: #FFFFFF;
+    background: var(--surface);
     box-shadow: 4px 0 32px rgba(0,0,0,0.13);
     z-index: 500;
     display: flex;
@@ -848,7 +863,7 @@
   .panel-input-row { display: flex; gap: 8px; margin-bottom: 10px; }
   .panel-input-row input {
     flex: 1;
-    background: var(--bg);
+    background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 9px 12px;
@@ -909,7 +924,7 @@
   .task-item.done { opacity: 0.42; }
   .task-check {
     width: 20px; height: 20px;
-    border: 2px solid #D4D4D4;
+    border: 2px solid var(--border);
     border-radius: 50%;
     cursor: pointer; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
@@ -1112,7 +1127,7 @@
   }
   /* Mini calendario semanal */
   .inicio-semana-card {
-    background: #FFFFFF;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 20px;
@@ -1133,7 +1148,7 @@
   .inicio-semana-letra {
     font-size: 11px;
     font-weight: 500;
-    color: #9E9E9E;
+    color: var(--muted);
     text-transform: uppercase;
   }
   .inicio-semana-num {
@@ -1149,7 +1164,7 @@
     border-radius: 50%;
     transition: background 0.2s;
   }
-  .inicio-semana-num.futuro { color: #9E9E9E; }
+  .inicio-semana-num.futuro { color: var(--muted); }
   .inicio-semana-num.hoy { background: #E8450A; color: #FFFFFF; }
   .inicio-semana-dot {
     width: 6px;
@@ -1158,7 +1173,7 @@
     background: transparent;
   }
   .inicio-semana-dot.completo   { background: #E8450A; }
-  .inicio-semana-dot.incompleto { background: #D4D4D4; }
+  .inicio-semana-dot.incompleto { background: var(--border); }
 
   /* Backup */
   .backup-section {
@@ -1169,7 +1184,7 @@
   .backup-title {
     font-size: 0.65rem;
     font-weight: 700;
-    color: #9E9E9E;
+    color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.8px;
     margin-bottom: 12px;
@@ -1184,21 +1199,21 @@
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
-    border: 1.5px solid #D4CAC0;
+    border: 1.5px solid var(--border);
     border-radius: 8px;
     background: transparent;
     font-family: 'Geist', sans-serif;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #6B6B6B;
+    color: var(--muted);
     cursor: pointer;
     transition: border-color 0.15s, color 0.15s;
   }
-  .backup-btn:hover { border-color: #9E9E9E; color: var(--text); }
+  .backup-btn:hover { border-color: var(--muted); color: var(--text); }
   .backup-btn i, .backup-btn svg { width: 14px; height: 14px; }
   .backup-hint {
     font-size: 11px;
-    color: #9E9E9E;
+    color: var(--muted);
   }
   .backup-msg {
     font-size: 0.78rem;
@@ -1260,14 +1275,14 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    background: white;
+    background: var(--card);
     border: 1.5px solid var(--border);
     border-radius: 99px;
     padding: 5px 12px 5px 8px;
     font-family: 'Geist', sans-serif;
     font-size: 12px;
     font-weight: 600;
-    color: #1A1A1A;
+    color: var(--text);
     cursor: pointer;
     white-space: nowrap;
     transition: box-shadow .15s;
@@ -1300,7 +1315,7 @@
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
-    background: white;
+    background: var(--card);
     border: 1px solid var(--border);
     border-radius: 14px;
     box-shadow: 0 8px 28px rgba(0,0,0,.13);
@@ -1336,6 +1351,30 @@
   .racha-chip svg, .racha-chip i { width: 13px; height: 13px; }
   #headerRachaDias { font-family: 'Geist Mono', monospace; font-weight: 700; }
 
+  /* ── DARK MODE TOGGLE ── */
+  .dark-toggle-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .dark-toggle-wrap i, .dark-toggle-wrap svg { width: 14px; height: 14px; color: var(--muted); flex-shrink: 0; }
+  .dark-toggle {
+    width: 44px; height: 24px;
+    border-radius: 99px;
+    background: #D4D4D4;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.3s ease;
+  }
+  .dark-toggle.on { background: #E8450A; }
+  .dark-toggle-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    position: absolute;
+    top: 3px; left: 3px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    transition: left 0.3s ease;
+  }
+  .dark-toggle.on .dark-toggle-thumb { left: 23px; }
+
   /* ── ALERTA RACHA EN RIESGO ── */
   .racha-alerta {
     align-items: center; gap: 12px;
@@ -1367,13 +1406,13 @@
   }
   .racha-big-left {
     flex: 0 0 60%;
-    background: #FFFFFF;
+    background: var(--card);
     padding: 28px 32px;
     display: flex; flex-direction: column;
     justify-content: center; gap: 14px;
   }
   .racha-big-msg {
-    font-size: 1.625rem; font-weight: 800; color: #1A1A1A;
+    font-size: 1.625rem; font-weight: 800; color: var(--text);
     line-height: 1.2;
   }
   .racha-big-actions { display: flex; }
@@ -1403,13 +1442,13 @@
   .racha-hito {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 5px 12px; border-radius: 99px; font-size: 0.72rem;
-    font-weight: 700; background: #F0F0F0; color: #9E9E9E;
+    font-weight: 700; background: var(--border); color: var(--muted);
     border: 1.5px solid transparent;
   }
-  .racha-hito svg, .racha-hito i { width: 12px; height: 12px; color: #D4D4D4; }
+  .racha-hito svg, .racha-hito i { width: 12px; height: 12px; color: var(--muted); }
   .racha-hito.alcanzado { background: #E8450A; color: #FFF; border-color: #E8450A; }
   .racha-hito.alcanzado svg, .racha-hito.alcanzado i { color: #FFF; }
-  .racha-hito.proximo { background: #FFF; border: 1.5px dashed #E8450A; color: #E8450A; }
+  .racha-hito.proximo { background: var(--card); border: 1.5px dashed #E8450A; color: #E8450A; }
   .racha-hito.proximo svg, .racha-hito.proximo i { color: #E8450A; }
 
   /* ── MODAL CELEBRACIÓN ── */
@@ -1420,7 +1459,7 @@
   }
   .celebracion-overlay.open { display: flex; }
   .celebracion-card {
-    background: #FFF; border-radius: 24px; padding: 40px 32px;
+    background: var(--card); border-radius: 24px; padding: 40px 32px;
     text-align: center; max-width: 320px; width: 100%;
     box-shadow: 0 8px 40px rgba(0,0,0,0.18);
   }
@@ -1468,7 +1507,7 @@
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
-    background: #FFFFFF;
+    background: var(--card);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 14px;
@@ -1481,14 +1520,14 @@
   .portada-upload-btn {
     display: flex; align-items: center; gap: 8px;
     width: 100%;
-    background: #F5F0EB; border: 1.5px dashed #D4CAC0;
+    background: var(--bg); border: 1.5px dashed var(--border);
     border-radius: 8px; padding: 9px 12px;
     font-family: 'Geist', sans-serif; font-size: 0.78rem;
     font-weight: 600; color: var(--text);
     cursor: pointer; text-align: left;
     transition: background 0.15s;
   }
-  .portada-upload-btn:hover { background: #EDE8E1; }
+  .portada-upload-btn:hover { background: var(--border); }
   .portada-quitar-btn {
     display: flex; align-items: center; gap: 8px;
     width: 100%; margin-top: 6px;
@@ -1502,7 +1541,7 @@
   .portada-divider {
     margin: 12px 0 10px;
     font-family: 'Geist', sans-serif; font-size: 0.65rem;
-    font-weight: 600; color: #9E9E9E;
+    font-weight: 600; color: var(--muted);
     text-transform: uppercase; letter-spacing: 0.8px;
     border-top: 1px solid var(--border); padding-top: 10px;
   }
@@ -1732,7 +1771,7 @@
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #9E9E9E;
+    color: var(--muted);
     margin-bottom: 14px;
   }
   .notif-card-row {
@@ -1750,7 +1789,7 @@
     flex: 1;
     min-width: 0;
   }
-  .notif-card-label i, .notif-card-label svg { color: #9E9E9E; width: 16px; height: 16px; flex-shrink: 0; }
+  .notif-card-label i, .notif-card-label svg { color: var(--muted); width: 16px; height: 16px; flex-shrink: 0; }
   .notif-card-label.active i, .notif-card-label.active svg { color: #E8450A; }
   .notif-time-input {
     font-family: 'Geist Mono', monospace;
@@ -1795,7 +1834,7 @@
   }
   .notif-hint {
     font-size: 11px;
-    color: #9E9E9E;
+    color: var(--muted);
     margin-top: 10px;
   }
   .notif-msg {
@@ -1821,14 +1860,14 @@
   }
   .avatar-bubble {
     position: relative;
-    background: #fff;
+    background: var(--card);
     border-radius: 12px;
     padding: 10px 14px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.13);
     font-size: 13px;
     font-family: 'Geist', sans-serif;
     font-weight: 400;
-    color: #1A1A1A;
+    color: var(--text);
     line-height: 1.45;
     max-width: 220px;
     min-width: 100px;
@@ -1840,13 +1879,13 @@
     content: ''; position: absolute; right: -7px; bottom: 18px;
     width: 0; height: 0;
     border-top: 7px solid transparent; border-bottom: 7px solid transparent;
-    border-left: 8px solid #fff;
+    border-left: 8px solid var(--card);
   }
   .avatar-wrap--hoy .avatar-bubble::after {
     content: ''; position: absolute; left: -7px; bottom: 18px;
     width: 0; height: 0;
     border-top: 7px solid transparent; border-bottom: 7px solid transparent;
-    border-right: 8px solid #fff;
+    border-right: 8px solid var(--card);
   }
   /* Emoji avatar */
   .av-emoji-wrap {
@@ -1872,7 +1911,7 @@
     align-items: flex-start;
     font-family: 'Geist Mono', monospace;
     font-weight: 700;
-    color: #9E9E9E;
+    color: var(--muted);
     pointer-events: none;
     line-height: 1.3;
   }
@@ -2196,8 +2235,8 @@
     color: rgba(255,255,255,0.85);
   }
   .rana-empty {
-    background: rgba(0,0,0,0.04);
-    border: 1.5px dashed #D4D4D4;
+    background: var(--input-bg);
+    border: 1.5px dashed var(--border);
     border-radius: 12px;
     padding: 16px 20px;
     margin-bottom: 24px;
@@ -2245,7 +2284,7 @@
   .viz-racha-lbl  { font-size:11px; opacity:.55; font-family:'Geist Mono',monospace; text-transform:uppercase; letter-spacing:1px; }
   .viz-racha-txt  { font-size:13px; opacity:.65; }
   .afirmacion-card {
-    background: white;
+    background: var(--card);
     border-radius: 12px;
     border-left: 4px solid #E8450A;
     padding: 16px;
@@ -2316,7 +2355,7 @@
   }
   .viz-suggest-btn:hover { border-color: var(--gold); color: var(--text); }
   .viz-suggest-card {
-    background: white;
+    background: var(--card);
     border-radius: 12px;
     padding: 13px 16px;
     margin-bottom: 8px;
@@ -2340,7 +2379,7 @@
     flex-shrink: 0;
   }
   .viz-reminder-card {
-    background: white;
+    background: var(--card);
     border-radius: 12px;
     padding: 14px 16px;
     border: 1px solid var(--border);
@@ -2550,6 +2589,127 @@
     .viz-texto { font-size:22px; }
     .afirm-cat-grid { grid-template-columns:repeat(2,1fr); }
   }
+
+  /* ── ONBOARDING ── */
+  .onboarding-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: #0F1A2E;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    overflow: hidden;
+  }
+  .onboarding-overlay.open { display: flex; }
+  .ob-skip-btn {
+    position: absolute;
+    top: max(20px, env(safe-area-inset-top));
+    right: 20px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 99px;
+    color: rgba(255,255,255,0.6);
+    font-family: 'Geist', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .ob-skip-btn:hover { background: rgba(255,255,255,0.18); color: #FFFFFF; }
+  .ob-step {
+    width: 100%;
+    max-width: 480px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    animation: obFadeSlide 0.4s ease;
+  }
+  @keyframes obFadeSlide { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+  .ob-emoji-bienvenida { font-size: 72px; margin-bottom: 24px; animation: av-float 2s ease-in-out infinite alternate; }
+  .ob-title {
+    font-family: 'Geist', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.25;
+    margin-bottom: 12px;
+  }
+  .ob-subtitle { font-size: 16px; color: rgba(255,255,255,0.7); line-height: 1.5; margin-bottom: 36px; }
+  .ob-icon { width: 64px; height: 64px; color: #E8450A; margin-bottom: 20px; }
+  .ob-title-light {
+    font-family: 'Geist', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .ob-desc { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.6; margin-bottom: 16px; }
+  .ob-quote { font-size: 13px; font-style: italic; color: #E8450A; margin-bottom: 24px; line-height: 1.5; }
+  .ob-input-row { display: flex; gap: 8px; width: 100%; margin-bottom: 10px; }
+  .ob-input-row input {
+    flex: 1;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: #FFFFFF;
+    font-family: 'Geist', sans-serif;
+    font-size: max(0.9rem, 16px);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .ob-input-row input::placeholder { color: rgba(255,255,255,0.4); }
+  .ob-input-row input:focus { border-color: #E8450A; }
+  .ob-add-btn {
+    background: #E8450A;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 10px;
+    padding: 0 18px;
+    font-family: 'Geist', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .ob-confirm { font-size: 13px; color: #4CAF87; margin-bottom: 14px; }
+  .ob-btn-primary {
+    margin-top: 20px;
+    background: #E8450A;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 14px;
+    padding: 15px 32px;
+    font-family: 'Geist', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    max-width: 280px;
+    transition: transform 0.15s;
+  }
+  .ob-btn-primary:hover { transform: translateY(-2px); }
+  .ob-btn-final { max-width: 340px; padding: 17px 32px; font-size: 16px; }
+  .ob-checklist { list-style: none; text-align: left; margin: 8px 0 24px; }
+  .ob-checklist li { font-size: 14px; color: rgba(255,255,255,0.85); padding: 6px 0; }
+  .ob-dots { display: flex; gap: 8px; position: absolute; bottom: max(28px, env(safe-area-inset-bottom)); }
+  .ob-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.25); transition: background 0.2s, transform 0.2s; }
+  .ob-dot.active { background: #E8450A; transform: scale(1.3); }
+  @media (max-width: 480px) {
+    .ob-title { font-size: 22px; }
+    .ob-title-light { font-size: 19px; }
+    .ob-emoji-bienvenida { font-size: 56px; }
+  }
 </style>
 </head>
 <body>
@@ -2577,6 +2737,13 @@
         <div class="meter-fill" id="meterFill" style="width:0%"></div>
       </div>
       <span class="meter-pct" id="meterPct">0%</span>
+    </div>
+    <div class="dark-toggle-wrap">
+      <i data-lucide="sun"></i>
+      <div class="dark-toggle" id="darkToggle" onclick="toggleDarkMode()" role="button" aria-label="Modo oscuro">
+        <div class="dark-toggle-thumb"></div>
+      </div>
+      <i data-lucide="moon"></i>
     </div>
     <div id="authZone" style="position:relative">
       <button class="auth-btn" id="authLoginBtn" onclick="loginConGoogle()" style="display:none">
@@ -2911,7 +3078,7 @@
 <!-- ══ MODAL HÁBITO ══ -->
 <div class="modal-overlay" id="habitoModal">
   <div class="modal">
-    <h2>Nuevo Hábito</h2>
+    <h2 id="habitoModalTitle">Nuevo Hábito</h2>
 
     <div class="form-group">
       <label>Nombre del hábito</label>
@@ -2943,7 +3110,7 @@
 
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeHabitoModal()">Cancelar</button>
-      <button class="btn btn-gold" onclick="saveHabito()">Guardar hábito</button>
+      <button class="btn btn-gold" id="habitoModalSaveBtn" onclick="saveHabito()">Guardar hábito</button>
     </div>
   </div>
 </div>
@@ -3007,6 +3174,66 @@
   <div class="panel-tasks" id="panel-tasks-list"></div>
 </div>
 
+<!-- ══ ONBOARDING ══ -->
+<div class="onboarding-overlay" id="onboardingOverlay">
+  <button class="ob-skip-btn" onclick="saltarOnboarding()">Saltar</button>
+
+  <div class="ob-step" id="obStep1">
+    <div class="ob-emoji-bienvenida">🦊</div>
+    <h1 class="ob-title">BIENVENIDO A SISTEMA TRACY</h1>
+    <p class="ob-subtitle">Tu sistema personal de hábitos, metas y productividad</p>
+    <button class="ob-btn-primary" onclick="obSiguiente()">Comenzar →</button>
+  </div>
+
+  <div class="ob-step" id="obStep2" style="display:none">
+    <i data-lucide="check-circle" class="ob-icon"></i>
+    <h2 class="ob-title-light">CONSTRUÍ TUS HÁBITOS</h2>
+    <p class="ob-desc">Registrá tus hábitos diarios y seguí tu progreso con rachas. Cada día que completás un hábito te acerca más a tu mejor versión.</p>
+    <p class="ob-quote">"Los hábitos exitosos construyen el futuro que querés."</p>
+    <div class="ob-input-row">
+      <input type="text" id="obHabitoInput" placeholder="¿Cuál es tu primer hábito?"/>
+      <button class="ob-add-btn" onclick="obAgregarHabito()">Agregar</button>
+    </div>
+    <div class="ob-confirm" id="obHabitoConfirm" style="display:none">✅ ¡Hábito agregado!</div>
+    <button class="ob-btn-primary" onclick="obSiguiente()">Siguiente →</button>
+  </div>
+
+  <div class="ob-step" id="obStep3" style="display:none">
+    <i data-lucide="target" class="ob-icon"></i>
+    <h2 class="ob-title-light">DEFINÍ TUS METAS</h2>
+    <p class="ob-desc">Una meta no escrita es solo un deseo. Escribí tu primera meta con fecha límite.</p>
+    <div class="ob-input-row">
+      <input type="text" id="obMetaInput" placeholder="¿Cuál es tu meta principal?"/>
+    </div>
+    <div class="ob-input-row">
+      <input type="date" id="obMetaFecha" placeholder="¿Para cuándo?"/>
+      <button class="ob-add-btn" onclick="obAgregarMeta()">Agregar</button>
+    </div>
+    <div class="ob-confirm" id="obMetaConfirm" style="display:none">✅ ¡Meta agregada!</div>
+    <button class="ob-btn-primary" onclick="obSiguiente()">Siguiente →</button>
+  </div>
+
+  <div class="ob-step" id="obStep4" style="display:none">
+    <div class="ob-emoji-bienvenida">🎯</div>
+    <h1 class="ob-title" id="obFinalTitle">¡TODO LISTO!</h1>
+    <ul class="ob-checklist">
+      <li>✅ Registrar hábitos diarios</li>
+      <li>✅ Hacer seguimiento de metas</li>
+      <li>✅ Usar el Pomodoro para concentrarte</li>
+      <li>✅ Visualizar tus metas cada mañana</li>
+    </ul>
+    <p class="ob-quote">"El éxito es el resultado de hacer pequeñas cosas correctamente cada día."</p>
+    <button class="ob-btn-primary ob-btn-final" onclick="completarOnboarding()">¡EMPEZAR MI SISTEMA! →</button>
+  </div>
+
+  <div class="ob-dots" id="obDots">
+    <span class="ob-dot active" data-dot="1"></span>
+    <span class="ob-dot" data-dot="2"></span>
+    <span class="ob-dot" data-dot="3"></span>
+    <span class="ob-dot" data-dot="4"></span>
+  </div>
+</div>
+
 <!-- ══ POMODORO FAB ══ -->
 <button class="fab-pomo" id="fabPomo" onclick="togglePomoPanel()" title="Pomodoro">
   <i data-lucide="timer"></i>
@@ -3023,6 +3250,7 @@
 // ── STATE ──
 const STORAGE_KEY = 'tracy_system_v1';
 let editingMetaIdx = -1;
+const primeraVez = !localStorage.getItem(STORAGE_KEY);
 
 function loadState() {
   try {
@@ -3059,9 +3287,24 @@ if (!state.ranaDelDia) state.ranaDelDia = { tareaId: null, fecha: null };
 if (!state.afirmaciones) state.afirmaciones = [];
 if (!state.rachaVisualizacion) state.rachaVisualizacion = { dias: 0, ultimaFecha: null };
 if (!state.notificacionVisualizacion) state.notificacionVisualizacion = { activa: false, horaStr: '07:00' };
+if (state.modoOscuro === undefined) state.modoOscuro = false;
+if (state.onboardingCompletado === undefined) state.onboardingCompletado = !primeraVez;
 
 // Clean today's check key for new day
 const todayKey = new Date().toISOString().split('T')[0];
+
+// ── MODO OSCURO ──
+function aplicarModoOscuro() {
+  document.body.classList.toggle('dark-mode', !!state.modoOscuro);
+  const t = document.getElementById('darkToggle');
+  if (t) t.classList.toggle('on', !!state.modoOscuro);
+}
+function toggleDarkMode() {
+  state.modoOscuro = !state.modoOscuro;
+  aplicarModoOscuro();
+  saveState();
+}
+aplicarModoOscuro();
 
 // ── TABS ──
 function switchTab(tab) {
@@ -3565,6 +3808,7 @@ function renderHabitos() {
             <div class="habit-streak">${streak > 0 ? `<i data-lucide="flame" style="width:14px;height:14px;vertical-align:-2px;color:#f97316"></i> <span style="font-family:'Geist Mono',monospace;font-weight:600">${streak}</span> días seguidos` : 'Sin racha aún'}</div>
           </div>
           <div class="habit-card-actions">
+            <button class="habit-del habit-edit" onclick="editarHabito(${hi})"><i data-lucide="pencil"></i></button>
             <button class="habit-del" onclick="deleteHabito(${hi})">×</button>
             <div class="habit-check-big ${checked ? 'checked' : ''}"
                  onclick="toggleHabito(${hi})"></div>
@@ -3629,21 +3873,46 @@ function selectHabitoColor(el) {
 }
 
 function openHabitoModal() {
-  document.getElementById('habito-nombre').value = '';
-  selectedHabitoColor = '#C9A84C';
-  document.querySelectorAll('#colorSwatches .color-swatch').forEach((s, i) => {
-    s.classList.toggle('selected', i === 0);
-  });
+  const editando = window.editandoHabitoIdx !== undefined;
+  document.getElementById('habitoModalTitle').textContent = editando ? 'Editar hábito' : 'Nuevo Hábito';
+  document.getElementById('habitoModalSaveBtn').textContent = editando ? 'Guardar cambios' : 'Guardar hábito';
+  if (!editando) {
+    document.getElementById('habito-nombre').value = '';
+    document.getElementById('habito-categoria').selectedIndex = 0;
+    selectedHabitoColor = '#C9A84C';
+    document.querySelectorAll('#colorSwatches .color-swatch').forEach((s, i) => {
+      s.classList.toggle('selected', i === 0);
+    });
+  }
   document.getElementById('habitoModal').classList.add('open');
+}
+function editarHabito(idx) {
+  const habito = state.habitos[idx];
+  document.getElementById('habito-nombre').value = habito.nombre;
+  document.getElementById('habito-categoria').value = habito.categoria;
+  selectedHabitoColor = habito.color || '#C9A84C';
+  document.querySelectorAll('#colorSwatches .color-swatch').forEach(s => {
+    s.classList.toggle('selected', s.dataset.color === selectedHabitoColor);
+  });
+  window.editandoHabitoIdx = idx;
+  openHabitoModal();
 }
 function closeHabitoModal() {
   document.getElementById('habitoModal').classList.remove('open');
+  window.editandoHabitoIdx = undefined;
 }
 function saveHabito() {
   const nombre = document.getElementById('habito-nombre').value.trim();
   const categoria = document.getElementById('habito-categoria').value;
   if (!nombre) { alert('Escribí el nombre del hábito.'); return; }
-  state.habitos.push({ nombre, categoria, color: selectedHabitoColor });
+  if (window.editandoHabitoIdx !== undefined) {
+    state.habitos[window.editandoHabitoIdx].nombre = nombre;
+    state.habitos[window.editandoHabitoIdx].categoria = categoria;
+    state.habitos[window.editandoHabitoIdx].color = selectedHabitoColor;
+    window.editandoHabitoIdx = undefined;
+  } else {
+    state.habitos.push({ nombre, categoria, color: selectedHabitoColor });
+  }
   saveState();
   closeHabitoModal();
   renderHoy();
@@ -4558,7 +4827,7 @@ function renderNotifCard() {
     ? '<span style="font-size:13px;color:#16a34a">✅ Notificaciones activas</span>'
     : perm === 'denied'
       ? '<span style="font-size:13px;color:#dc2626">❌ Notificaciones bloqueadas</span>'
-      : '<span style="font-size:13px;color:#6B6B6B">⚪ Sin configurar</span>';
+      : '<span style="font-size:13px;color:var(--muted)">⚪ Sin configurar</span>';
 
   const activarBtnHtml = perm !== 'granted' ? `
     <div class="notif-card-row" style="margin-top:12px">
@@ -5603,6 +5872,54 @@ async function solicitarPermisoNotificaciones() {
 
 // Llamar después de 2 segundos para no interrumpir la carga
 setTimeout(solicitarPermisoNotificaciones, 2000);
+
+// ── ONBOARDING ──
+let obStepActual = 1;
+function obMostrarPaso(n) {
+  document.querySelectorAll('.ob-step').forEach(s => s.style.display = 'none');
+  document.getElementById('obStep' + n).style.display = 'flex';
+  document.querySelectorAll('.ob-dot').forEach(d => d.classList.toggle('active', Number(d.dataset.dot) === n));
+  obStepActual = n;
+  if (n === 4) {
+    document.getElementById('obFinalTitle').textContent = `¡TODO LISTO, ${obtenerNombreUsuario().toUpperCase()}!`;
+  }
+  if (window.lucide) lucide.createIcons();
+}
+function obSiguiente() {
+  if (obStepActual < 4) obMostrarPaso(obStepActual + 1);
+}
+function obAgregarHabito() {
+  const input = document.getElementById('obHabitoInput');
+  const nombre = input.value.trim();
+  if (!nombre) return;
+  state.habitos.push({ nombre, categoria: '🎯 Productividad', color: '#C9A84C' });
+  saveState();
+  input.value = '';
+  document.getElementById('obHabitoConfirm').style.display = 'block';
+}
+function obAgregarMeta() {
+  const nombre = document.getElementById('obMetaInput').value.trim();
+  const fecha = document.getElementById('obMetaFecha').value;
+  if (!nombre) return;
+  state.metas.push({ titulo: nombre, razon: '', fecha, steps: [], creado: new Date().toISOString() });
+  saveState();
+  document.getElementById('obMetaInput').value = '';
+  document.getElementById('obMetaConfirm').style.display = 'block';
+}
+function saltarOnboarding() { completarOnboarding(); }
+function completarOnboarding() {
+  state.onboardingCompletado = true;
+  saveState();
+  document.getElementById('onboardingOverlay').classList.remove('open');
+  switchTabProgrammatic('hoy');
+  renderHoy();
+  if (window.lucide) lucide.createIcons();
+}
+function mostrarOnboarding() {
+  obMostrarPaso(1);
+  document.getElementById('onboardingOverlay').classList.add('open');
+}
+if (!state.onboardingCompletado) mostrarOnboarding();
 </script>
 
 <script>
