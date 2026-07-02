@@ -210,6 +210,20 @@
   }
   .tab-btn.active { background: var(--gold); color: #FFFFFF; }
   .tab-btn:hover:not(.active) { color: var(--text); background: rgba(0,0,0,0.04); }
+  .tab-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    background: #E8450A;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(1.3); opacity: 0.7; }
+  }
 
   /* ── MAIN ── */
   main {
@@ -2776,7 +2790,7 @@
     <button class="tab-btn" onclick="switchTab('hoy')"><i data-lucide="sun"></i> Hoy</button>
     <button class="tab-btn" onclick="switchTab('tareas')"><i data-lucide="clipboard-list"></i> Tareas</button>
     <button class="tab-btn" onclick="switchTab('metas')"><i data-lucide="target"></i> Metas</button>
-    <button class="tab-btn" onclick="switchTab('vision')"><i data-lucide="eye"></i> Visión</button>
+    <button class="tab-btn" onclick="switchTab('vision')" style="position:relative"><i data-lucide="eye"></i> Visión<span class="tab-badge" id="badge-vision" style="display:none"></span></button>
     <button class="tab-btn" onclick="switchTab('calendario')"><i data-lucide="calendar"></i> Calendario</button>
   </div>
 </nav>
@@ -3318,6 +3332,7 @@ function switchTab(tab) {
   if (tab === 'vision')     renderVision();
   if (tab === 'calendario') renderCalendario();
   if (tab === 'tareas')     renderPaginaTareas();
+  actualizarBadgeVision();
 }
 
 // ── PÁGINA INICIO ──
@@ -3409,6 +3424,7 @@ function switchTabProgrammatic(tab) {
   if (tab === 'vision')     renderVision();
   if (tab === 'calendario') renderCalendario();
   if (tab === 'tareas')     renderPaginaTareas();
+  actualizarBadgeVision();
   if (window.lucide) lucide.createIcons();
 }
 
@@ -5584,11 +5600,31 @@ function vizReiniciar() {
 
 function _registrarSesionViz() {
   const r = state.rachaVisualizacion;
-  if (r.ultimaFecha === todayKey) return;
+  if (r.ultimaFecha === todayKey) { actualizarBadgeVision(); return; }
   const ayer = new Date(new Date() - 86400000).toISOString().split('T')[0];
   r.dias = r.ultimaFecha === ayer ? (r.dias || 0) + 1 : 1;
   r.ultimaFecha = todayKey;
   saveState();
+  actualizarBadgeVision();
+}
+
+// ── BADGE VISIÓN ──
+function visualizacionCompletadaHoy() {
+  const hoy = new Date().toISOString().split('T')[0];
+  return state.rachaVisualizacion &&
+         state.rachaVisualizacion.ultimaFecha === hoy;
+}
+
+function actualizarBadgeVision() {
+  const badge = document.getElementById('badge-vision');
+  const tieneAfirmaciones = state.afirmaciones &&
+                            state.afirmaciones.length > 0;
+  const completadaHoy = visualizacionCompletadaHoy();
+
+  if (badge) {
+    badge.style.display = (tieneAfirmaciones && !completadaHoy)
+      ? 'block' : 'none';
+  }
 }
 
 function renderCardVisualizacion() {
@@ -5855,6 +5891,7 @@ renderInicio();
 showAvatarBubble('inicio');
 fetchWeather();
 iniciarNotificacionesSiActivas();
+actualizarBadgeVision();
 if (window.lucide) lucide.createIcons();
 
 // Pedir permiso de notificaciones al cargar
