@@ -2959,6 +2959,135 @@
     .pf-card-item .pf-tx-right { width: 100%; }
     .pf-pay-btn, .pf-tx-del { width: 100%; text-align: center; }
   }
+
+  /* ── FINANZAS: botón header ── */
+  .header-finanzas-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(101,201,148,0.12); border: none; cursor: pointer;
+    color: #65C994; transition: background 0.15s;
+  }
+  .header-finanzas-btn:hover { background: rgba(101,201,148,0.22); }
+  .header-finanzas-btn svg, .header-finanzas-btn i { width: 18px; height: 18px; }
+
+  /* ── FINANZAS: FAB de registro rápido ── */
+  .fab-finanzas {
+    position: fixed;
+    bottom: 28px;
+    left: 160px;
+    border-radius: 99px;
+    padding: 12px 18px;
+    gap: 8px;
+    background: #65C994;
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 18px rgba(101,201,148,0.38);
+    z-index: 300;
+    transition: transform 0.2s, box-shadow 0.2s;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .fab-finanzas:hover  { transform: scale(1.05); box-shadow: 0 6px 24px rgba(101,201,148,0.48); }
+  .fab-finanzas:active { transform: scale(0.97); }
+  .fab-finanzas svg, .fab-finanzas i { width: 16px; height: 16px; flex-shrink: 0; color: #FFFFFF; }
+  .fab-finanzas-label { font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 600; color: #FFFFFF; }
+  @keyframes fabFinanzasPulse { 0% { transform: scale(1); } 45% { transform: scale(1.18); } 100% { transform: scale(1); } }
+  .fab-finanzas.pulse { animation: fabFinanzasPulse 0.5s ease; }
+
+  /* ── FINANZAS: panel de registro rápido (bottom sheet) ── */
+  .pf-quick-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+    z-index: 399; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  }
+  .pf-quick-overlay.open { opacity: 1; pointer-events: all; }
+  .pf-quick-sheet {
+    position: fixed; bottom: 0; left: 0; right: 0; margin: 0 auto;
+    max-width: 480px;
+    background: var(--card);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.25);
+    z-index: 400;
+    padding: 10px 22px calc(22px + env(safe-area-inset-bottom));
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  .pf-quick-sheet.open { transform: translateY(0); }
+  .pf-quick-handle { width: 40px; height: 4px; border-radius: 99px; background: var(--border); margin: 6px auto 14px; }
+  .pf-quick-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .pf-quick-title {
+    font-family: 'Geist', sans-serif; font-size: 14px; font-weight: 700;
+    color: var(--text); text-transform: uppercase; letter-spacing: 1px;
+  }
+  .pf-quick-close {
+    width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.06);
+    border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--muted); font-size: 0.9rem; transition: background 0.15s;
+  }
+  .pf-quick-close:hover { background: rgba(0,0,0,0.12); color: var(--text); }
+  .pf-quick-type-switch { display: flex; gap: 8px; margin-bottom: 20px; }
+  .pf-quick-type-btn {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 13px 0; border-radius: 12px; border: 1.5px solid var(--border);
+    background: transparent; color: var(--muted);
+    font-family: 'Geist', sans-serif; font-weight: 700; font-size: 13px;
+    cursor: pointer; transition: 0.15s; letter-spacing: 0.5px;
+  }
+  .pf-quick-type-btn svg, .pf-quick-type-btn i { width: 16px; height: 16px; }
+  .pf-quick-type-btn.gasto.active   { background: #E2704B; border-color: #E2704B; color: #FFFFFF; }
+  .pf-quick-type-btn.ingreso.active { background: #65C994; border-color: #65C994; color: #FFFFFF; }
+  .pf-quick-amount-wrap {
+    display: flex; align-items: baseline; justify-content: center; gap: 6px;
+    padding-bottom: 10px; margin-bottom: 20px; border-bottom: 1.5px solid var(--border);
+  }
+  .pf-quick-amount-prefix { font-family: 'Geist Mono', monospace; font-size: 20px; font-weight: 700; color: var(--muted); }
+  .pf-quick-amount-input {
+    border: none; background: transparent; outline: none; text-align: center;
+    font-family: 'Geist Mono', monospace; font-weight: 800; font-size: 36px;
+    width: 100%; color: #E2704B; -moz-appearance: textfield;
+  }
+  .pf-quick-amount-input::-webkit-outer-spin-button,
+  .pf-quick-amount-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .pf-quick-amount-input.tipo-ingreso { color: #65C994; }
+  .pf-quick-cats {
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .pf-quick-cats::-webkit-scrollbar { display: none; }
+  .pf-quick-cat-pill {
+    flex-shrink: 0; padding: 8px 14px; border-radius: 99px; border: none;
+    background: var(--surface); color: var(--muted);
+    font-family: 'Geist', sans-serif; font-size: 12.5px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; transition: 0.15s;
+  }
+  .pf-quick-cat-pill.active.gasto   { background: #E2704B; color: #FFFFFF; }
+  .pf-quick-cat-pill.active.ingreso { background: #65C994; color: #FFFFFF; }
+  .pf-quick-note-input {
+    width: 100%; border: none; border-bottom: 1.5px solid var(--border);
+    background: transparent; padding: 8px 2px; margin-bottom: 20px;
+    font-family: 'Geist', sans-serif; font-size: max(14px, 14px); color: var(--text); outline: none;
+  }
+  .pf-quick-note-input::placeholder { color: var(--muted); }
+  .pf-quick-note-input:focus { border-color: var(--gold); }
+  .pf-quick-save-btn {
+    width: 100%; height: 52px; border-radius: 14px; border: none;
+    font-family: 'Geist', sans-serif; font-weight: 700; font-size: 15px;
+    color: #FFFFFF; cursor: pointer; transition: opacity 0.15s, transform 0.1s, background 0.15s;
+  }
+  .pf-quick-save-btn.gasto   { background: #E2704B; }
+  .pf-quick-save-btn.ingreso { background: #65C994; }
+  .pf-quick-save-btn:active  { transform: scale(0.98); }
+  .pf-quick-save-btn.saved   { background: #4CAF87; }
+
+  @media (max-width: 480px) {
+    .fab-finanzas { bottom: calc(24px + env(safe-area-inset-bottom)); left: 210px; padding: 10px 14px; }
+    .pf-quick-sheet { max-height: 85vh; overflow-y: auto; padding-left: 18px; padding-right: 18px; }
+    .pf-quick-amount-input { font-size: 42px; }
+    .pf-quick-amount-input, .pf-quick-note-input { font-size: max(16px, 1em); }
+  }
 </style>
 </head>
 <body>
@@ -2994,6 +3123,9 @@
       </div>
       <i data-lucide="moon"></i>
     </div>
+    <button class="header-finanzas-btn" onclick="pf_abrirPanelRapido()" title="Registrar movimiento" aria-label="Registrar movimiento">
+      <i data-lucide="plus-circle"></i>
+    </button>
     <div id="authZone" style="position:relative">
       <button class="auth-btn" id="authLoginBtn" onclick="loginConGoogle()" style="display:none">
         <svg width="16" height="16" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -3512,6 +3644,37 @@
 <!-- ══ POMODORO PANEL ══ -->
 <div class="pomo-panel" id="pomoPanel">
   <div id="pomoPanelContent"></div>
+</div>
+
+<!-- ══ FAB FINANZAS (registro rápido) ══ -->
+<button class="fab-finanzas" id="fabFinanzas" onclick="pf_abrirPanelRapido()" title="Anotar movimiento">
+  <i data-lucide="plus-circle"></i>
+  <span class="fab-finanzas-label">$ Anotar</span>
+</button>
+
+<!-- ══ PANEL REGISTRO RÁPIDO DE FINANZAS ══ -->
+<div class="pf-quick-overlay" id="pfQuickOverlay" onclick="pf_cerrarPanelRapido()"></div>
+<div class="pf-quick-sheet" id="pfQuickSheet">
+  <div class="pf-quick-handle"></div>
+  <div class="pf-quick-header">
+    <span class="pf-quick-title">Anotar movimiento</span>
+    <button class="pf-quick-close" onclick="pf_cerrarPanelRapido()">✕</button>
+  </div>
+  <div class="pf-quick-type-switch">
+    <button class="pf-quick-type-btn gasto" id="pfQuickBtnGasto" onclick="pf_quickSetTipo('gasto')">
+      <i data-lucide="arrow-up-circle"></i> GASTO
+    </button>
+    <button class="pf-quick-type-btn ingreso" id="pfQuickBtnIngreso" onclick="pf_quickSetTipo('ingreso')">
+      <i data-lucide="arrow-down-circle"></i> INGRESO
+    </button>
+  </div>
+  <div class="pf-quick-amount-wrap">
+    <span class="pf-quick-amount-prefix">₲</span>
+    <input type="number" id="pfQuickAmount" class="pf-quick-amount-input" placeholder="0" min="0" step="1000" inputmode="numeric" onkeydown="if(event.key==='Enter') pf_quickGuardar()">
+  </div>
+  <div class="pf-quick-cats" id="pfQuickCats"></div>
+  <input type="text" id="pfQuickNote" class="pf-quick-note-input" placeholder="Descripción (opcional)..." onkeydown="if(event.key==='Enter') pf_quickGuardar()">
+  <button class="pf-quick-save-btn gasto" id="pfQuickSaveBtn" onclick="pf_quickGuardar()">GUARDAR GASTO</button>
 </div>
 
 <script>
@@ -4955,7 +5118,7 @@ document.getElementById('habitoModal').addEventListener('click', function(e) {
   if (e.target === this) closeHabitoModal();
 });
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') { closeMetaModal(); closeHabitoModal(); closeTaskPanel(); closeEtiquetasModal(); }
+  if (e.key === 'Escape') { closeMetaModal(); closeHabitoModal(); closeTaskPanel(); closeEtiquetasModal(); pf_cerrarPanelRapido(); }
 });
 
 // ── BACKUP ──
@@ -5646,6 +5809,108 @@ function pf_todayStr() {
 function pf_formatDate(s) {
   const d = new Date(s + 'T00:00:00');
   return d.getDate() + ' ' + PF_MESES_ABR[d.getMonth()];
+}
+
+// ── FINANZAS: registro rápido (bottom sheet) ──
+const PF_QUICK_GASTO_CATS = ['Alimentación','Transporte','Servicios','Entretenimiento','Salud','Ropa','PC House','Freelance','Otros'];
+const PF_QUICK_INGRESO_CATS = ['Salario PC House','Comisión','Freelance','Regalo','Otros'];
+let pf_quickTipo = 'gasto';
+let pf_quickCategoria = PF_QUICK_GASTO_CATS[0];
+
+function pf_abrirPanelRapido() {
+  document.getElementById('pfQuickOverlay').classList.add('open');
+  document.getElementById('pfQuickSheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  pf_quickRenderUI();
+  const amountInput = document.getElementById('pfQuickAmount');
+  setTimeout(() => amountInput.focus(), 300);
+}
+
+function pf_cerrarPanelRapido() {
+  document.getElementById('pfQuickOverlay').classList.remove('open');
+  document.getElementById('pfQuickSheet').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function pf_quickSetTipo(tipo) {
+  pf_quickTipo = tipo;
+  pf_quickCategoria = (tipo === 'gasto' ? PF_QUICK_GASTO_CATS : PF_QUICK_INGRESO_CATS)[0];
+  pf_quickRenderUI();
+}
+
+function pf_quickSelectCat(cat) {
+  pf_quickCategoria = cat;
+  pf_quickRenderCats();
+}
+
+function pf_quickRenderCats() {
+  const cats = pf_quickTipo === 'gasto' ? PF_QUICK_GASTO_CATS : PF_QUICK_INGRESO_CATS;
+  document.getElementById('pfQuickCats').innerHTML = cats.map(c =>
+    `<button class="pf-quick-cat-pill ${pf_quickTipo}${c === pf_quickCategoria ? ' active' : ''}" onclick="pf_quickSelectCat('${c}')">${c}</button>`
+  ).join('');
+}
+
+function pf_quickRenderUI() {
+  const btnGasto = document.getElementById('pfQuickBtnGasto');
+  const btnIngreso = document.getElementById('pfQuickBtnIngreso');
+  btnGasto.classList.toggle('active', pf_quickTipo === 'gasto');
+  btnIngreso.classList.toggle('active', pf_quickTipo === 'ingreso');
+
+  const amountInput = document.getElementById('pfQuickAmount');
+  amountInput.classList.toggle('tipo-ingreso', pf_quickTipo === 'ingreso');
+
+  const saveBtn = document.getElementById('pfQuickSaveBtn');
+  saveBtn.classList.remove('gasto', 'ingreso');
+  saveBtn.classList.add(pf_quickTipo);
+  saveBtn.textContent = pf_quickTipo === 'ingreso' ? 'GUARDAR INGRESO' : 'GUARDAR GASTO';
+
+  pf_quickRenderCats();
+  if (window.lucide) lucide.createIcons();
+}
+
+function pf_quickGuardar() {
+  const amountInput = document.getElementById('pfQuickAmount');
+  const amount = parseFloat(amountInput.value);
+  if (!amount || amount <= 0) {
+    amountInput.style.borderColor = '#E2704B';
+    setTimeout(() => amountInput.style.borderColor = '', 900);
+    amountInput.focus();
+    return;
+  }
+  const noteInput = document.getElementById('pfQuickNote');
+  const tx = {
+    id: pf_uid(),
+    type: pf_quickTipo,
+    amount,
+    category: pf_quickCategoria,
+    note: noteInput.value.trim(),
+    date: pf_todayStr(),
+    fixed: false
+  };
+  pf_data.transactions.push(tx);
+  pf_persist();
+
+  if (document.getElementById('sec-finanzas').classList.contains('active')) pf_render();
+
+  const saveBtn = document.getElementById('pfQuickSaveBtn');
+  const originalLabel = pf_quickTipo === 'ingreso' ? 'GUARDAR INGRESO' : 'GUARDAR GASTO';
+  saveBtn.textContent = '✅ ¡Guardado!';
+  saveBtn.classList.add('saved');
+
+  const fab = document.getElementById('fabFinanzas');
+  if (fab) {
+    fab.classList.remove('pulse');
+    void fab.offsetWidth; // reiniciar animación si se guarda seguido
+    fab.classList.add('pulse');
+  }
+
+  setTimeout(() => {
+    amountInput.value = '';
+    noteInput.value = '';
+    saveBtn.textContent = originalLabel;
+    saveBtn.classList.remove('saved');
+    pf_cerrarPanelRapido();
+  }, 1500);
 }
 
 pf_loadData();
