@@ -5812,10 +5812,10 @@ function pf_formatDate(s) {
 }
 
 // ── FINANZAS: registro rápido (bottom sheet) ──
-const PF_QUICK_GASTO_CATS = ['Alimentación','Transporte','Servicios','Entretenimiento','Salud','Ropa','PC House','Freelance','Otros'];
-const PF_QUICK_INGRESO_CATS = ['Salario PC House','Comisión','Freelance','Regalo','Otros'];
+// Usa las mismas categorías que el formulario completo (PF_GASTO_CATS / PF_INGRESO_CATS)
+// para que "Gastos por categoría" no se fragmente entre los dos puntos de carga.
 let pf_quickTipo = 'gasto';
-let pf_quickCategoria = PF_QUICK_GASTO_CATS[0];
+let pf_quickCategoria = PF_GASTO_CATS[0];
 
 function pf_abrirPanelRapido() {
   document.getElementById('pfQuickOverlay').classList.add('open');
@@ -5834,7 +5834,7 @@ function pf_cerrarPanelRapido() {
 
 function pf_quickSetTipo(tipo) {
   pf_quickTipo = tipo;
-  pf_quickCategoria = (tipo === 'gasto' ? PF_QUICK_GASTO_CATS : PF_QUICK_INGRESO_CATS)[0];
+  pf_quickCategoria = (tipo === 'gasto' ? PF_GASTO_CATS : PF_INGRESO_CATS)[0];
   pf_quickRenderUI();
 }
 
@@ -5844,7 +5844,7 @@ function pf_quickSelectCat(cat) {
 }
 
 function pf_quickRenderCats() {
-  const cats = pf_quickTipo === 'gasto' ? PF_QUICK_GASTO_CATS : PF_QUICK_INGRESO_CATS;
+  const cats = pf_quickTipo === 'gasto' ? PF_GASTO_CATS : PF_INGRESO_CATS;
   document.getElementById('pfQuickCats').innerHTML = cats.map(c =>
     `<button class="pf-quick-cat-pill ${pf_quickTipo}${c === pf_quickCategoria ? ' active' : ''}" onclick="pf_quickSelectCat('${c}')">${c}</button>`
   ).join('');
