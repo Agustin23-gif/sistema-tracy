@@ -53,6 +53,7 @@
     --gold-dim:  #C23A08;
     --text:      #1A1A1A;
     --muted:     #6B6B6B;
+    --muted-rgb: 107,107,107;
     --danger:    #D94040;
     --success:   #2E9B6B;
     --border:    #E8E0D8;
@@ -66,6 +67,7 @@
     --card:      #1E2D40;
     --text:      #F0EDE6;
     --muted:     #7A8FA6;
+    --muted-rgb: 122,143,166;
     --border:    rgba(255,255,255,0.08);
     --input-bg:  rgba(255,255,255,0.06);
   }
@@ -2828,6 +2830,135 @@
     .ob-title-light { font-size: 19px; }
     .ob-emoji-bienvenida { font-size: 56px; }
   }
+
+  /* ── FINANZAS (Pulso Financiero) ── */
+  #sec-finanzas {
+    --pf-jade:      #65C994;
+    --pf-jade-dim:  rgba(101,201,148,0.14);
+    --pf-clay:      #E2704B;
+    --pf-clay-dim:  rgba(226,112,75,0.15);
+    --pf-gold:      #E8B84A;
+    --pf-gold-dim:  rgba(232,184,74,0.14);
+  }
+  .pf-view-switch { display: flex; justify-content: center; margin-bottom: 20px; }
+
+  .pf-banner {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--pf-clay-dim); border: 1px solid rgba(226,112,75,0.35);
+    color: var(--pf-clay); padding: 12px 16px; border-radius: 12px;
+    font-size: 13.5px; margin-bottom: 18px;
+  }
+
+  .pf-hero {
+    background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+    padding: 24px; margin-bottom: 18px; position: relative; overflow: hidden;
+  }
+  .pf-hero-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+  .pf-hero-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .pf-hero-balance { font-family: 'Geist Mono', monospace; font-size: 40px; font-weight: 800; letter-spacing: -0.01em; }
+  .pf-hero-balance.neg { color: var(--pf-clay); }
+  .pf-hero-balance.pos { color: var(--pf-jade); }
+  .pf-pulse-tag { font-size: 11px; color: var(--muted); font-family: 'Geist Mono', monospace; margin-top: 6px; }
+  .pf-hero-stats { display: flex; gap: 22px; margin-top: 4px; flex-wrap: wrap; }
+  .pf-hstat { min-width: 90px; }
+  .pf-hstat .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .pf-hstat .v { font-family: 'Geist Mono', monospace; font-size: 16px; margin-top: 3px; font-weight: 600; }
+  .pf-hstat .v.jade { color: var(--pf-jade); } .pf-hstat .v.clay { color: var(--pf-clay); } .pf-hstat .v.gold { color: var(--pf-gold); }
+  #pfPulseSvg { width: 100%; height: 70px; margin-top: 14px; display: block; }
+
+  .pf-panel { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 18px; }
+  .pf-panel h2 { font-family: 'Geist', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 14px; }
+
+  .pf-type-switch { display: flex; gap: 8px; margin-bottom: 14px; }
+  .pf-type-btn {
+    flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg);
+    color: var(--muted); font-family: 'Geist', sans-serif; font-weight: 600; font-size: 13.5px; cursor: pointer; transition: .15s;
+  }
+  .pf-type-btn.on-ingreso.active { background: var(--pf-jade-dim); border-color: var(--pf-jade); color: var(--pf-jade); }
+  .pf-type-btn.on-gasto.active   { background: var(--pf-clay-dim); border-color: var(--pf-clay); color: var(--pf-clay); }
+
+  .pf-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pf-form-grid .full { grid-column: 1/-1; }
+  #sec-finanzas label {
+    font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em;
+    display: block; margin-bottom: 6px;
+  }
+  #sec-finanzas input, #sec-finanzas select {
+    width: 100%; background: var(--input-bg); border: 1px solid var(--border); color: var(--text);
+    padding: 10px 12px; border-radius: 10px; font-family: 'Geist', sans-serif; font-size: max(0.88rem, 16px);
+  }
+  #sec-finanzas input:focus, #sec-finanzas select:focus { outline: none; border-color: var(--gold); }
+  .pf-hint { font-size: 11.5px; color: var(--pf-gold); margin-top: 6px; display: none; }
+  .pf-hint.show { display: block; }
+  .pf-add-btn {
+    margin-top: 14px; width: 100%; padding: 12px; border-radius: 10px; border: none;
+    background: var(--gold); color: #FFFFFF; font-weight: 700; font-size: 14px; cursor: pointer; transition: .15s;
+    font-family: 'Geist', sans-serif;
+  }
+  .pf-add-btn:hover { opacity: .88; }
+
+  .pf-cat-row { margin-bottom: 12px; }
+  .pf-cat-row .cr-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+  .pf-cat-row .cr-top span:first-child { color: var(--muted); }
+  .pf-cat-row .cr-top span:last-child { font-family: 'Geist Mono', monospace; color: var(--text); }
+  .pf-bar-bg { height: 7px; background: var(--input-bg); border-radius: 99px; overflow: hidden; }
+  .pf-bar-fill { height: 100%; background: var(--pf-clay); border-radius: 99px; }
+  .pf-empty { color: var(--muted); font-size: 13.5px; text-align: center; padding: 20px 0; }
+
+  .pf-tx { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--border); }
+  .pf-tx:last-child { border-bottom: none; }
+  .pf-tx-left { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .pf-tx-cat { font-size: 13.5px; color: var(--text); }
+  .pf-tx-meta { font-size: 11.5px; color: var(--muted); }
+  .pf-tx-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .pf-tx-amt { font-family: 'Geist Mono', monospace; font-size: 14px; font-weight: 600; }
+  .pf-tx-amt.jade { color: var(--pf-jade); } .pf-tx-amt.clay { color: var(--pf-clay); }
+  .pf-tx-del {
+    width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border); background: transparent;
+    color: var(--muted); cursor: pointer; font-size: 13px; line-height: 1; flex-shrink: 0;
+  }
+  .pf-tx-del:hover { color: var(--pf-clay); border-color: var(--pf-clay); }
+
+  .pf-badge { font-size: 9.5px; padding: 2px 7px; border-radius: 99px; font-family: 'Geist Mono', monospace; text-transform: uppercase; letter-spacing: .04em; display: inline-block; }
+  .pf-badge.pending { background: var(--pf-gold-dim); color: var(--pf-gold); }
+  .pf-badge.paid    { background: var(--pf-jade-dim); color: var(--pf-jade); }
+  .pf-badge.overdue { background: var(--pf-clay-dim); color: var(--pf-clay); }
+  .pf-card-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--border); gap: 10px; flex-wrap: wrap; }
+  .pf-card-item:last-child { border-bottom: none; }
+  .pf-pay-btn { font-size: 11.5px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--pf-jade); color: var(--pf-jade); background: transparent; cursor: pointer; font-family: 'Geist', sans-serif; font-weight: 600; white-space: nowrap; }
+  .pf-pay-btn:hover { background: var(--pf-jade-dim); }
+  .pf-pay-all-btn { width: 100%; margin-top: 6px; padding: 11px; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-weight: 600; font-size: 13px; cursor: pointer; transition: .15s; font-family: 'Geist', sans-serif; }
+  .pf-pay-all-btn:hover { border-color: var(--pf-jade); color: var(--pf-jade); }
+  .pf-debt-total { font-family: 'Geist Mono', monospace; font-size: 22px; font-weight: 700; color: var(--pf-gold); margin-bottom: 14px; }
+  .pf-arrears-info {
+    margin-top: 6px; font-size: 11.5px; color: var(--muted); padding: 5px 9px;
+    background: var(--pf-clay-dim); border-radius: 6px; line-height: 1.5; max-width: 640px;
+  }
+  .pf-highlight-gold { color: var(--pf-gold); font-weight: 600; }
+  .pf-ink-faint { color: rgba(var(--muted-rgb), 0.75); }
+
+  .pf-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 720px) { .pf-cols { grid-template-columns: 1fr; } .pf-form-grid { grid-template-columns: 1fr; } }
+
+  .pf-year-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 18px; }
+  @media (max-width: 720px) { .pf-year-stats { grid-template-columns: 1fr 1fr; } }
+  .pf-ystat { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+  .pf-ystat .k { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .pf-ystat .v { font-family: 'Geist Mono', monospace; font-size: 19px; font-weight: 700; margin-top: 6px; }
+  #pfYearChart { width: 100%; height: 220px; }
+  .pf-legend { display: flex; gap: 18px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+  .pf-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .pf-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  @media (max-width: 480px) {
+    #pfYearChart { height: 160px; }
+    .pf-hero-stats { gap: 14px; }
+    .pf-hero-balance { font-size: 32px; }
+    .pf-form-grid { grid-template-columns: 1fr; }
+    .pf-card-item { flex-direction: column; align-items: flex-start; }
+    .pf-card-item .pf-tx-right { width: 100%; }
+    .pf-pay-btn, .pf-tx-del { width: 100%; text-align: center; }
+  }
 </style>
 </head>
 <body>
@@ -2896,6 +3027,7 @@
     <button class="tab-btn" onclick="switchTab('metas')"><i data-lucide="target"></i> Metas</button>
     <button class="tab-btn" onclick="switchTab('vision')" style="position:relative"><i data-lucide="eye"></i> Visión<span class="tab-badge" id="badge-vision" style="display:none"></span></button>
     <button class="tab-btn" onclick="switchTab('calendario')"><i data-lucide="calendar"></i> Calendario</button>
+    <button class="tab-btn" onclick="switchTab('finanzas')"><i data-lucide="wallet"></i> Finanzas</button>
   </div>
 </nav>
 
@@ -3128,6 +3260,17 @@
     <!-- Lista de tareas -->
     <div id="tareas-page-list"></div>
 
+  </section>
+
+  <!-- ══ FINANZAS ══ -->
+  <section id="sec-finanzas" class="section">
+    <div class="sec-header">
+      <div>
+        <h2>Finanzas</h2>
+        <p>Pulso Financiero — control de tu flujo de caja</p>
+      </div>
+    </div>
+    <div id="pf-app"></div>
   </section>
 
 </main>
@@ -3481,6 +3624,7 @@ function switchTab(tab) {
   if (tab === 'vision')     renderVision();
   if (tab === 'calendario') renderCalendario();
   if (tab === 'tareas')     renderPaginaTareas();
+  if (tab === 'finanzas')   pf_render();
   actualizarBadgeVision();
 }
 
@@ -3573,6 +3717,7 @@ function switchTabProgrammatic(tab) {
   if (tab === 'vision')     renderVision();
   if (tab === 'calendario') renderCalendario();
   if (tab === 'tareas')     renderPaginaTareas();
+  if (tab === 'finanzas')   pf_render();
   actualizarBadgeVision();
   if (window.lucide) lucide.createIcons();
 }
@@ -4816,7 +4961,8 @@ document.addEventListener('keydown', function(e) {
 // ── BACKUP ──
 function exportarBackup() {
   const fecha = new Date().toISOString().split('T')[0];
-  const json  = JSON.stringify(state, null, 2);
+  const payload = { ...state, pulsoFinanciero: pf_data };
+  const json  = JSON.stringify(payload, null, 2);
   const blob  = new Blob([json], { type: 'application/json' });
   const url   = URL.createObjectURL(blob);
   const a     = document.createElement('a');
@@ -4834,15 +4980,30 @@ function importarBackup(e) {
     const msg = document.getElementById('backupMsg');
     try {
       const parsed = JSON.parse(ev.target.result);
-      if (!parsed.metas || !parsed.habitos || !parsed.habitoChecks) throw new Error('invalid');
-      Object.assign(state, parsed);
-      saveState();
-      renderInicio();
-      renderHoy();
-      renderMetas();
-      if (window.lucide) lucide.createIcons();
-      msg.style.color = '#2E9B6B';
-      msg.textContent = '✅ Backup restaurado correctamente';
+      if (parsed.app === 'Pulso Financiero' && Array.isArray(parsed.transactions)) {
+        // Export suelto del prototipo standalone de Pulso Financiero
+        pf_data = { transactions: parsed.transactions || [], fixedPayments: parsed.fixedPayments || [] };
+        pf_persist();
+        pf_render();
+        msg.style.color = '#2E9B6B';
+        msg.textContent = `✅ ${pf_data.transactions.length} movimientos importados a Finanzas`;
+      } else {
+        if (!parsed.metas || !parsed.habitos || !parsed.habitoChecks) throw new Error('invalid');
+        if (parsed.pulsoFinanciero) {
+          pf_data = { transactions: parsed.pulsoFinanciero.transactions || [], fixedPayments: parsed.pulsoFinanciero.fixedPayments || [] };
+          pf_persist();
+          pf_render();
+        }
+        delete parsed.pulsoFinanciero;
+        Object.assign(state, parsed);
+        saveState();
+        renderInicio();
+        renderHoy();
+        renderMetas();
+        if (window.lucide) lucide.createIcons();
+        msg.style.color = '#2E9B6B';
+        msg.textContent = '✅ Backup restaurado correctamente';
+      }
     } catch {
       msg.style.color = '#D94040';
       msg.textContent = '❌ Archivo inválido';
@@ -4863,6 +5024,631 @@ function formatFecha(str) {
   const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   return `${d} ${meses[parseInt(m)-1]} ${y}`;
 }
+
+// ── FINANZAS (Pulso Financiero) ──
+const PF_STORAGE_KEY = 'pulso_financiero_v1';
+const PF_INGRESO_CATS = ['Sueldo fijo (PC House)','Comisiones (PC House)','Proyectos freelance','Otro ingreso'];
+const PF_GASTO_CATS = ['Vivienda y servicios','Suscripciones y pagos fijos','Comida','Transporte','Herramientas y software','Insumos PC House','Ocio y personal','Ahorro / Inversión','Otro gasto'];
+const PF_PAYMENT_METHODS = ['Efectivo / Débito','Tarjeta de crédito'];
+const PF_MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const PF_MESES_ABR = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+let pf_data = { transactions: [], fixedPayments: [] };
+let pf_view = 'month';       // 'month' | 'year'
+let pf_cursor = new Date();
+let pf_formType = 'gasto';
+
+const pf_fmtGs = n => '₲ ' + Math.round(n).toLocaleString('es-PY');
+const pf_uid = () => 'tx_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+
+function pf_loadData() {
+  try {
+    const raw = localStorage.getItem(PF_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      pf_data = { transactions: parsed.transactions || [], fixedPayments: parsed.fixedPayments || [] };
+    }
+  } catch (e) {
+    pf_data = { transactions: [], fixedPayments: [] };
+  }
+}
+
+function pf_persist() {
+  localStorage.setItem(PF_STORAGE_KEY, JSON.stringify(pf_data));
+  saveToFirestore();
+}
+
+function pf_sameMonth(dateStr, date) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.getFullYear() === date.getFullYear() && d.getMonth() === date.getMonth();
+}
+
+function pf_dueDateThisMonth(dueDay, date) {
+  const y = date.getFullYear(), m = date.getMonth();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const day = Math.min(Math.max(parseInt(dueDay) || 1, 1), daysInMonth);
+  return `${y}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+function pf_fixedStatus(fp, date) {
+  const dueStr = pf_dueDateThisMonth(fp.dueDay, date);
+  const paidTx = pf_data.transactions.find(t => t.fixedPaymentId === fp.id && pf_sameMonth(t.date, date));
+  if (paidTx) return { status: 'paid', dueStr };
+  const now = new Date();
+  const isCurrentMonth = date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+  const overdue = isCurrentMonth && pf_todayStr() > dueStr;
+  return { status: overdue ? 'overdue' : 'pending', dueStr };
+}
+
+function pf_fixedOverdueMonths(fp, currentDate) {
+  const overdue = [];
+  if (!fp.createdAt) return overdue;
+  const created = new Date(fp.createdAt);
+  let y = created.getFullYear();
+  let m = created.getMonth();
+  const cy = currentDate.getFullYear();
+  const cm = currentDate.getMonth();
+  while (y < cy || (y === cy && m < cm)) {
+    const monthDate = new Date(y, m, 1);
+    const paidTx = pf_data.transactions.find(t => t.fixedPaymentId === fp.id && pf_sameMonth(t.date, monthDate));
+    if (!paidTx) {
+      overdue.push({ year: y, month: m, label: `${PF_MESES_ABR[m]} ${y}`, amount: fp.amount });
+    }
+    m++;
+    if (m > 11) { m = 0; y++; }
+  }
+  return overdue;
+}
+
+function pf_totalOverdueAllFixed(currentDate) {
+  return pf_data.fixedPayments.reduce((sum, fp) => {
+    const months = pf_fixedOverdueMonths(fp, currentDate);
+    return sum + months.reduce((s, om) => s + om.amount, 0);
+  }, 0);
+}
+
+function pf_monthTx(date) {
+  const y = date.getFullYear(), m = date.getMonth();
+  return pf_data.transactions.filter(t => {
+    const d = new Date(t.date + 'T00:00:00');
+    return d.getFullYear() === y && d.getMonth() === m;
+  });
+}
+
+function pf_monthStats(txs) {
+  const ingresos = txs.filter(t => t.type === 'ingreso').reduce((s, t) => s + t.amount, 0);
+  const gastos = txs.filter(t => t.type === 'gasto').reduce((s, t) => s + t.amount, 0);
+  const balance = ingresos - gastos;
+  const tasa = ingresos > 0 ? (balance / ingresos * 100) : 0;
+  return { ingresos, gastos, balance, tasa };
+}
+
+function pf_pendingCardTx() {
+  return pf_data.transactions
+    .filter(t => t.type === 'gasto' && t.method === 'Tarjeta de crédito' && !t.paid)
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+function pf_pendingCardDebt() {
+  return pf_pendingCardTx().reduce((s, t) => s + t.amount, 0);
+}
+
+function pf_pulsePath(date) {
+  const y = date.getFullYear(), m = date.getMonth();
+  const days = new Date(y, m + 1, 0).getDate();
+  const txs = pf_monthTx(date);
+  let cum = 0;
+  const points = [];
+  for (let d = 1; d <= days; d++) {
+    const dayTxs = txs.filter(t => new Date(t.date + 'T00:00:00').getDate() === d);
+    dayTxs.forEach(t => cum += (t.type === 'ingreso' ? t.amount : -t.amount));
+    points.push(cum);
+  }
+  const max = Math.max(...points, 0), min = Math.min(...points, 0);
+  const range = (max - min) || 1;
+  const W = 600, H = 70, pad = 6;
+  const xStep = points.length > 1 ? (W - 2 * pad) / (points.length - 1) : 0;
+  const coords = points.map((v, i) => {
+    const x = pad + i * xStep;
+    const y2 = pad + (1 - (v - min) / range) * (H - 2 * pad);
+    return [x, y2];
+  });
+  const path = coords.map((c, i) => (i === 0 ? 'M' : 'L') + c[0].toFixed(1) + ',' + c[1].toFixed(1)).join(' ');
+  const zeroY = pad + (1 - (0 - min) / range) * (H - 2 * pad);
+  const last = points[points.length - 1] || 0;
+  return { path, zeroY, W, H, last };
+}
+
+function pf_renderHeader() {
+  return `
+    <div class="pf-view-switch">
+      <div class="tab-pills">
+        <button class="tab-btn ${pf_view === 'month' ? 'active' : ''}" data-action="view" data-value="month">Mes</button>
+        <button class="tab-btn ${pf_view === 'year' ? 'active' : ''}" data-action="view" data-value="year">Año</button>
+      </div>
+    </div>
+  `;
+}
+
+function pf_renderMonth() {
+  const txs = pf_monthTx(pf_cursor).sort((a, b) => b.date.localeCompare(a.date));
+  const { ingresos, gastos, balance, tasa } = pf_monthStats(txs);
+  const pulse = pf_pulsePath(pf_cursor);
+  const balCls = balance < 0 ? 'neg' : 'pos';
+  const label = PF_MESES[pf_cursor.getMonth()] + ' ' + pf_cursor.getFullYear();
+
+  const warning = balance < 0 ? `
+    <div class="pf-banner">⚠️ Este mes estás gastando ${pf_fmtGs(Math.abs(balance))} más de lo que ingresás. Revisá la categoría que más pesa abajo.</div>
+  ` : '';
+  const totalArrears = pf_totalOverdueAllFixed(pf_cursor);
+  const arrearsWarning = totalArrears > 0 ? `
+    <div class="pf-banner">📅 Tenés ${pf_fmtGs(totalArrears)} en pagos fijos atrasados de meses anteriores. Revisá el panel de Pagos Fijos abajo.</div>
+  ` : '';
+
+  const catTotals = {};
+  txs.filter(t => t.type === 'gasto').forEach(t => { catTotals[t.category] = (catTotals[t.category] || 0) + t.amount; });
+  const catEntries = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
+  const maxCat = catEntries.length ? catEntries[0][1] : 1;
+  const catHtml = catEntries.length ? catEntries.map(([cat, val]) => `
+    <div class="pf-cat-row">
+      <div class="cr-top"><span>${escHtml(cat)}</span><span>${pf_fmtGs(val)}</span></div>
+      <div class="pf-bar-bg"><div class="pf-bar-fill" style="width:${(val / maxCat * 100).toFixed(0)}%"></div></div>
+    </div>
+  `).join('') : `<div class="pf-empty">Sin gastos registrados este mes todavía.</div>`;
+
+  const txHtml = txs.length ? txs.map(t => `
+    <div class="pf-tx">
+      <div class="pf-tx-left">
+        <span class="pf-tx-cat">${escHtml(t.category)}${t.note ? ' · ' + escHtml(t.note) : ''}</span>
+        <span class="pf-tx-meta">${pf_formatDate(t.date)}${t.method === 'Tarjeta de crédito' ? ' · <span class="pf-badge ' + (t.paid ? 'paid' : 'pending') + '">' + (t.paid ? 'Tarjeta pagada' : 'Tarjeta pendiente') + '</span>' : ''}</span>
+      </div>
+      <div class="pf-tx-right">
+        <span class="pf-tx-amt ${t.type === 'ingreso' ? 'jade' : 'clay'}">${t.type === 'ingreso' ? '+' : '-'}${pf_fmtGs(t.amount)}</span>
+        <button class="pf-tx-del" data-action="delete" data-id="${t.id}">✕</button>
+      </div>
+    </div>
+  `).join('') : `<div class="pf-empty">Todavía no cargaste movimientos este mes. Empezá con el formulario de arriba.</div>`;
+
+  return `
+    <div class="cal-nav-row">
+      <button class="cal-nav-btn" data-action="prevMonth">‹</button>
+      <div class="cal-month-label">${label}</div>
+      <button class="cal-nav-btn" data-action="nextMonth">›</button>
+    </div>
+    ${warning}
+    ${arrearsWarning}
+    <div class="pf-hero">
+      <div class="pf-hero-top">
+        <div>
+          <div class="pf-hero-label">Balance del mes</div>
+          <div class="pf-hero-balance ${balCls}">${balance < 0 ? '-' : ''}${pf_fmtGs(Math.abs(balance))}</div>
+          <div class="pf-pulse-tag">flujo acumulado día a día</div>
+        </div>
+        <div class="pf-hero-stats">
+          <div class="pf-hstat"><div class="k">Ingresos</div><div class="v jade">${pf_fmtGs(ingresos)}</div></div>
+          <div class="pf-hstat"><div class="k">Gastos</div><div class="v clay">${pf_fmtGs(gastos)}</div></div>
+          <div class="pf-hstat"><div class="k">Tasa de ahorro</div><div class="v ${tasa >= 0 ? 'gold' : 'clay'}">${tasa.toFixed(0)}%</div></div>
+          <div class="pf-hstat"><div class="k">Deuda tarjeta</div><div class="v ${pf_pendingCardDebt() > 0 ? 'gold' : ''}">${pf_fmtGs(pf_pendingCardDebt())}</div></div>
+        </div>
+      </div>
+      <svg id="pfPulseSvg" viewBox="0 0 ${pulse.W} ${pulse.H}" preserveAspectRatio="none">
+        <line x1="0" y1="${pulse.zeroY}" x2="${pulse.W}" y2="${pulse.zeroY}" stroke="rgba(var(--muted-rgb),0.3)" stroke-dasharray="3,4" />
+        <path d="${pulse.path}" fill="none" stroke="${pulse.last < 0 ? 'var(--pf-clay)' : 'var(--pf-jade)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <div class="pf-panel">
+      <h2>Agregar movimiento</h2>
+      <div class="pf-type-switch">
+        <button class="pf-type-btn on-ingreso ${pf_formType === 'ingreso' ? 'active' : ''}" data-action="formType" data-value="ingreso">↑ Ingreso</button>
+        <button class="pf-type-btn on-gasto ${pf_formType === 'gasto' ? 'active' : ''}" data-action="formType" data-value="gasto">↓ Gasto</button>
+      </div>
+      <div class="pf-form-grid">
+        <div>
+          <label>Monto (₲)</label>
+          <input type="number" id="pfAmount" placeholder="150000" min="0" step="1000">
+        </div>
+        <div>
+          <label>Fecha</label>
+          <input type="date" id="pfDate" value="${pf_todayStr()}">
+        </div>
+        ${pf_formType === 'gasto' ? `
+        <div class="full">
+          <label>Medio de pago</label>
+          <select id="pfMethod">
+            ${PF_PAYMENT_METHODS.map(m => `<option value="${m}">${m}</option>`).join('')}
+          </select>
+          <div class="pf-hint" id="pfTarjetaHint">Se suma a tu gasto del mes ya mismo, y queda como deuda pendiente hasta que marqués que pagaste la tarjeta.</div>
+        </div>` : ''}
+        <div class="full">
+          <label>Categoría</label>
+          <select id="pfCategory">
+            ${(pf_formType === 'ingreso' ? PF_INGRESO_CATS : PF_GASTO_CATS).map(c => `<option value="${c}">${c}</option>`).join('')}
+          </select>
+          <div class="pf-hint" id="pfAhorroHint">Destiná esto antes de gastar en lo demás — pagate primero a vos.</div>
+        </div>
+        <div class="full">
+          <label>Nota (opcional)</label>
+          <input type="text" id="pfNote" placeholder="Ej: cliente diseño logo, alquiler local...">
+        </div>
+      </div>
+      <button class="pf-add-btn" data-action="add">Agregar ${pf_formType === 'ingreso' ? 'ingreso' : 'gasto'}</button>
+    </div>
+
+    <div class="pf-panel">
+      <h2>Pagos fijos del mes</h2>
+      ${pf_renderFixedPanel()}
+    </div>
+
+    <div class="pf-panel">
+      <h2>Tarjeta de crédito</h2>
+      ${pf_renderCardPanel()}
+    </div>
+
+    <div class="pf-cols">
+      <div class="pf-panel">
+        <h2>Gastos por categoría</h2>
+        ${catHtml}
+      </div>
+      <div class="pf-panel">
+        <h2>Movimientos del mes</h2>
+        <div>${txHtml}</div>
+      </div>
+    </div>
+  `;
+}
+
+function pf_renderFixedPanel() {
+  const list = pf_data.fixedPayments.slice().sort((a, b) => a.dueDay - b.dueDay);
+  const totalPending = list.reduce((s, fp) => {
+    const st = pf_fixedStatus(fp, pf_cursor);
+    return st.status !== 'paid' ? s + fp.amount : s;
+  }, 0);
+
+  const items = list.length ? list.map(fp => {
+    const st = pf_fixedStatus(fp, pf_cursor);
+    const overdueMonths = pf_fixedOverdueMonths(fp, pf_cursor);
+    const overdueSum = overdueMonths.reduce((s, om) => s + om.amount, 0);
+    const hasArrears = overdueMonths.length > 0;
+    const badgeText = st.status === 'paid'
+      ? 'Pagado'
+      : (hasArrears
+          ? `Pendiente + ${overdueMonths.length} mes${overdueMonths.length > 1 ? 'es' : ''} atrasado${overdueMonths.length > 1 ? 's' : ''}`
+          : (st.status === 'overdue' ? 'Vencido' : 'Pendiente'));
+    const badgeCls = st.status === 'paid' ? 'paid' : (hasArrears || st.status === 'overdue' ? 'overdue' : 'pending');
+    const arrearsInfo = hasArrears && st.status !== 'paid'
+      ? `<div class="pf-arrears-info">Atrasado: ${overdueMonths.map(o => o.label).join(', ')} · <span class="pf-highlight-gold">Total a pagar: ${pf_fmtGs(fp.amount + overdueSum)}</span> <span class="pf-ink-faint">(este mes ${pf_fmtGs(fp.amount)} + atrasado ${pf_fmtGs(overdueSum)})</span></div>`
+      : '';
+    return `
+      <div class="pf-card-item">
+        <div class="pf-tx-left">
+          <span class="pf-tx-cat">${escHtml(fp.name)} <span class="pf-badge ${badgeCls}">${badgeText}</span></span>
+          <span class="pf-tx-meta">Vence el día ${fp.dueDay} · ${pf_fmtGs(fp.amount)}${fp.method === 'Tarjeta de crédito' ? ' · con tarjeta' : ''}</span>
+          ${arrearsInfo}
+        </div>
+        <div class="pf-tx-right">
+          ${st.status === 'paid'
+            ? `<button class="pf-pay-btn" data-action="unmarkFixed" data-id="${fp.id}" style="border-color:var(--muted); color:var(--muted);">Desmarcar</button>`
+            : (hasArrears
+                ? `<button class="pf-pay-btn" data-action="markFixedAll" data-id="${fp.id}" title="Registra un solo gasto por ${pf_fmtGs(fp.amount + overdueSum)} en el mes actual">Pagar todo</button>
+                   <button class="pf-pay-btn" data-action="markFixed" data-id="${fp.id}" style="border-color:var(--muted); color:var(--muted);" title="Solo la cuota de este mes, el atrasado sigue pendiente">Solo este mes</button>`
+                : `<button class="pf-pay-btn" data-action="markFixed" data-id="${fp.id}">Marcar pagado</button>`
+              )
+          }
+          <button class="pf-tx-del" data-action="deleteFixed" data-id="${fp.id}">✕</button>
+        </div>
+      </div>
+    `;
+  }).join('') : `<div class="pf-empty">Todavía no cargaste tus pagos fijos (suscripciones, servicios, alquiler...).</div>`;
+
+  return `
+    ${list.length ? `<div class="pf-debt-total">${pf_fmtGs(totalPending)} pendiente este mes</div>` : ''}
+    ${items}
+    <div class="pf-form-grid" style="margin-top:16px;">
+      <div class="full">
+        <label>Nombre</label>
+        <input type="text" id="pfFpName" placeholder="Spotify, iCloud, alquiler local...">
+      </div>
+      <div>
+        <label>Monto (₲)</label>
+        <input type="number" id="pfFpAmount" placeholder="35000" min="0" step="1000">
+      </div>
+      <div>
+        <label>Día de vencimiento</label>
+        <input type="number" id="pfFpDueDay" placeholder="15" min="1" max="31">
+      </div>
+      <div>
+        <label>Medio de pago</label>
+        <select id="pfFpMethod">${PF_PAYMENT_METHODS.map(m => `<option value="${m}">${m}</option>`).join('')}</select>
+      </div>
+      <div>
+        <label>Categoría</label>
+        <select id="pfFpCategory">${PF_GASTO_CATS.map(c => `<option value="${c}" ${c === 'Suscripciones y pagos fijos' ? 'selected' : ''}>${c}</option>`).join('')}</select>
+      </div>
+    </div>
+    <button class="pf-add-btn" data-action="addFixed">Agregar pago fijo</button>
+  `;
+}
+
+function pf_renderCardPanel() {
+  const pending = pf_pendingCardTx();
+  const debt = pf_pendingCardDebt();
+  if (!pending.length) {
+    return `<div class="pf-empty">No tenés compras con tarjeta pendientes de pago. 🎉</div>`;
+  }
+  const items = pending.map(t => `
+    <div class="pf-card-item">
+      <div class="pf-tx-left">
+        <span class="pf-tx-cat">${escHtml(t.category)}${t.note ? ' · ' + escHtml(t.note) : ''}</span>
+        <span class="pf-tx-meta">${pf_formatDate(t.date)} · ${pf_fmtGs(t.amount)}</span>
+      </div>
+      <button class="pf-pay-btn" data-action="payCard" data-id="${t.id}">Marcar pagada</button>
+    </div>
+  `).join('');
+  return `
+    <div class="pf-debt-total">${pf_fmtGs(debt)} pendiente</div>
+    ${items}
+    <button class="pf-pay-all-btn" data-action="payAllCards">Pagué toda la tarjeta (${pf_fmtGs(debt)})</button>
+  `;
+}
+
+function pf_renderYear() {
+  const year = pf_cursor.getFullYear();
+  const monthly = PF_MESES_ABR.map((_, m) => {
+    const txs = pf_data.transactions.filter(t => {
+      const d = new Date(t.date + 'T00:00:00');
+      return d.getFullYear() === year && d.getMonth() === m;
+    });
+    const ing = txs.filter(t => t.type === 'ingreso').reduce((s, t) => s + t.amount, 0);
+    const gas = txs.filter(t => t.type === 'gasto').reduce((s, t) => s + t.amount, 0);
+    return { ing, gas, bal: ing - gas };
+  });
+  const totalIng = monthly.reduce((s, m) => s + m.ing, 0);
+  const totalGas = monthly.reduce((s, m) => s + m.gas, 0);
+  const netoAnual = totalIng - totalGas;
+  const mesesConDatos = monthly.filter(m => m.ing > 0 || m.gas > 0);
+  const promedio = mesesConDatos.length ? netoAnual / mesesConDatos.length : 0;
+
+  let mejorIdx = 0, peorIdx = 0;
+  monthly.forEach((m, i) => { if (m.bal > monthly[mejorIdx].bal) mejorIdx = i; if (m.bal < monthly[peorIdx].bal) peorIdx = i; });
+
+  const max = Math.max(...monthly.map(m => Math.max(m.ing, m.gas)), 1);
+  const W = 680, H = 200, padB = 24, padT = 8;
+  const groupW = W / 12;
+  const barW = groupW * 0.32;
+  let bars = '';
+  monthly.forEach((m, i) => {
+    const gx = i * groupW;
+    const ih = (m.ing / max) * (H - padB - padT);
+    const gh = (m.gas / max) * (H - padB - padT);
+    const baseY = H - padB;
+    bars += `<rect x="${gx + groupW * 0.14}" y="${baseY - ih}" width="${barW}" height="${ih}" fill="var(--pf-jade)" rx="2"/>`;
+    bars += `<rect x="${gx + groupW * 0.52}" y="${baseY - gh}" width="${barW}" height="${gh}" fill="var(--pf-clay)" rx="2"/>`;
+    bars += `<text x="${gx + groupW / 2}" y="${H - 6}" text-anchor="middle" font-size="10" fill="rgba(var(--muted-rgb),0.9)" font-family="'Geist Mono',monospace">${PF_MESES_ABR[i]}</text>`;
+  });
+
+  return `
+    <div class="cal-nav-row">
+      <button class="cal-nav-btn" data-action="prevYear">‹</button>
+      <div class="cal-month-label">${year}</div>
+      <button class="cal-nav-btn" data-action="nextYear">›</button>
+    </div>
+
+    <div class="pf-year-stats">
+      <div class="pf-ystat"><div class="k">Ingresos del año</div><div class="v" style="color:var(--pf-jade)">${pf_fmtGs(totalIng)}</div></div>
+      <div class="pf-ystat"><div class="k">Gastos del año</div><div class="v" style="color:var(--pf-clay)">${pf_fmtGs(totalGas)}</div></div>
+      <div class="pf-ystat"><div class="k">Ahorro neto</div><div class="v" style="color:${netoAnual >= 0 ? 'var(--pf-gold)' : 'var(--pf-clay)'}">${pf_fmtGs(netoAnual)}</div></div>
+      <div class="pf-ystat"><div class="k">Promedio mensual</div><div class="v">${pf_fmtGs(promedio)}</div></div>
+    </div>
+
+    <div class="pf-panel">
+      <h2>Ingresos vs. gastos por mes</h2>
+      <svg id="pfYearChart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${bars}</svg>
+      <div class="pf-legend">
+        <span><i class="pf-dot" style="background:var(--pf-jade)"></i>Ingresos</span>
+        <span><i class="pf-dot" style="background:var(--pf-clay)"></i>Gastos</span>
+      </div>
+    </div>
+
+    ${mesesConDatos.length ? `
+    <div class="pf-cols">
+      <div class="pf-panel">
+        <h2>Mejor mes</h2>
+        <div class="pf-hero-balance pos" style="font-size:28px">${PF_MESES[mejorIdx]}</div>
+        <div class="pf-pulse-tag" style="margin-top:8px">balance de ${pf_fmtGs(monthly[mejorIdx].bal)}</div>
+      </div>
+      <div class="pf-panel">
+        <h2>Mes más ajustado</h2>
+        <div class="pf-hero-balance ${monthly[peorIdx].bal < 0 ? 'neg' : 'pos'}" style="font-size:28px">${PF_MESES[peorIdx]}</div>
+        <div class="pf-pulse-tag" style="margin-top:8px">balance de ${pf_fmtGs(monthly[peorIdx].bal)}</div>
+      </div>
+    </div>` : `<div class="pf-panel"><div class="pf-empty">Cargá movimientos en la vista "Mes" para ver tu resumen anual acá.</div></div>`}
+  `;
+}
+
+function pf_render() {
+  const container = document.getElementById('pf-app');
+  if (!container) return;
+  container.innerHTML = pf_renderHeader() + (pf_view === 'month' ? pf_renderMonth() : pf_renderYear());
+  pf_bindEvents();
+}
+
+function pf_bindEvents() {
+  document.querySelectorAll('#pf-app [data-action]').forEach(el => {
+    el.addEventListener('click', pf_onAction);
+  });
+  const catSel = document.getElementById('pfCategory');
+  if (catSel) { catSel.addEventListener('change', pf_updateAhorroHint); pf_updateAhorroHint(); }
+  const methodSel = document.getElementById('pfMethod');
+  if (methodSel) { methodSel.addEventListener('change', pf_updateMethodHint); pf_updateMethodHint(); }
+}
+
+function pf_updateAhorroHint() {
+  const catSel = document.getElementById('pfCategory');
+  const hint = document.getElementById('pfAhorroHint');
+  if (!catSel || !hint) return;
+  hint.classList.toggle('show', catSel.value === 'Ahorro / Inversión');
+}
+
+function pf_updateMethodHint() {
+  const methodSel = document.getElementById('pfMethod');
+  const hint = document.getElementById('pfTarjetaHint');
+  if (!methodSel || !hint) return;
+  hint.classList.toggle('show', methodSel.value === 'Tarjeta de crédito');
+}
+
+function pf_onAction(e) {
+  const btn = e.currentTarget;
+  const action = btn.dataset.action;
+  if (action === 'view') { pf_view = btn.dataset.value; pf_render(); }
+  else if (action === 'formType') { pf_formType = btn.dataset.value; pf_render(); }
+  else if (action === 'prevMonth') { pf_cursor = new Date(pf_cursor.getFullYear(), pf_cursor.getMonth() - 1, 1); pf_render(); }
+  else if (action === 'nextMonth') { pf_cursor = new Date(pf_cursor.getFullYear(), pf_cursor.getMonth() + 1, 1); pf_render(); }
+  else if (action === 'prevYear') { pf_cursor = new Date(pf_cursor.getFullYear() - 1, pf_cursor.getMonth(), 1); pf_render(); }
+  else if (action === 'nextYear') { pf_cursor = new Date(pf_cursor.getFullYear() + 1, pf_cursor.getMonth(), 1); pf_render(); }
+  else if (action === 'add') pf_addTransaction();
+  else if (action === 'delete') pf_deleteTransaction(btn.dataset.id);
+  else if (action === 'payCard') pf_payCard(btn.dataset.id);
+  else if (action === 'payAllCards') pf_payAllCards();
+  else if (action === 'addFixed') pf_addFixedPayment();
+  else if (action === 'markFixed') pf_markFixedPaid(btn.dataset.id);
+  else if (action === 'markFixedAll') pf_markFixedPaidAll(btn.dataset.id);
+  else if (action === 'unmarkFixed') pf_unmarkFixedPaid(btn.dataset.id);
+  else if (action === 'deleteFixed') pf_deleteFixedPayment(btn.dataset.id);
+}
+
+function pf_addFixedPayment() {
+  const nameEl = document.getElementById('pfFpName');
+  const name = nameEl.value.trim();
+  const amount = parseFloat(document.getElementById('pfFpAmount').value);
+  const dueDay = parseInt(document.getElementById('pfFpDueDay').value);
+  const method = document.getElementById('pfFpMethod').value;
+  const category = document.getElementById('pfFpCategory').value;
+  if (!name || !amount || amount <= 0 || !dueDay || dueDay < 1 || dueDay > 31) {
+    nameEl.style.borderColor = 'var(--pf-clay)';
+    setTimeout(() => nameEl.style.borderColor = '', 1200);
+    return;
+  }
+  pf_data.fixedPayments.push({ id: pf_uid(), name, amount, dueDay, method, category, createdAt: new Date().toISOString() });
+  pf_persist();
+  pf_render();
+}
+
+function pf_markFixedPaid(id) {
+  const fp = pf_data.fixedPayments.find(f => f.id === id);
+  if (!fp) return;
+  const dueStr = pf_dueDateThisMonth(fp.dueDay, pf_cursor);
+  const isTarjeta = fp.method === 'Tarjeta de crédito';
+  pf_data.transactions.push({
+    id: pf_uid(), type: 'gasto', amount: fp.amount, date: dueStr, category: fp.category,
+    note: fp.name, method: fp.method, paid: isTarjeta ? false : true, fixedPaymentId: fp.id
+  });
+  pf_persist();
+  pf_render();
+}
+
+function pf_markFixedPaidAll(id) {
+  const fp = pf_data.fixedPayments.find(f => f.id === id);
+  if (!fp) return;
+  const overdueMonths = pf_fixedOverdueMonths(fp, pf_cursor);
+  const overdueSum = overdueMonths.reduce((s, om) => s + om.amount, 0);
+  const totalAmount = fp.amount + overdueSum;
+  const dueStr = pf_dueDateThisMonth(fp.dueDay, pf_cursor);
+  const isTarjeta = fp.method === 'Tarjeta de crédito';
+  const arrearLabels = overdueMonths.map(o => o.label).join(', ');
+  pf_data.transactions.push({
+    id: pf_uid(), type: 'gasto', amount: totalAmount, date: dueStr, category: fp.category,
+    note: `${fp.name} (incluye atrasado: ${arrearLabels})`,
+    method: fp.method, paid: isTarjeta ? false : true, fixedPaymentId: fp.id
+  });
+  overdueMonths.forEach(om => {
+    const monthDate = new Date(om.year, om.month, 1);
+    pf_data.transactions.push({
+      id: pf_uid(), type: 'gasto', amount: 0,
+      date: pf_dueDateThisMonth(fp.dueDay, monthDate),
+      category: fp.category, note: `${fp.name} — saldado en mes posterior`,
+      method: fp.method, paid: true, fixedPaymentId: fp.id, settledByArrears: true
+    });
+  });
+  pf_persist();
+  pf_render();
+}
+
+function pf_unmarkFixedPaid(id) {
+  const currentMonthTxs = pf_data.transactions.filter(t => t.fixedPaymentId === id && pf_sameMonth(t.date, pf_cursor));
+  const hasAccumulated = currentMonthTxs.some(t => t.note && t.note.includes('incluye atrasado'));
+  if (hasAccumulated) {
+    pf_data.transactions = pf_data.transactions.filter(t => {
+      if (t.fixedPaymentId !== id) return true;
+      if (pf_sameMonth(t.date, pf_cursor)) return false;
+      if (t.settledByArrears) return false;
+      return true;
+    });
+  } else {
+    pf_data.transactions = pf_data.transactions.filter(t => !(t.fixedPaymentId === id && pf_sameMonth(t.date, pf_cursor)));
+  }
+  pf_persist();
+  pf_render();
+}
+
+function pf_deleteFixedPayment(id) {
+  pf_data.fixedPayments = pf_data.fixedPayments.filter(f => f.id !== id);
+  pf_persist();
+  pf_render();
+}
+
+function pf_payCard(id) {
+  const t = pf_data.transactions.find(t => t.id === id);
+  if (t) t.paid = true;
+  pf_persist();
+  pf_render();
+}
+
+function pf_payAllCards() {
+  pf_data.transactions.forEach(t => {
+    if (t.type === 'gasto' && t.method === 'Tarjeta de crédito') t.paid = true;
+  });
+  pf_persist();
+  pf_render();
+}
+
+function pf_addTransaction() {
+  const amount = parseFloat(document.getElementById('pfAmount').value);
+  const date = document.getElementById('pfDate').value;
+  const category = document.getElementById('pfCategory').value;
+  const note = document.getElementById('pfNote').value.trim();
+  const methodEl = document.getElementById('pfMethod');
+  const method = (pf_formType === 'gasto' && methodEl) ? methodEl.value : null;
+  const isTarjeta = method === 'Tarjeta de crédito';
+  if (!amount || amount <= 0 || !date) {
+    const amtInput = document.getElementById('pfAmount');
+    amtInput.style.borderColor = 'var(--pf-clay)';
+    setTimeout(() => amtInput.style.borderColor = '', 1200);
+    return;
+  }
+  pf_data.transactions.push({
+    id: pf_uid(), type: pf_formType, amount, date, category, note,
+    method, paid: isTarjeta ? false : true
+  });
+  pf_persist();
+  pf_render();
+}
+
+function pf_deleteTransaction(id) {
+  pf_data.transactions = pf_data.transactions.filter(t => t.id !== id);
+  pf_persist();
+  pf_render();
+}
+
+function pf_todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function pf_formatDate(s) {
+  const d = new Date(s + 'T00:00:00');
+  return d.getDate() + ' ' + PF_MESES_ABR[d.getMonth()];
+}
+
+pf_loadData();
 
 // ── WEATHER ──
 let weatherState = null;
@@ -6127,7 +6913,7 @@ async function saveToFirestore() {
     const updatedAt = new Date().toISOString();
     await setDoc(
       doc(window.firebaseDb, 'usuarios', window.currentUser.uid),
-      { state: JSON.stringify(state), updatedAt }
+      { state: JSON.stringify(state), pulsoData: JSON.stringify(pf_data), updatedAt }
     );
     localStorage.setItem(STORAGE_KEY + '_ts', updatedAt);
     setSyncStatus('ok');
@@ -6157,6 +6943,10 @@ function attachFirestoreListener(uid) {
         state = Object.assign(state, remoteState);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         localStorage.setItem(STORAGE_KEY + '_ts', remoteTs);
+        if (data.pulsoData) {
+          pf_data = JSON.parse(data.pulsoData);
+          localStorage.setItem(PF_STORAGE_KEY, data.pulsoData);
+        }
         renderAll();
         console.log('Estado actualizado desde Firestore (otro dispositivo)');
       }
@@ -6176,6 +6966,7 @@ function renderAll() {
   renderVision();
   renderCalendario();
   renderPaginaTareas();
+  pf_render();
   if (window.lucide) lucide.createIcons();
 }
 
