@@ -3790,6 +3790,14 @@
   </div>
 
   <div class="ob-step" id="obStep4" style="display:none">
+    <i data-lucide="wallet" class="ob-icon"></i>
+    <h2 class="ob-title-light">CONTROLÁ TUS FINANZAS</h2>
+    <p class="ob-desc">Tocá el botón <strong>+</strong> flotante desde cualquier pantalla para anotar un ingreso o gasto en segundos, sin salir de lo que estás haciendo.</p>
+    <p class="ob-quote">"No gastes lo que no has ganado." — Thomas Jefferson</p>
+    <button class="ob-btn-primary" onclick="obSiguiente()">Siguiente →</button>
+  </div>
+
+  <div class="ob-step" id="obStep5" style="display:none">
     <div class="ob-emoji-bienvenida">🎯</div>
     <h1 class="ob-title" id="obFinalTitle">¡TODO LISTO!</h1>
     <ul class="ob-checklist">
@@ -3797,6 +3805,7 @@
       <li>✅ Hacer seguimiento de metas</li>
       <li>✅ Usar el Pomodoro para concentrarte</li>
       <li>✅ Visualizar tus metas cada mañana</li>
+      <li>✅ Registrar tus movimientos financieros</li>
     </ul>
     <p class="ob-quote">"El éxito es el resultado de hacer pequeñas cosas correctamente cada día."</p>
     <button class="ob-btn-primary ob-btn-final" onclick="completarOnboarding()">¡EMPEZAR MI SISTEMA! →</button>
@@ -3807,6 +3816,7 @@
     <span class="ob-dot" data-dot="2"></span>
     <span class="ob-dot" data-dot="3"></span>
     <span class="ob-dot" data-dot="4"></span>
+    <span class="ob-dot" data-dot="5"></span>
   </div>
 </div>
 
@@ -7595,13 +7605,13 @@ function obMostrarPaso(n) {
   document.getElementById('obStep' + n).style.display = 'flex';
   document.querySelectorAll('.ob-dot').forEach(d => d.classList.toggle('active', Number(d.dataset.dot) === n));
   obStepActual = n;
-  if (n === 4) {
+  if (n === 5) {
     document.getElementById('obFinalTitle').textContent = `¡TODO LISTO, ${obtenerNombreUsuario().toUpperCase()}!`;
   }
   if (window.lucide) lucide.createIcons();
 }
 function obSiguiente() {
-  if (obStepActual < 4) obMostrarPaso(obStepActual + 1);
+  if (obStepActual < 5) obMostrarPaso(obStepActual + 1);
 }
 function obAgregarHabito() {
   const input = document.getElementById('obHabitoInput');
