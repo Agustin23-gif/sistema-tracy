@@ -1385,6 +1385,17 @@
   .inicio-semana-dot.completo   { background: #E8450A; }
   .inicio-semana-dot.incompleto { background: var(--border); }
 
+  /* Ajustes */
+  .ajustes-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .ajustes-row-label {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.9rem; font-weight: 500; color: var(--text);
+  }
+  .ajustes-row-label i, .ajustes-row-label svg { width: 18px; height: 18px; color: var(--muted); }
+
   /* Backup */
   .backup-section {
     margin-top: 40px;
@@ -3286,6 +3297,10 @@
       <i data-lucide="calendar"></i>
       <span>Calendario</span>
     </button>
+    <button class="mas-option" onclick="irAMas('ajustes')">
+      <i data-lucide="settings"></i>
+      <span>Ajustes</span>
+    </button>
   </div>
 </div>
 
@@ -3357,25 +3372,44 @@
       <!-- Visualización de Metas -->
       <div id="inicioVizCard"></div>
 
-      <!-- Recordatorio diario -->
-      <div id="inicioNotifCard"></div>
+    </div>
+  </section>
 
-      <!-- Backup -->
-      <div class="backup-section">
-        <div class="backup-title">Datos</div>
-        <div class="backup-btns">
-          <button class="backup-btn" onclick="exportarBackup()">
-            <i data-lucide="download"></i> Exportar backup
-          </button>
-          <button class="backup-btn" onclick="document.getElementById('backupFileInput').click()">
-            <i data-lucide="upload"></i> Importar backup
-          </button>
-        </div>
-        <input type="file" id="backupFileInput" accept=".json" style="display:none" onchange="importarBackup(event)">
-        <div class="backup-hint">Guardá copias de seguridad periódicamente</div>
-        <div class="backup-msg" id="backupMsg"></div>
+  <!-- ══ AJUSTES ══ -->
+  <section id="sec-ajustes" class="section">
+    <div class="sec-header">
+      <div>
+        <h2>Ajustes</h2>
+        <p>Preferencias y respaldo de datos</p>
       </div>
+    </div>
 
+    <h3 class="inicio-section-title">Apariencia</h3>
+    <div class="ajustes-row">
+      <span class="ajustes-row-label"><i data-lucide="moon"></i> Modo oscuro</span>
+      <div class="dark-toggle" id="darkToggleAjustes" onclick="toggleDarkMode()" role="button" aria-label="Modo oscuro">
+        <div class="dark-toggle-thumb"></div>
+      </div>
+    </div>
+
+    <h3 class="inicio-section-title" style="margin-top:28px">Recordatorio diario</h3>
+    <!-- Recordatorio diario -->
+    <div id="inicioNotifCard"></div>
+
+    <!-- Backup -->
+    <div class="backup-section">
+      <div class="backup-title">Datos</div>
+      <div class="backup-btns">
+        <button class="backup-btn" onclick="exportarBackup()">
+          <i data-lucide="download"></i> Exportar backup
+        </button>
+        <button class="backup-btn" onclick="document.getElementById('backupFileInput').click()">
+          <i data-lucide="upload"></i> Importar backup
+        </button>
+      </div>
+      <input type="file" id="backupFileInput" accept=".json" style="display:none" onchange="importarBackup(event)">
+      <div class="backup-hint">Guardá copias de seguridad periódicamente</div>
+      <div class="backup-msg" id="backupMsg"></div>
     </div>
   </section>
 
@@ -3897,8 +3931,8 @@ const todayKey = new Date().toISOString().split('T')[0];
 // ── MODO OSCURO ──
 function aplicarModoOscuro() {
   document.body.classList.toggle('dark-mode', !!state.modoOscuro);
-  const t = document.getElementById('darkToggle');
-  if (t) t.classList.toggle('on', !!state.modoOscuro);
+  // Sincroniza el toggle del header y su copia en Ajustes (ambos usan la clase .dark-toggle)
+  document.querySelectorAll('.dark-toggle').forEach(t => t.classList.toggle('on', !!state.modoOscuro));
 }
 function toggleDarkMode() {
   state.modoOscuro = !state.modoOscuro;
@@ -3909,7 +3943,7 @@ aplicarModoOscuro();
 
 // ── TABS ──
 // Tabs que ya no tienen botón propio en el nav — viven dentro del panel "Más"
-const TABS_EN_MAS = ['metas', 'vision', 'calendario'];
+const TABS_EN_MAS = ['metas', 'vision', 'calendario', 'ajustes'];
 
 function marcarTabActivo(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
