@@ -844,9 +844,6 @@
 
   /* ── FAB ── */
   .fab {
-    position: fixed;
-    bottom: 28px;
-    left: 16px;
     width: 52px;
     height: 52px;
     border-radius: 50%;
@@ -859,12 +856,59 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 18px rgba(232,69,10,0.38);
-    z-index: 300;
     transition: transform 0.2s, box-shadow 0.2s;
     line-height: 1;
+    flex-shrink: 0;
   }
   .fab:hover { transform: scale(1.08); box-shadow: 0 6px 24px rgba(232,69,10,0.48); }
   .fab:active { transform: scale(0.95); }
+
+  /* ── FAB PRINCIPAL EXPANDIBLE ── */
+  .fab-main-wrap {
+    position: fixed;
+    right: 20px;
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    z-index: 300;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 14px;
+  }
+  .fab-main {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 18px rgba(232,69,10,0.38);
+    transition: transform 0.25s ease, box-shadow 0.2s;
+    flex-shrink: 0;
+  }
+  .fab-main:hover { box-shadow: 0 6px 24px rgba(232,69,10,0.48); }
+  .fab-main:active { transform: scale(0.95); }
+  .fab-main svg, .fab-main i { width: 24px; height: 24px; transition: transform 0.25s ease; }
+  .fab-main-wrap.open .fab-main svg,
+  .fab-main-wrap.open .fab-main i { transform: rotate(45deg); }
+  .fab-mini-group {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .fab-main-wrap.open .fab-mini-group {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+  }
 
   /* ── PANEL OVERLAY ── */
   .panel-overlay {
@@ -1876,11 +1920,14 @@
 
     /* FAB */
     .fab {
-      bottom: calc(28px + env(safe-area-inset-bottom));
-      left: 16px;
       width: 48px;
       height: 48px;
     }
+    .fab-main-wrap {
+      right: 16px;
+      bottom: calc(76px + env(safe-area-inset-bottom));
+    }
+    .fab-main { width: 52px; height: 52px; }
 
     /* PORTADA TAREAS */
     .tareas-portada { height: 140px; }
@@ -2113,9 +2160,7 @@
 
   /* ── POMODORO ── */
   .fab-pomo {
-    position: fixed;
-    bottom: 28px;
-    left: 86px;
+    position: relative;
     border-radius: 99px;
     padding: 12px 18px;
     gap: 8px;
@@ -2127,10 +2172,10 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 18px rgba(0,0,0,0.38);
-    z-index: 300;
     transition: transform 0.2s, box-shadow 0.2s;
     line-height: 1;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .fab-pomo:hover  { transform: scale(1.05); box-shadow: 0 6px 24px rgba(0,0,0,0.5); }
   .fab-pomo:active { transform: scale(0.97); }
@@ -2303,8 +2348,6 @@
 
   @media (max-width: 480px) {
     .fab-pomo {
-      bottom: calc(90px + env(safe-area-inset-bottom));
-      left: 16px;
       padding: 10px 14px;
     }
     .pomo-panel {
@@ -3018,9 +3061,6 @@
 
   /* ── FINANZAS: FAB de registro rápido ── */
   .fab-finanzas {
-    position: fixed;
-    bottom: 28px;
-    left: 216px;
     border-radius: 99px;
     padding: 12px 18px;
     gap: 8px;
@@ -3032,10 +3072,10 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 18px rgba(101,201,148,0.38);
-    z-index: 300;
     transition: transform 0.2s, box-shadow 0.2s;
     line-height: 1;
     white-space: nowrap;
+    flex-shrink: 0;
   }
   .fab-finanzas:hover  { transform: scale(1.05); box-shadow: 0 6px 24px rgba(101,201,148,0.48); }
   .fab-finanzas:active { transform: scale(0.97); }
@@ -3147,7 +3187,7 @@
   .pf-quick-save-btn.saved   { background: #4CAF87; }
 
   @media (max-width: 480px) {
-    .fab-finanzas { bottom: calc(28px + env(safe-area-inset-bottom)); left: 80px; padding: 10px 14px; }
+    .fab-finanzas { padding: 10px 14px; }
     .pf-quick-sheet { max-height: 85vh; overflow-y: auto; padding-left: 18px; padding-right: 18px; }
     .pf-quick-amount-input { font-size: 42px; }
     .pf-quick-amount-input, .pf-quick-note-input { font-size: max(16px, 1em); }
@@ -3632,8 +3672,24 @@
   <div id="vizInner" style="display:flex;flex-direction:column;flex:1;min-height:0"></div>
 </div>
 
-<!-- ══ FAB ══ -->
-<button class="fab" id="fabBtn" onclick="toggleTaskPanel()" title="Mis tareas"><i data-lucide="pencil"></i></button>
+<!-- ══ FAB PRINCIPAL EXPANDIBLE ══ -->
+<div class="fab-main-wrap" id="fabMainWrap">
+  <div class="fab-mini-group" id="fabMiniGroup">
+    <button class="fab-finanzas fab-mini" id="fabFinanzas" onclick="fabMiniFinanzas()" title="Anotar movimiento">
+      <i data-lucide="plus-circle"></i>
+      <span class="fab-finanzas-label">$ Anotar</span>
+    </button>
+    <button class="fab-pomo fab-mini" id="fabPomo" onclick="fabMiniPomo()" title="Pomodoro">
+      <i data-lucide="timer"></i>
+      <span class="fab-pomo-label" id="fabPomoLabel">Pomodoro</span>
+      <span class="fab-pomo-dot" id="pomoDot"></span>
+    </button>
+    <button class="fab fab-mini" id="fabBtn" onclick="fabMiniTarea()" title="Mis tareas"><i data-lucide="pencil"></i></button>
+  </div>
+  <button class="fab-main" id="fabMain" onclick="toggleFabMenu()" title="Acciones rápidas">
+    <i data-lucide="plus"></i>
+  </button>
+</div>
 
 <!-- ══ PANEL OVERLAY ══ -->
 <div class="panel-overlay" id="panelOverlay" onclick="closeTaskPanel()"></div>
@@ -3720,23 +3776,10 @@
   </div>
 </div>
 
-<!-- ══ POMODORO FAB ══ -->
-<button class="fab-pomo" id="fabPomo" onclick="togglePomoPanel()" title="Pomodoro">
-  <i data-lucide="timer"></i>
-  <span class="fab-pomo-label" id="fabPomoLabel">Pomodoro</span>
-  <span class="fab-pomo-dot" id="pomoDot"></span>
-</button>
-
 <!-- ══ POMODORO PANEL ══ -->
 <div class="pomo-panel" id="pomoPanel">
   <div id="pomoPanelContent"></div>
 </div>
-
-<!-- ══ FAB FINANZAS (registro rápido) ══ -->
-<button class="fab-finanzas" id="fabFinanzas" onclick="pf_abrirPanelRapido()" title="Anotar movimiento">
-  <i data-lucide="plus-circle"></i>
-  <span class="fab-finanzas-label">$ Anotar</span>
-</button>
 
 <!-- ══ PANEL REGISTRO RÁPIDO DE FINANZAS ══ -->
 <div class="pf-quick-overlay" id="pfQuickOverlay" onclick="pf_cerrarPanelRapido()"></div>
@@ -4641,6 +4684,27 @@ function calNavNext() {
   }
 }
 
+// ── FAB PRINCIPAL EXPANDIBLE ──
+let fabMenuOpen = false;
+function toggleFabMenu() { fabMenuOpen ? cerrarFabMenu() : abrirFabMenu(); }
+function abrirFabMenu() {
+  fabMenuOpen = true;
+  document.getElementById('fabMainWrap').classList.add('open');
+}
+function cerrarFabMenu() {
+  fabMenuOpen = false;
+  document.getElementById('fabMainWrap')?.classList.remove('open');
+}
+// Disparadores visuales de los mini-botones — no reescriben la lógica original,
+// solo la ejecutan y cierran el menú expandido.
+function fabMiniTarea()    { toggleTaskPanel(); cerrarFabMenu(); }
+function fabMiniPomo()     { togglePomoPanel(); cerrarFabMenu(); }
+function fabMiniFinanzas() { pf_abrirPanelRapido(); cerrarFabMenu(); }
+
+document.addEventListener('click', function(e) {
+  if (fabMenuOpen && !e.target.closest('#fabMainWrap')) cerrarFabMenu();
+});
+
 // ── TASK PANEL ──
 let selectedTag = state.etiquetas[0] ? state.etiquetas[0].id : null;
 let panelOpen = false;
@@ -5231,7 +5295,7 @@ document.getElementById('habitoModal').addEventListener('click', function(e) {
   if (e.target === this) closeHabitoModal();
 });
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') { closeMetaModal(); closeHabitoModal(); closeTaskPanel(); closeEtiquetasModal(); pf_cerrarPanelRapido(); cerrarMasPanel(); }
+  if (e.key === 'Escape') { closeMetaModal(); closeHabitoModal(); closeTaskPanel(); closeEtiquetasModal(); pf_cerrarPanelRapido(); cerrarMasPanel(); cerrarFabMenu(); }
 });
 
 // ── BACKUP ──
