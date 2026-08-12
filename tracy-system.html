@@ -18,7 +18,7 @@
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-  import { getFirestore, doc, setDoc, getDoc, onSnapshot }
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, getDocs, deleteDoc, query, orderBy }
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
   const firebaseConfig = {
@@ -38,7 +38,7 @@
   window.firebaseAuth     = auth;
   window.firebaseDb       = db;
   window.firebaseProvider = provider;
-  window.firebaseFns      = { signInWithPopup, signOut, onAuthStateChanged, doc, setDoc, getDoc, onSnapshot };
+  window.firebaseFns      = { signInWithPopup, signOut, onAuthStateChanged, doc, setDoc, getDoc, onSnapshot, collection, getDocs, deleteDoc, query, orderBy };
   window.firebaseReady    = true;
   window.dispatchEvent(new Event('firebase-ready'));
 </script>
@@ -1610,6 +1610,37 @@
   @keyframes pulse-flame {
     0%, 100% { opacity: 1; transform: scale(1); }
     50%       { opacity: 0.55; transform: scale(0.88); }
+  }
+
+  /* ── AVISO DE VACIADO SOSPECHOSO ── */
+  .vaciado-toast {
+    position: fixed;
+    top: max(16px, env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%) translateY(-16px);
+    max-width: 420px;
+    width: calc(100% - 32px);
+    background: #FFF3E0;
+    border-left: 4px solid #E8450A;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.20);
+    z-index: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .vaciado-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: all; }
+  .vaciado-toast strong {
+    display: block; margin-bottom: 4px; font-size: 0.85rem; color: #7A3500;
+  }
+  .vaciado-toast p {
+    font-size: 0.8rem; color: #7A3500; line-height: 1.5; margin-bottom: 10px;
+  }
+  .vaciado-toast button {
+    background: #E8450A; color: #FFFFFF; border: none;
+    border-radius: 8px; padding: 6px 12px;
+    font-family: 'Geist', sans-serif; font-size: 0.72rem; font-weight: 700; cursor: pointer;
   }
   .racha-alerta-text { flex: 1; font-size: 0.82rem; color: #7A3500; line-height: 1.4; }
   .racha-alerta-btn {
@@ -3266,6 +3297,13 @@
   </div>
 </header>
 
+<!-- ══ AVISO DE VACIADO SOSPECHOSO (guardado automático pausado) ══ -->
+<div class="vaciado-toast" id="vaciadoToast">
+  <strong>⚠️ Guardado automático pausado</strong>
+  <p id="vaciadoToastMsg"></p>
+  <button onclick="document.getElementById('vaciadoToast').classList.remove('show')">Entendido</button>
+</div>
+
 <nav>
   <div class="tab-pills">
     <button class="tab-btn active" onclick="switchTab('inicio')"><i data-lucide="home"></i> Inicio</button>
@@ -3877,6 +3915,13 @@ function obtenerNombreUsuario() {
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   localStorage.setItem(STORAGE_KEY + '_ts', new Date().toISOString());
+  // Guarda: si hay usuario logueado pero todavía no bajó el primer snapshot remoto,
+  // no dispares una escritura a Firestore — podría pisar datos reales con un estado
+  // recién cargado (posiblemente vacío) en este dispositivo.
+  if (window.currentUser && !window.firstSyncDone) {
+    console.log('saveState: esperando el primer snapshot de Firestore antes de sincronizar.');
+    return;
+  }
   saveToFirestore();
 }
 
@@ -7405,35 +7450,157 @@ function renderRanaDelDia() {
 // ── FIREBASE AUTH & SYNC ──
 window.currentUser = null;
 window.firestoreUnsubscribe = null;
-let _syncStatus = 'idle'; // idle | syncing | ok | error
+// true recién cuando llega el primer snapshot de onSnapshot (exista o no el doc).
+// Mientras sea false, saveState()/saveToFirestore() no escriben a Firestore.
+window.firstSyncDone = false;
+// Últimos conteos conocidos del documento remoto — sirve de "línea de base" para
+// detectar un vaciado accidental antes de sobrescribir.
+window.lastKnownCounts = { habitos: 0, tareas: 0, metas: 0 };
+let _syncStatus = 'idle'; // idle | loading | syncing | ok | error | blocked
+let _vaciadoYaAvisado = false; // evita que el aviso de vaciado bloquee para siempre
 
 function setSyncStatus(s) {
   _syncStatus = s;
   const dot = document.getElementById('syncDot');
   const txt = document.getElementById('authDropdownStatus');
   if (!dot) return;
-  dot.className = 'sync-dot ' + (s === 'syncing' ? 'yellow' : s === 'error' ? 'red' : 'green');
-  if (txt) txt.textContent = s === 'syncing' ? '🔄 Sincronizando...' : s === 'error' ? '🔴 Sin conexión' : '✅ Sincronizado';
+  dot.className = 'sync-dot ' + ((s === 'syncing' || s === 'loading') ? 'yellow' : (s === 'error' || s === 'blocked') ? 'red' : 'green');
+  if (txt) txt.textContent =
+    s === 'loading' ? '⏳ Cargando tus datos...' :
+    s === 'syncing' ? '🔄 Sincronizando...' :
+    s === 'blocked' ? '⚠️ Guardado pausado' :
+    s === 'error'   ? '🔴 Sin conexión' : '✅ Sincronizado';
+}
+
+function mostrarAvisoVaciadoSospechoso(ultimo) {
+  const toast = document.getElementById('vaciadoToast');
+  const msg   = document.getElementById('vaciadoToastMsg');
+  if (!toast) return;
+  if (msg) msg.textContent =
+    `Se detectó un posible vaciado de datos (tu estado actual no tiene hábitos, tareas ni metas, pero el último dato conocido en Firestore tenía ${ultimo.habitos} hábito(s), ${ultimo.tareas} tarea(s) y ${ultimo.metas} meta(s)). El guardado automático de este cambio se pausó. Si esto es intencional, hacé otro cambio para confirmar, o exportá un backup antes de continuar.`;
+  toast.classList.add('show');
+  clearTimeout(window._vaciadoToastTimer);
+  window._vaciadoToastTimer = setTimeout(() => toast.classList.remove('show'), 12000);
 }
 
 async function saveToFirestore() {
   if (!window.currentUser || !window.firebaseFns) return;
+  // Guarda: nunca escribas a Firestore antes de saber qué había ahí.
+  if (!window.firstSyncDone) {
+    console.log('saveToFirestore: todavía no llegó el primer snapshot remoto, guardado pospuesto.');
+    return;
+  }
+
+  // Guarda de sanidad: no pises datos remotos reales con un estado vacío.
+  const habitosCount = (state.habitos || []).length;
+  const tareasCount  = (state.tareas  || []).length;
+  const metasCount   = (state.metas   || []).length;
+  const ultimo = window.lastKnownCounts || { habitos: 0, tareas: 0, metas: 0 };
+  const pareceVaciado = habitosCount === 0 && tareasCount === 0 && metasCount === 0 &&
+    (ultimo.habitos > 0 || ultimo.tareas > 0 || ultimo.metas > 0);
+
+  if (pareceVaciado && !_vaciadoYaAvisado) {
+    _vaciadoYaAvisado = true;
+    console.warn(
+      `⚠️ Guardado automático pausado: el estado local no tiene hábitos, tareas ni metas, ` +
+      `pero el último snapshot remoto conocido tenía ${ultimo.habitos} hábito(s), ${ultimo.tareas} tarea(s) ` +
+      `y ${ultimo.metas} meta(s). Si esto es intencional, el próximo guardado sí se va a aplicar.`
+    );
+    mostrarAvisoVaciadoSospechoso(ultimo);
+    setSyncStatus('blocked');
+    return;
+  }
+
   console.log('Guardando en Firestore para usuario:', window.currentUser?.uid);
   setSyncStatus('syncing');
   try {
     const { doc, setDoc } = window.firebaseFns;
     const updatedAt = new Date().toISOString();
-    await setDoc(
-      doc(window.firebaseDb, 'usuarios', window.currentUser.uid),
-      { state: JSON.stringify(state), pulsoData: JSON.stringify(pf_data), updatedAt }
-    );
+    const payload = { state: JSON.stringify(state), pulsoData: JSON.stringify(pf_data), updatedAt };
+    await setDoc(doc(window.firebaseDb, 'usuarios', window.currentUser.uid), payload);
     localStorage.setItem(STORAGE_KEY + '_ts', updatedAt);
+    _vaciadoYaAvisado = false;
     setSyncStatus('ok');
+    // Backup versionado — no bloquea el guardado principal, corre en segundo plano.
+    guardarBackupVersionado(payload);
   } catch (e) {
     setSyncStatus('error');
     console.error('Firestore save error:', e);
   }
 }
+
+const MAX_BACKUPS = 15;
+
+// Escribe usuarios/{uid}/backups/{updatedAt} y purga los más viejos si hay más de MAX_BACKUPS.
+async function guardarBackupVersionado(payload) {
+  if (!window.currentUser || !window.firebaseFns) return;
+  try {
+    const { doc, setDoc, collection, getDocs, deleteDoc, query, orderBy } = window.firebaseFns;
+    const backupsRef = collection(window.firebaseDb, 'usuarios', window.currentUser.uid, 'backups');
+    await setDoc(doc(backupsRef, payload.updatedAt), payload);
+
+    const snap = await getDocs(query(backupsRef, orderBy('updatedAt', 'desc')));
+    const excedentes = snap.docs.slice(MAX_BACKUPS);
+    if (excedentes.length) {
+      await Promise.all(excedentes.map(d => deleteDoc(d.ref)));
+      console.log(`Backups: purgados ${excedentes.length} backup(s) viejo(s), quedan ${MAX_BACKUPS}.`);
+    }
+  } catch (e) {
+    console.error('Error guardando backup versionado:', e);
+  }
+}
+
+// ── BACKUPS VERSIONADOS — invocables desde la consola del navegador (logueado) ──
+//   await listarBackups()                                  → tabla de backups, más reciente primero
+//   await restaurarBackup('2026-08-11T14:34:29.481Z')       → restaura ESE backup puntual (pide confirmación)
+async function listarBackups() {
+  if (!window.currentUser) { console.warn('Necesitás estar logueado para listar backups.'); return []; }
+  const { collection, getDocs, query, orderBy } = window.firebaseFns;
+  const backupsRef = collection(window.firebaseDb, 'usuarios', window.currentUser.uid, 'backups');
+  const snap = await getDocs(query(backupsRef, orderBy('updatedAt', 'desc')));
+  const lista = snap.docs.map(d => {
+    const data = d.data();
+    const st = JSON.parse(data.state);
+    return {
+      id: d.id,
+      updatedAt: data.updatedAt,
+      habitos: (st.habitos || []).length,
+      tareas: (st.tareas || []).length,
+      metas: (st.metas || []).length
+    };
+  });
+  console.table(lista);
+  return lista;
+}
+
+async function restaurarBackup(backupId) {
+  if (!window.currentUser) { console.warn('Necesitás estar logueado para restaurar un backup.'); return; }
+  const { doc, getDoc, setDoc } = window.firebaseFns;
+  const backupRef = doc(window.firebaseDb, 'usuarios', window.currentUser.uid, 'backups', backupId);
+  const snap = await getDoc(backupRef);
+  if (!snap.exists()) { console.error('No se encontró el backup', backupId, '— usá listarBackups() para ver los IDs disponibles.'); return; }
+  const data = snap.data();
+  if (!confirm(`¿Restaurar el backup del ${data.updatedAt}? Esto reemplaza tu estado actual (local y en Firestore).`)) {
+    console.log('Restauración cancelada.');
+    return;
+  }
+  const remoteState = JSON.parse(data.state);
+  state = Object.assign(state, remoteState);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  localStorage.setItem(STORAGE_KEY + '_ts', data.updatedAt);
+  if (data.pulsoData) {
+    pf_data = JSON.parse(data.pulsoData);
+    localStorage.setItem(PF_STORAGE_KEY, data.pulsoData);
+  }
+  renderAll();
+  await setDoc(
+    doc(window.firebaseDb, 'usuarios', window.currentUser.uid),
+    { state: data.state, pulsoData: data.pulsoData || JSON.stringify(pf_data), updatedAt: new Date().toISOString() }
+  );
+  console.log('✅ Backup restaurado:', backupId);
+}
+window.listarBackups = listarBackups;
+window.restaurarBackup = restaurarBackup;
 
 // Escucha cambios en tiempo real (otro dispositivo guarda → este dispositivo se actualiza solo)
 function attachFirestoreListener(uid) {
@@ -7444,11 +7611,17 @@ function attachFirestoreListener(uid) {
     doc(window.firebaseDb, 'usuarios', uid),
     (snap) => {
       console.log('Cargando desde Firestore, datos:', snap.data());
-      if (!snap.exists()) { saveToFirestore(); return; }
+      window.firstSyncDone = true;
+      if (!snap.exists()) { setSyncStatus('ok'); saveToFirestore(); return; }
       // Ignorar el eco del propio guardado local (evita loop de escrituras)
       if (snap.metadata.hasPendingWrites) return;
       const data = snap.data();
       const remoteState = JSON.parse(data.state);
+      window.lastKnownCounts = {
+        habitos: (remoteState.habitos || []).length,
+        tareas: (remoteState.tareas || []).length,
+        metas: (remoteState.metas || []).length
+      };
       const localTs  = localStorage.getItem(STORAGE_KEY + '_ts') || '0';
       const remoteTs = data.updatedAt || '0';
       if (remoteTs > localTs) {
@@ -7491,7 +7664,8 @@ function actualizarUILogin(user) {
   if (avatarWrap) avatarWrap.style.display = 'inline-flex';
   if (avatarImg && user.photoURL)  avatarImg.src = user.photoURL;
   if (emailEl)  emailEl.textContent = user.email || '';
-  setSyncStatus('ok');
+  // El estado real (loading → ok) lo maneja _initAuthListener/attachFirestoreListener,
+  // según si ya llegó el primer snapshot remoto.
 }
 
 function actualizarUILogout() {
@@ -7544,9 +7718,13 @@ function _initAuthListener() {
   onAuthStateChanged(window.firebaseAuth, async (user) => {
     window.currentUser = user;
     if (user) {
+      window.firstSyncDone = false;
+      window.lastKnownCounts = { habitos: 0, tareas: 0, metas: 0 };
       actualizarUILogin(user);
+      setSyncStatus('loading');
       attachFirestoreListener(user.uid);
     } else {
+      window.firstSyncDone = false;
       actualizarUILogout();
     }
   });
