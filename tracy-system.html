@@ -1554,6 +1554,7 @@
   }
   .auth-dropdown-email { font-weight: 600; color: var(--text); font-size: 13px; margin-bottom: 2px; }
   .auth-dropdown-status { font-size: 11px; }
+  .auth-dropdown-lastsync { font-size: 10px; color: var(--muted); margin-top: 2px; }
   .auth-dropdown-item {
     display: block;
     width: 100%;
@@ -3290,6 +3291,7 @@
         <div class="auth-dropdown-info">
           <div class="auth-dropdown-email" id="authDropdownEmail"></div>
           <div class="auth-dropdown-status" id="authDropdownStatus">✅ Sincronizado</div>
+          <div class="auth-dropdown-lastsync" id="authDropdownLastSync"></div>
         </div>
         <button class="auth-dropdown-item danger" onclick="logoutGoogle()">Cerrar sesión</button>
       </div>
@@ -3927,9 +3929,55 @@ function saveState() {
 
 let state = loadState();
 if (!state.tareas) state.tareas = [];
+if (!state.metas) state.metas = [];
 if (!state.portadaTareas) state.portadaTareas = 'naranja';
 // Migrar tareas del formato boolean (completada) al formato de 3 estados
 state.tareas.forEach(t => { if (!t.estado) t.estado = t.completada ? 'completada' : 'sin_empezar'; });
+
+// ── SINCRONIZACIÓN POR ID (tareas, metas, transacciones y pagos fijos de Finanzas) ──
+// Hábitos quedan fuera de este merge por id a propósito: el historial de racha
+// (state.habitoChecks) está indexado por posición en el array, no por id, y migrarlo
+// es un cambio de mucho más riesgo para el dato más sensible de la app. Hábitos siguen
+// resolviéndose con "el documento más nuevo pisa entero", como antes.
+function _uid(prefix) {
+  return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
+}
+// Agrega id/updatedAt a los ítems que no los tengan, sin tocar los que ya los tienen.
+function asegurarIdsYTimestamps(arr, prefix) {
+  const now = new Date().toISOString();
+  (arr || []).forEach(item => {
+    if (item.id === undefined || item.id === null) item.id = _uid(prefix);
+    if (!item.updatedAt) item.updatedAt = item.creado || item.createdAt || now;
+  });
+}
+// Cuenta solo ítems activos (no marcados eliminado:true por soft-delete).
+function activos(arr) { return (arr || []).filter(x => !x.eliminado); }
+function contarActivos(arr) { return activos(arr).length; }
+// Marca un ítem como borrado (soft-delete) en vez de sacarlo del array: así, si el otro
+// dispositivo estaba offline y todavía tiene el ítem, el merge por id sabe que hay que
+// ocultarlo en vez de "no lo conozco, lo conservo" (que lo resucitaría como fantasma).
+function marcarEliminado(item) {
+  item.eliminado = true;
+  item.eliminadoEn = new Date().toISOString();
+  item.updatedAt = item.eliminadoEn;
+}
+// Fusiona dos colecciones por id: si un id existe en ambos lados, gana el que tenga
+// updatedAt más reciente (incluye tombstones eliminado:true); si un id existe solo en
+// un lado, se conserva — esto es lo que evita perder ítems agregados en el dispositivo
+// que estuvo offline.
+function mergeCollectionById(localArr, remoteArr) {
+  const porId = new Map();
+  (localArr || []).forEach(item => { if (item && item.id !== undefined && item.id !== null) porId.set(item.id, item); });
+  (remoteArr || []).forEach(item => {
+    if (!item || item.id === undefined || item.id === null) return;
+    const local = porId.get(item.id);
+    if (!local) { porId.set(item.id, item); return; }
+    if ((item.updatedAt || '') > (local.updatedAt || '')) porId.set(item.id, item);
+  });
+  return Array.from(porId.values());
+}
+asegurarIdsYTimestamps(state.tareas, 'tarea');
+asegurarIdsYTimestamps(state.metas, 'meta');
 if (!state.escudoUsado) state.escudoUsado = '';
 if (!state.hitosVistos) state.hitosVistos = [];
 if (state.portadaImagen === undefined) state.portadaImagen = null;
@@ -4311,7 +4359,7 @@ function renderInicio() {
     }).join('') + `</div>`;
 
   // En curso
-  const enCurso = state.tareas.filter(t => t.estado === 'en_curso');
+  const enCurso = activos(state.tareas).filter(t => t.estado === 'en_curso');
   const enCursoEl = document.getElementById('inicioEnCurso');
   if (!enCurso.length) {
     enCursoEl.innerHTML = '<p class="inicio-en-curso-empty">Sin tareas en curso por ahora.</p>';
@@ -4335,7 +4383,7 @@ function renderInicio() {
 // ── RENDER METAS ──
 function renderMetas() {
   const container = document.getElementById('metas-list');
-  if (!state.metas.length) {
+  if (!contarActivos(state.metas)) {
     container.innerHTML = `
       <div class="empty">
         <div class="empty-icon">🎯</div>
@@ -4345,7 +4393,10 @@ function renderMetas() {
     return;
   }
 
+  // Se mapea el array completo (no el filtrado) para que mi siga siendo el índice
+  // real en state.metas — de eso dependen openMetaModal/deleteMeta/toggleStep.
   container.innerHTML = state.metas.map((m, mi) => {
+    if (m.eliminado) return '';
     const totalSteps = m.steps.length;
     const doneSteps = m.steps.filter(s => s.done).length;
     const pct = totalSteps ? Math.round((doneSteps / totalSteps) * 100) : 0;
@@ -4393,14 +4444,16 @@ function renderMetas() {
 }
 
 function toggleStep(metaIdx, stepIdx) {
-  state.metas[metaIdx].steps[stepIdx].done = !state.metas[metaIdx].steps[stepIdx].done;
+  const meta = state.metas[metaIdx];
+  meta.steps[stepIdx].done = !meta.steps[stepIdx].done;
+  meta.updatedAt = new Date().toISOString();
   saveState();
   renderMetas();
 }
 
 function deleteMeta(idx) {
   if (confirm('¿Eliminar esta meta?')) {
-    state.metas.splice(idx, 1);
+    marcarEliminado(state.metas[idx]);
     saveState();
     renderMetas();
   }
@@ -4460,9 +4513,9 @@ function saveMeta() {
       text: s.text,
       done: (original.steps[i] && original.steps[i].text === s.text) ? original.steps[i].done : false
     }));
-    state.metas[editingMetaIdx] = { ...original, titulo, razon, fecha, steps: mergedSteps };
+    state.metas[editingMetaIdx] = { ...original, titulo, razon, fecha, steps: mergedSteps, updatedAt: new Date().toISOString() };
   } else {
-    state.metas.push({ titulo, razon, fecha, steps, creado: new Date().toISOString() });
+    state.metas.push({ id: _uid('meta'), titulo, razon, fecha, steps, creado: new Date().toISOString(), updatedAt: new Date().toISOString() });
   }
   saveState();
   closeMetaModal();
@@ -4833,7 +4886,7 @@ function addTarea() {
   const input = document.getElementById('tarea-input');
   const texto = input.value.trim();
   if (!texto) return;
-  state.tareas.push({ id: Date.now(), texto, etiquetaId: selectedTag, estado: 'sin_empezar' });
+  state.tareas.push({ id: _uid('tarea'), texto, etiquetaId: selectedTag, estado: 'sin_empezar', updatedAt: new Date().toISOString() });
   saveState();
   input.value = '';
   renderTareas();
@@ -4847,13 +4900,15 @@ function toggleTarea(id) {
   if (!t) return;
   t.estado = ESTADO_CYCLE[t.estado] || 'en_curso';
   t.completada = t.estado === 'completada'; // backwards compat
+  t.updatedAt = new Date().toISOString();
   saveState();
   renderTareas();
   if (document.getElementById('sec-tareas').classList.contains('active')) renderTareasLista();
 }
 
 function deleteTarea(id) {
-  state.tareas = state.tareas.filter(t => t.id !== id);
+  const t = state.tareas.find(t => t.id === id);
+  if (t) marcarEliminado(t);
   saveState();
   renderTareas();
   if (document.getElementById('sec-tareas').classList.contains('active')) renderTareasLista();
@@ -4866,9 +4921,10 @@ function toggleCompletadas() {
 }
 
 function renderTareas() {
-  const enCurso    = state.tareas.filter(t => t.estado === 'en_curso');
-  const sinEmpezar = state.tareas.filter(t => !t.estado || t.estado === 'sin_empezar');
-  const completadas = state.tareas.filter(t => t.estado === 'completada');
+  const tareasActivas = activos(state.tareas);
+  const enCurso    = tareasActivas.filter(t => t.estado === 'en_curso');
+  const sinEmpezar = tareasActivas.filter(t => !t.estado || t.estado === 'sin_empezar');
+  const completadas = tareasActivas.filter(t => t.estado === 'completada');
   const pendientesCnt = enCurso.length + sinEmpezar.length;
 
   document.getElementById('panelSubtitle').textContent =
@@ -4901,7 +4957,7 @@ function renderTareas() {
   }
 
   let html = '';
-  if (!state.tareas.length) {
+  if (!tareasActivas.length) {
     html = `<div class="empty" style="padding:32px 0">
               <div class="empty-icon">✅</div>
               <h3>Sin tareas</h3>
@@ -5058,7 +5114,7 @@ function addTareaPage() {
   const input = document.getElementById('tarea-page-input');
   const texto = input.value.trim();
   if (!texto) return;
-  state.tareas.push({ id: Date.now(), texto, etiquetaId: selectedTagPage, estado: 'sin_empezar' });
+  state.tareas.push({ id: _uid('tarea'), texto, etiquetaId: selectedTagPage, estado: 'sin_empezar', updatedAt: new Date().toISOString() });
   saveState();
   input.value = '';
   renderTareasLista();
@@ -5070,13 +5126,15 @@ function toggleTareaPage(id) {
   if (!t) return;
   t.estado = ESTADO_CYCLE[t.estado] || 'en_curso';
   t.completada = t.estado === 'completada';
+  t.updatedAt = new Date().toISOString();
   saveState();
   renderTareasLista();
   renderTareas();
 }
 
 function deleteTareaPage(id) {
-  state.tareas = state.tareas.filter(t => t.id !== id);
+  const t = state.tareas.find(t => t.id === id);
+  if (t) marcarEliminado(t);
   saveState();
   renderTareasLista();
   renderTareas();
@@ -5088,16 +5146,17 @@ function togglePageCompletadas() {
 }
 
 function renderTareasLista() {
-  const total        = state.tareas.length;
-  const enCursoAll   = state.tareas.filter(t => t.estado === 'en_curso');
-  const sinEmpAll    = state.tareas.filter(t => !t.estado || t.estado === 'sin_empezar');
-  const compAll      = state.tareas.filter(t => t.estado === 'completada');
+  const tareasActivasLista = activos(state.tareas);
+  const total        = tareasActivasLista.length;
+  const enCursoAll   = tareasActivasLista.filter(t => t.estado === 'en_curso');
+  const sinEmpAll    = tareasActivasLista.filter(t => !t.estado || t.estado === 'sin_empezar');
+  const compAll      = tareasActivasLista.filter(t => t.estado === 'completada');
 
   const sub = document.getElementById('tareas-page-subtitle');
   if (sub) sub.textContent =
     `${sinEmpAll.length} sin empezar · ${enCursoAll.length} en curso · ${compAll.length} completadas`;
 
-  const filtered = state.tareas.filter(t => {
+  const filtered = tareasActivasLista.filter(t => {
     const mE = filtroEtiqueta === 'todas' || t.etiquetaId === filtroEtiqueta;
     const mS = filtroEstado   === 'todas' || t.estado === filtroEstado ||
                (!t.estado && filtroEstado === 'sin_empezar');
@@ -5194,6 +5253,7 @@ function editarTarea(id, origen) {
     finalizado = true;
     if (guardar && input.value.trim()) {
       tarea.texto = input.value.trim();
+      tarea.updatedAt = new Date().toISOString();
       saveState();
     }
     renderTareas();
@@ -5237,6 +5297,7 @@ function cambiarEtiquetaTarea(id, etiquetaId) {
   const t = state.tareas.find(t => t.id === id);
   if (!t) return;
   t.etiquetaId = etiquetaId;
+  t.updatedAt = new Date().toISOString();
   saveState();
   cerrarDropdownEtiqueta();
   renderTareas();
@@ -5412,6 +5473,8 @@ function importarBackup(e) {
       if (parsed.app === 'Pulso Financiero' && Array.isArray(parsed.transactions)) {
         // Export suelto del prototipo standalone de Pulso Financiero
         pf_data = { transactions: parsed.transactions || [], fixedPayments: parsed.fixedPayments || [] };
+        asegurarIdsYTimestamps(pf_data.transactions, 'tx');
+        asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
         pf_persist();
         pf_render();
         msg.style.color = '#2E9B6B';
@@ -5420,11 +5483,15 @@ function importarBackup(e) {
         if (!parsed.metas || !parsed.habitos || !parsed.habitoChecks) throw new Error('invalid');
         if (parsed.pulsoFinanciero) {
           pf_data = { transactions: parsed.pulsoFinanciero.transactions || [], fixedPayments: parsed.pulsoFinanciero.fixedPayments || [] };
+          asegurarIdsYTimestamps(pf_data.transactions, 'tx');
+          asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
           pf_persist();
           pf_render();
         }
         delete parsed.pulsoFinanciero;
         Object.assign(state, parsed);
+        asegurarIdsYTimestamps(state.tareas, 'tarea');
+        asegurarIdsYTimestamps(state.metas, 'meta');
         saveState();
         renderInicio();
         renderHoy();
@@ -5501,7 +5568,7 @@ function pf_dueDateThisMonth(dueDay, date) {
 
 function pf_fixedStatus(fp, date) {
   const dueStr = pf_dueDateThisMonth(fp.dueDay, date);
-  const paidTx = pf_data.transactions.find(t => t.fixedPaymentId === fp.id && pf_sameMonth(t.date, date));
+  const paidTx = pf_data.transactions.find(t => !t.eliminado && t.fixedPaymentId === fp.id && pf_sameMonth(t.date, date));
   if (paidTx) return { status: 'paid', dueStr };
   const now = new Date();
   const isCurrentMonth = date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
@@ -5519,7 +5586,7 @@ function pf_fixedOverdueMonths(fp, currentDate) {
   const cm = currentDate.getMonth();
   while (y < cy || (y === cy && m < cm)) {
     const monthDate = new Date(y, m, 1);
-    const paidTx = pf_data.transactions.find(t => t.fixedPaymentId === fp.id && pf_sameMonth(t.date, monthDate));
+    const paidTx = pf_data.transactions.find(t => !t.eliminado && t.fixedPaymentId === fp.id && pf_sameMonth(t.date, monthDate));
     if (!paidTx) {
       overdue.push({ year: y, month: m, label: `${PF_MESES_ABR[m]} ${y}`, amount: fp.amount });
     }
@@ -5530,7 +5597,7 @@ function pf_fixedOverdueMonths(fp, currentDate) {
 }
 
 function pf_totalOverdueAllFixed(currentDate) {
-  return pf_data.fixedPayments.reduce((sum, fp) => {
+  return activos(pf_data.fixedPayments).reduce((sum, fp) => {
     const months = pf_fixedOverdueMonths(fp, currentDate);
     return sum + months.reduce((s, om) => s + om.amount, 0);
   }, 0);
@@ -5539,6 +5606,7 @@ function pf_totalOverdueAllFixed(currentDate) {
 function pf_monthTx(date) {
   const y = date.getFullYear(), m = date.getMonth();
   return pf_data.transactions.filter(t => {
+    if (t.eliminado) return false;
     const d = new Date(t.date + 'T00:00:00');
     return d.getFullYear() === y && d.getMonth() === m;
   });
@@ -5554,7 +5622,7 @@ function pf_monthStats(txs) {
 
 function pf_pendingCardTx() {
   return pf_data.transactions
-    .filter(t => t.type === 'gasto' && t.method === 'Tarjeta de crédito' && !t.paid)
+    .filter(t => !t.eliminado && t.type === 'gasto' && t.method === 'Tarjeta de crédito' && !t.paid)
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 function pf_pendingCardDebt() {
@@ -5727,7 +5795,7 @@ function pf_renderMonth() {
 }
 
 function pf_renderFixedPanel() {
-  const list = pf_data.fixedPayments.slice().sort((a, b) => a.dueDay - b.dueDay);
+  const list = activos(pf_data.fixedPayments).sort((a, b) => a.dueDay - b.dueDay);
   const totalPending = list.reduce((s, fp) => {
     const st = pf_fixedStatus(fp, pf_cursor);
     return st.status !== 'paid' ? s + fp.amount : s;
@@ -5824,6 +5892,7 @@ function pf_renderYear() {
   const year = pf_cursor.getFullYear();
   const monthly = PF_MESES_ABR.map((_, m) => {
     const txs = pf_data.transactions.filter(t => {
+      if (t.eliminado) return false;
       const d = new Date(t.date + 'T00:00:00');
       return d.getFullYear() === year && d.getMonth() === m;
     });
@@ -5957,7 +6026,7 @@ function pf_addFixedPayment() {
     setTimeout(() => nameEl.style.borderColor = '', 1200);
     return;
   }
-  pf_data.fixedPayments.push({ id: pf_uid(), name, amount, dueDay, method, category, createdAt: new Date().toISOString() });
+  pf_data.fixedPayments.push({ id: pf_uid(), name, amount, dueDay, method, category, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
   pf_persist();
   pf_render();
 }
@@ -5969,7 +6038,8 @@ function pf_markFixedPaid(id) {
   const isTarjeta = fp.method === 'Tarjeta de crédito';
   pf_data.transactions.push({
     id: pf_uid(), type: 'gasto', amount: fp.amount, date: dueStr, category: fp.category,
-    note: fp.name, method: fp.method, paid: isTarjeta ? false : true, fixedPaymentId: fp.id
+    note: fp.name, method: fp.method, paid: isTarjeta ? false : true, fixedPaymentId: fp.id,
+    updatedAt: new Date().toISOString()
   });
   pf_persist();
   pf_render();
@@ -5987,7 +6057,8 @@ function pf_markFixedPaidAll(id) {
   pf_data.transactions.push({
     id: pf_uid(), type: 'gasto', amount: totalAmount, date: dueStr, category: fp.category,
     note: `${fp.name} (incluye atrasado: ${arrearLabels})`,
-    method: fp.method, paid: isTarjeta ? false : true, fixedPaymentId: fp.id
+    method: fp.method, paid: isTarjeta ? false : true, fixedPaymentId: fp.id,
+    updatedAt: new Date().toISOString()
   });
   overdueMonths.forEach(om => {
     const monthDate = new Date(om.year, om.month, 1);
@@ -5995,46 +6066,51 @@ function pf_markFixedPaidAll(id) {
       id: pf_uid(), type: 'gasto', amount: 0,
       date: pf_dueDateThisMonth(fp.dueDay, monthDate),
       category: fp.category, note: `${fp.name} — saldado en mes posterior`,
-      method: fp.method, paid: true, fixedPaymentId: fp.id, settledByArrears: true
+      method: fp.method, paid: true, fixedPaymentId: fp.id, settledByArrears: true,
+      updatedAt: new Date().toISOString()
     });
   });
   pf_persist();
   pf_render();
 }
 
+// Revertir "pagado" no saca la transacción del array (eso la resucitaría vía merge por
+// id cuando el otro dispositivo todavía la tenga) — la marca eliminado:true, igual que
+// un borrado explícito.
 function pf_unmarkFixedPaid(id) {
-  const currentMonthTxs = pf_data.transactions.filter(t => t.fixedPaymentId === id && pf_sameMonth(t.date, pf_cursor));
+  const currentMonthTxs = pf_data.transactions.filter(t => !t.eliminado && t.fixedPaymentId === id && pf_sameMonth(t.date, pf_cursor));
   const hasAccumulated = currentMonthTxs.some(t => t.note && t.note.includes('incluye atrasado'));
-  if (hasAccumulated) {
-    pf_data.transactions = pf_data.transactions.filter(t => {
-      if (t.fixedPaymentId !== id) return true;
-      if (pf_sameMonth(t.date, pf_cursor)) return false;
-      if (t.settledByArrears) return false;
-      return true;
-    });
-  } else {
-    pf_data.transactions = pf_data.transactions.filter(t => !(t.fixedPaymentId === id && pf_sameMonth(t.date, pf_cursor)));
-  }
+  pf_data.transactions.forEach(t => {
+    if (t.eliminado || t.fixedPaymentId !== id) return;
+    const debeBorrarse = hasAccumulated
+      ? (pf_sameMonth(t.date, pf_cursor) || t.settledByArrears)
+      : pf_sameMonth(t.date, pf_cursor);
+    if (debeBorrarse) marcarEliminado(t);
+  });
   pf_persist();
   pf_render();
 }
 
 function pf_deleteFixedPayment(id) {
-  pf_data.fixedPayments = pf_data.fixedPayments.filter(f => f.id !== id);
+  const fp = pf_data.fixedPayments.find(f => f.id === id);
+  if (fp) marcarEliminado(fp);
   pf_persist();
   pf_render();
 }
 
 function pf_payCard(id) {
   const t = pf_data.transactions.find(t => t.id === id);
-  if (t) t.paid = true;
+  if (t) { t.paid = true; t.updatedAt = new Date().toISOString(); }
   pf_persist();
   pf_render();
 }
 
 function pf_payAllCards() {
   pf_data.transactions.forEach(t => {
-    if (t.type === 'gasto' && t.method === 'Tarjeta de crédito') t.paid = true;
+    if (!t.eliminado && t.type === 'gasto' && t.method === 'Tarjeta de crédito') {
+      t.paid = true;
+      t.updatedAt = new Date().toISOString();
+    }
   });
   pf_persist();
   pf_render();
@@ -6056,14 +6132,15 @@ function pf_addTransaction() {
   }
   pf_data.transactions.push({
     id: pf_uid(), type: pf_formType, amount, date, category, note,
-    method, paid: isTarjeta ? false : true
+    method, paid: isTarjeta ? false : true, updatedAt: new Date().toISOString()
   });
   pf_persist();
   pf_render();
 }
 
 function pf_deleteTransaction(id) {
-  pf_data.transactions = pf_data.transactions.filter(t => t.id !== id);
+  const t = pf_data.transactions.find(t => t.id === id);
+  if (t) marcarEliminado(t);
   pf_persist();
   pf_render();
 }
@@ -6177,7 +6254,8 @@ function pf_quickGuardar() {
     // method/paid en el mismo formato que usa el resto de Finanzas (pendingCardTx, badges)
     // para que un gasto a crédito realmente sume a la "Deuda tarjeta".
     method: pf_quickTipo === 'gasto' ? (esCredito ? 'Tarjeta de crédito' : 'Efectivo / Débito') : null,
-    paid: esCredito ? false : true
+    paid: esCredito ? false : true,
+    updatedAt: new Date().toISOString()
   };
   pf_data.transactions.push(tx);
   pf_persist();
@@ -6206,6 +6284,8 @@ function pf_quickGuardar() {
 }
 
 pf_loadData();
+asegurarIdsYTimestamps(pf_data.transactions, 'tx');
+asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
 
 // ── WEATHER ──
 let weatherState = null;
@@ -7097,7 +7177,7 @@ function renderAfirmacionesList() {
 }
 
 function _generarSugerencias() {
-  return state.metas.slice(0, 5).map(m => {
+  return activos(state.metas).slice(0, 5).map(m => {
     const t = m.titulo || '';
     let texto = `Tengo la disciplina y el enfoque para lograr: ${t}`;
     if (/diseñ|creativ|freelanc/i.test(t))              texto = 'Soy un creativo reconocido que atrae clientes de calidad';
@@ -7374,7 +7454,7 @@ function getRanaHoy() {
     saveState();
     return null;
   }
-  return state.tareas.find(t => t.id === r.tareaId) || null;
+  return state.tareas.find(t => t.id === r.tareaId && !t.eliminado) || null;
 }
 
 function toggleRana(id) {
@@ -7396,6 +7476,7 @@ function completarRana() {
   if (!rana) return;
   rana.estado = 'completada';
   rana.completada = true;
+  rana.updatedAt = new Date().toISOString();
   saveState();
   renderRanaDelDia();
   renderTareas();
@@ -7470,7 +7551,24 @@ function setSyncStatus(s) {
     s === 'syncing' ? '🔄 Sincronizando...' :
     s === 'blocked' ? '⚠️ Guardado pausado' :
     s === 'error'   ? '🔴 Sin conexión' : '✅ Sincronizado';
+  if (s === 'ok') window._ultimaSyncTs = Date.now();
+  renderUltimaSync();
 }
+
+// Texto "Última sincronización: hace X" junto al status, dentro del dropdown del avatar.
+function renderUltimaSync() {
+  const el = document.getElementById('authDropdownLastSync');
+  if (!el) return;
+  if (!window._ultimaSyncTs) { el.textContent = ''; return; }
+  const segs = Math.round((Date.now() - window._ultimaSyncTs) / 1000);
+  let txt;
+  if (segs < 10) txt = 'Última sincronización: justo ahora';
+  else if (segs < 60) txt = `Última sincronización: hace ${segs}s`;
+  else if (segs < 3600) txt = `Última sincronización: hace ${Math.round(segs / 60)} min`;
+  else txt = `Última sincronización: hace ${Math.round(segs / 3600)} h`;
+  el.textContent = txt;
+}
+setInterval(renderUltimaSync, 30000);
 
 function mostrarAvisoVaciadoSospechoso(ultimo) {
   const toast = document.getElementById('vaciadoToast');
@@ -7491,33 +7589,65 @@ async function saveToFirestore() {
     return;
   }
 
-  // Guarda de sanidad: no pises datos remotos reales con un estado vacío.
-  const habitosCount = (state.habitos || []).length;
-  const tareasCount  = (state.tareas  || []).length;
-  const metasCount   = (state.metas   || []).length;
-  const ultimo = window.lastKnownCounts || { habitos: 0, tareas: 0, metas: 0 };
-  const pareceVaciado = habitosCount === 0 && tareasCount === 0 && metasCount === 0 &&
-    (ultimo.habitos > 0 || ultimo.tareas > 0 || ultimo.metas > 0);
-
-  if (pareceVaciado && !_vaciadoYaAvisado) {
-    _vaciadoYaAvisado = true;
-    console.warn(
-      `⚠️ Guardado automático pausado: el estado local no tiene hábitos, tareas ni metas, ` +
-      `pero el último snapshot remoto conocido tenía ${ultimo.habitos} hábito(s), ${ultimo.tareas} tarea(s) ` +
-      `y ${ultimo.metas} meta(s). Si esto es intencional, el próximo guardado sí se va a aplicar.`
-    );
-    mostrarAvisoVaciadoSospechoso(ultimo);
-    setSyncStatus('blocked');
-    return;
-  }
-
   console.log('Guardando en Firestore para usuario:', window.currentUser?.uid);
   setSyncStatus('syncing');
   try {
-    const { doc, setDoc } = window.firebaseFns;
+    const { doc, getDoc, setDoc } = window.firebaseFns;
+    const docRef = doc(window.firebaseDb, 'usuarios', window.currentUser.uid);
+
+    // Traer el remoto actual y fusionar por id ANTES de escribir. Así, aunque este
+    // guardado dispare justo al reabrir la app (antes de que termine de asentarse el
+    // primer snapshot en la práctica, o en la ventana entre reactivación y el próximo
+    // onSnapshot), nunca pisa ítems que el otro dispositivo haya agregado mientras
+    // este estaba offline/cerrado — el merge es aditivo, nunca destructivo.
+    let remoteState = null, remotePf = null;
+    try {
+      const remoteSnap = await getDoc(docRef);
+      if (remoteSnap.exists()) {
+        const remoteData = remoteSnap.data();
+        remoteState = JSON.parse(remoteData.state);
+        remotePf    = remoteData.pulsoData ? JSON.parse(remoteData.pulsoData) : { transactions: [], fixedPayments: [] };
+      }
+    } catch (e) {
+      console.warn('No se pudo leer el remoto antes de guardar — se guarda el estado local tal cual:', e);
+    }
+    if (remoteState) {
+      state.tareas = mergeCollectionById(state.tareas, remoteState.tareas);
+      state.metas  = mergeCollectionById(state.metas, remoteState.metas);
+    }
+    if (remotePf) {
+      pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
+      pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(PF_STORAGE_KEY, JSON.stringify(pf_data));
+
+    // Guarda de sanidad: no pises datos remotos reales con un estado vacío. Hábitos
+    // quedan fuera del merge por id (ver nota junto a mergeCollectionById), así que acá
+    // siguen siendo el chequeo más importante; tareas/metas ya vienen fusionadas arriba,
+    // así que solo cuentan los activos (no tombstones) como señal real de "hay datos".
+    const habitosCount = (state.habitos || []).length;
+    const tareasCount  = contarActivos(state.tareas);
+    const metasCount   = contarActivos(state.metas);
+    const ultimo = window.lastKnownCounts || { habitos: 0, tareas: 0, metas: 0 };
+    const pareceVaciado = habitosCount === 0 && tareasCount === 0 && metasCount === 0 &&
+      (ultimo.habitos > 0 || ultimo.tareas > 0 || ultimo.metas > 0);
+
+    if (pareceVaciado && !_vaciadoYaAvisado) {
+      _vaciadoYaAvisado = true;
+      console.warn(
+        `⚠️ Guardado automático pausado: el estado local no tiene hábitos, tareas ni metas, ` +
+        `pero el último snapshot remoto conocido tenía ${ultimo.habitos} hábito(s), ${ultimo.tareas} tarea(s) ` +
+        `y ${ultimo.metas} meta(s). Si esto es intencional, el próximo guardado sí se va a aplicar.`
+      );
+      mostrarAvisoVaciadoSospechoso(ultimo);
+      setSyncStatus('blocked');
+      return;
+    }
+
     const updatedAt = new Date().toISOString();
     const payload = { state: JSON.stringify(state), pulsoData: JSON.stringify(pf_data), updatedAt };
-    await setDoc(doc(window.firebaseDb, 'usuarios', window.currentUser.uid), payload);
+    await setDoc(docRef, payload);
     localStorage.setItem(STORAGE_KEY + '_ts', updatedAt);
     _vaciadoYaAvisado = false;
     setSyncStatus('ok');
@@ -7565,8 +7695,8 @@ async function listarBackups() {
       id: d.id,
       updatedAt: data.updatedAt,
       habitos: (st.habitos || []).length,
-      tareas: (st.tareas || []).length,
-      metas: (st.metas || []).length
+      tareas: contarActivos(st.tareas),
+      metas: contarActivos(st.metas)
     };
   });
   console.table(lista);
@@ -7586,10 +7716,14 @@ async function restaurarBackup(backupId) {
   }
   const remoteState = JSON.parse(data.state);
   state = Object.assign(state, remoteState);
+  asegurarIdsYTimestamps(state.tareas, 'tarea');
+  asegurarIdsYTimestamps(state.metas, 'meta');
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   localStorage.setItem(STORAGE_KEY + '_ts', data.updatedAt);
   if (data.pulsoData) {
     pf_data = JSON.parse(data.pulsoData);
+    asegurarIdsYTimestamps(pf_data.transactions, 'tx');
+    asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
     localStorage.setItem(PF_STORAGE_KEY, data.pulsoData);
   }
   renderAll();
@@ -7617,24 +7751,37 @@ function attachFirestoreListener(uid) {
       if (snap.metadata.hasPendingWrites) return;
       const data = snap.data();
       const remoteState = JSON.parse(data.state);
-      window.lastKnownCounts = {
-        habitos: (remoteState.habitos || []).length,
-        tareas: (remoteState.tareas || []).length,
-        metas: (remoteState.metas || []).length
-      };
+      const remotePf = data.pulsoData ? JSON.parse(data.pulsoData) : { transactions: [], fixedPayments: [] };
+
+      // Merge por id de tareas/metas/transacciones/pagos fijos — SIEMPRE, sin importar
+      // si este snapshot remoto es "más nuevo" que el local a nivel de documento. Un
+      // merge por id nunca puede perder datos (solo agrega o actualiza por ítem), así
+      // que aplicarlo incondicionalmente es lo que evita la pérdida cuando este
+      // dispositivo estuvo cerrado y el otro agregó algo mientras tanto.
+      // Hábitos/habitoChecks quedan fuera (ver nota junto a mergeCollectionById).
+      state.tareas = mergeCollectionById(state.tareas, remoteState.tareas);
+      state.metas  = mergeCollectionById(state.metas, remoteState.metas);
+      pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
+      pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
+
       const localTs  = localStorage.getItem(STORAGE_KEY + '_ts') || '0';
       const remoteTs = data.updatedAt || '0';
       if (remoteTs > localTs) {
-        state = Object.assign(state, remoteState);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        localStorage.setItem(STORAGE_KEY + '_ts', remoteTs);
-        if (data.pulsoData) {
-          pf_data = JSON.parse(data.pulsoData);
-          localStorage.setItem(PF_STORAGE_KEY, data.pulsoData);
-        }
-        renderAll();
-        console.log('Estado actualizado desde Firestore (otro dispositivo)');
+        // Hábitos y el resto de campos del documento (no cubiertos por el merge por id):
+        // sigue el criterio de siempre, "el documento más nuevo pisa entero".
+        const { tareas, metas, ...restoRemoto } = remoteState;
+        Object.assign(state, restoRemoto);
       }
+      window.lastKnownCounts = {
+        habitos: (state.habitos || []).length,
+        tareas: contarActivos(state.tareas),
+        metas: contarActivos(state.metas)
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(PF_STORAGE_KEY, JSON.stringify(pf_data));
+      localStorage.setItem(STORAGE_KEY + '_ts', remoteTs > localTs ? remoteTs : localTs);
+      renderAll();
+      console.log('Estado sincronizado desde Firestore (merge por id + hábitos si corresponde)');
       setSyncStatus('ok');
     },
     (error) => {
@@ -7730,6 +7877,49 @@ function _initAuthListener() {
   });
 }
 
+// Safari en iPhone puede suspender el JS de la PWA en background; onSnapshot solo no
+// garantiza traer lo último apenas se reabre. Al volver a primer plano, forzamos una
+// lectura puntual con getDoc() y la fusionamos por id contra el estado local — misma
+// lógica que saveToFirestore, para no perder lo que se agregó en el otro dispositivo
+// mientras este estaba en background.
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState !== 'visible') return;
+  if (!window.currentUser || !window.firebaseFns || !window.firstSyncDone) return;
+  try {
+    const { doc, getDoc } = window.firebaseFns;
+    const snap = await getDoc(doc(window.firebaseDb, 'usuarios', window.currentUser.uid));
+    if (!snap.exists()) return;
+    const data = snap.data();
+    const remoteState = JSON.parse(data.state);
+    const remotePf = data.pulsoData ? JSON.parse(data.pulsoData) : { transactions: [], fixedPayments: [] };
+
+    state.tareas = mergeCollectionById(state.tareas, remoteState.tareas);
+    state.metas  = mergeCollectionById(state.metas, remoteState.metas);
+    pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
+    pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
+
+    const localTs  = localStorage.getItem(STORAGE_KEY + '_ts') || '0';
+    const remoteTs = data.updatedAt || '0';
+    if (remoteTs > localTs) {
+      const { tareas, metas, ...restoRemoto } = remoteState;
+      Object.assign(state, restoRemoto);
+    }
+    window.lastKnownCounts = {
+      habitos: (state.habitos || []).length,
+      tareas: contarActivos(state.tareas),
+      metas: contarActivos(state.metas)
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(PF_STORAGE_KEY, JSON.stringify(pf_data));
+    localStorage.setItem(STORAGE_KEY + '_ts', remoteTs > localTs ? remoteTs : localTs);
+    renderAll();
+    setSyncStatus('ok');
+    console.log('Resincronizado tras volver a primer plano.');
+  } catch (e) {
+    console.error('Error al resincronizar tras visibilitychange:', e);
+  }
+});
+
 function _showAuthBtn() {
   if (window.currentUser) return;
   const btn = document.getElementById('authLoginBtn');
@@ -7804,7 +7994,8 @@ function obAgregarMeta() {
   const nombre = document.getElementById('obMetaInput').value.trim();
   const fecha = document.getElementById('obMetaFecha').value;
   if (!nombre) return;
-  state.metas.push({ titulo: nombre, razon: '', fecha, steps: [], creado: new Date().toISOString() });
+  const ahora = new Date().toISOString();
+  state.metas.push({ id: _uid('meta'), titulo: nombre, razon: '', fecha, steps: [], creado: ahora, updatedAt: ahora });
   saveState();
   document.getElementById('obMetaInput').value = '';
   document.getElementById('obMetaConfirm').style.display = 'block';
