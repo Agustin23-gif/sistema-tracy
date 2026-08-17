@@ -3299,9 +3299,9 @@
   </div>
 </header>
 
-<!-- ══ AVISO DE VACIADO SOSPECHOSO (guardado automático pausado) ══ -->
+<!-- ══ AVISO DE VACIADO SOSPECHOSO (guardado automático pausado, o protección al sincronizar) ══ -->
 <div class="vaciado-toast" id="vaciadoToast">
-  <strong>⚠️ Guardado automático pausado</strong>
+  <strong id="vaciadoToastTitulo">⚠️ Guardado automático pausado</strong>
   <p id="vaciadoToastMsg"></p>
   <button onclick="document.getElementById('vaciadoToast').classList.remove('show')">Entendido</button>
 </div>
@@ -3943,10 +3943,16 @@ function _uid(prefix) {
   return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
 }
 // Agrega id/updatedAt a los ítems que no los tengan, sin tocar los que ya los tienen.
+// Además normaliza el id a string siempre: los ítems creados antes de la migración a
+// merge-por-id tenían id numérico (Date.now()), y esa mezcla de tipos rompe cualquier
+// comparación === contra un id que llega como string (ej. desde un atributo onclick o
+// un dataset del DOM). Convertir acá, en el único lugar por el que pasan todas las
+// colecciones al cargar el estado, evita tener que tocar cada comparación una por una.
 function asegurarIdsYTimestamps(arr, prefix) {
   const now = new Date().toISOString();
   (arr || []).forEach(item => {
     if (item.id === undefined || item.id === null) item.id = _uid(prefix);
+    item.id = String(item.id);
     if (!item.updatedAt) item.updatedAt = item.creado || item.createdAt || now;
   });
 }
@@ -3960,6 +3966,14 @@ function marcarEliminado(item) {
   item.eliminado = true;
   item.eliminadoEn = new Date().toISOString();
   item.updatedAt = item.eliminadoEn;
+}
+// Normaliza a string los ids de una colección que llega tal cual desde Firestore (sin
+// pasar por asegurarIdsYTimestamps). Necesario antes de mergeCollectionById: si el
+// remoto todavía tiene ids numéricos viejos (documento escrito por un dispositivo con
+// una versión anterior) y el local ya los normalizó a string, las claves del Map no
+// coinciden y el merge trata al mismo ítem como si fueran dos distintos.
+function normalizarIdsRemoto(arr) {
+  (arr || []).forEach(item => { if (item && item.id !== undefined && item.id !== null) item.id = String(item.id); });
 }
 // Fusiona dos colecciones por id: si un id existe en ambos lados, gana el que tenga
 // updatedAt más reciente (incluye tombstones eliminado:true); si un id existe solo en
@@ -7570,12 +7584,21 @@ function renderUltimaSync() {
 }
 setInterval(renderUltimaSync, 30000);
 
-function mostrarAvisoVaciadoSospechoso(ultimo) {
-  const toast = document.getElementById('vaciadoToast');
-  const msg   = document.getElementById('vaciadoToastMsg');
+// motivo: lista de nombres de colecciones que se detectaron vacías (ej. "hábitos") —
+// puede ser una sola, ya que ahora la guarda evalúa cada colección por separado.
+// accion: qué se hizo al respecto (varía entre la guarda de escritura y la de lectura).
+// titulo: encabezado del toast (por defecto el de la guarda de escritura, para no
+// cambiar el comportamiento existente cuando se llama sin este parámetro).
+function mostrarAvisoVaciadoSospechoso(ultimo, motivo, accion, titulo) {
+  const toast   = document.getElementById('vaciadoToast');
+  const msg     = document.getElementById('vaciadoToastMsg');
+  const tituloEl = document.getElementById('vaciadoToastTitulo');
   if (!toast) return;
+  const detalle   = motivo || 'hábitos, tareas ni metas';
+  const accionTxt = accion || 'El guardado automático de este cambio se pausó.';
+  if (tituloEl) tituloEl.textContent = titulo || '⚠️ Guardado automático pausado';
   if (msg) msg.textContent =
-    `Se detectó un posible vaciado de datos (tu estado actual no tiene hábitos, tareas ni metas, pero el último dato conocido en Firestore tenía ${ultimo.habitos} hábito(s), ${ultimo.tareas} tarea(s) y ${ultimo.metas} meta(s)). El guardado automático de este cambio se pausó. Si esto es intencional, hacé otro cambio para confirmar, o exportá un backup antes de continuar.`;
+    `Se detectó un posible vaciado de datos (tu estado quedó sin ${detalle}, pero el último dato conocido tenía ${ultimo.habitos} hábito(s), ${ultimo.tareas} tarea(s) y ${ultimo.metas} meta(s)). ${accionTxt} Si esto es intencional, hacé otro cambio para confirmar, o exportá un backup antes de continuar.`;
   toast.classList.add('show');
   clearTimeout(window._vaciadoToastTimer);
   window._vaciadoToastTimer = setTimeout(() => toast.classList.remove('show'), 12000);
@@ -7607,6 +7630,10 @@ async function saveToFirestore() {
         const remoteData = remoteSnap.data();
         remoteState = JSON.parse(remoteData.state);
         remotePf    = remoteData.pulsoData ? JSON.parse(remoteData.pulsoData) : { transactions: [], fixedPayments: [] };
+        normalizarIdsRemoto(remoteState.tareas);
+        normalizarIdsRemoto(remoteState.metas);
+        normalizarIdsRemoto(remotePf.transactions);
+        normalizarIdsRemoto(remotePf.fixedPayments);
       }
     } catch (e) {
       console.warn('No se pudo leer el remoto antes de guardar — se guarda el estado local tal cual:', e);
@@ -7626,21 +7653,29 @@ async function saveToFirestore() {
     // quedan fuera del merge por id (ver nota junto a mergeCollectionById), así que acá
     // siguen siendo el chequeo más importante; tareas/metas ya vienen fusionadas arriba,
     // así que solo cuentan los activos (no tombstones) como señal real de "hay datos".
+    // Se evalúa cada colección por separado (no con AND global): si SOLO los hábitos se
+    // vacían pero tareas/metas siguen con datos, la guarda tiene que activarse igual.
     const habitosCount = (state.habitos || []).length;
     const tareasCount  = contarActivos(state.tareas);
     const metasCount   = contarActivos(state.metas);
     const ultimo = window.lastKnownCounts || { habitos: 0, tareas: 0, metas: 0 };
-    const pareceVaciado = habitosCount === 0 && tareasCount === 0 && metasCount === 0 &&
-      (ultimo.habitos > 0 || ultimo.tareas > 0 || ultimo.metas > 0);
+    const habitosSeVaciaron = habitosCount === 0 && ultimo.habitos > 0;
+    const tareasSeVaciaron  = tareasCount === 0 && ultimo.tareas > 0;
+    const metasSeVaciaron   = metasCount === 0 && ultimo.metas > 0;
+    const pareceVaciado = habitosSeVaciaron || tareasSeVaciaron || metasSeVaciaron;
 
     if (pareceVaciado && !_vaciadoYaAvisado) {
       _vaciadoYaAvisado = true;
+      const motivos = [];
+      if (habitosSeVaciaron) motivos.push('hábitos');
+      if (tareasSeVaciaron)  motivos.push('tareas');
+      if (metasSeVaciaron)   motivos.push('metas');
       console.warn(
-        `⚠️ Guardado automático pausado: el estado local no tiene hábitos, tareas ni metas, ` +
+        `⚠️ Guardado automático pausado: el estado local se quedó sin ${motivos.join(', ')}, ` +
         `pero el último snapshot remoto conocido tenía ${ultimo.habitos} hábito(s), ${ultimo.tareas} tarea(s) ` +
         `y ${ultimo.metas} meta(s). Si esto es intencional, el próximo guardado sí se va a aplicar.`
       );
-      mostrarAvisoVaciadoSospechoso(ultimo);
+      mostrarAvisoVaciadoSospechoso(ultimo, motivos.join(', '));
       setSyncStatus('blocked');
       return;
     }
@@ -7752,6 +7787,10 @@ function attachFirestoreListener(uid) {
       const data = snap.data();
       const remoteState = JSON.parse(data.state);
       const remotePf = data.pulsoData ? JSON.parse(data.pulsoData) : { transactions: [], fixedPayments: [] };
+      normalizarIdsRemoto(remoteState.tareas);
+      normalizarIdsRemoto(remoteState.metas);
+      normalizarIdsRemoto(remotePf.transactions);
+      normalizarIdsRemoto(remotePf.fixedPayments);
 
       // Merge por id de tareas/metas/transacciones/pagos fijos — SIEMPRE, sin importar
       // si este snapshot remoto es "más nuevo" que el local a nivel de documento. Un
@@ -7770,6 +7809,28 @@ function attachFirestoreListener(uid) {
         // Hábitos y el resto de campos del documento (no cubiertos por el merge por id):
         // sigue el criterio de siempre, "el documento más nuevo pisa entero".
         const { tareas, metas, ...restoRemoto } = remoteState;
+        // Guarda de sanidad del lado de lectura: si el remoto llega sin hábitos pero acá
+        // hay hábitos con datos, no los pisamos — solo el "documento más nuevo pisa
+        // entero" queda sin proteger para hábitos (no están en el merge por id), así que
+        // esta es la única defensa contra que un vaciado accidental en OTRO dispositivo
+        // se propague acá con solo abrir la app. habitoChecks se conserva junto con
+        // habitos porque el historial de racha está indexado por posición en ese array.
+        const remoteHabitosCount = (restoRemoto.habitos || []).length;
+        const localHabitosCount  = (state.habitos || []).length;
+        if (remoteHabitosCount === 0 && localHabitosCount > 0) {
+          delete restoRemoto.habitos;
+          delete restoRemoto.habitoChecks;
+          console.warn(
+            `⚠️ Sincronización: el snapshot remoto llegó sin hábitos, pero acá hay ${localHabitosCount}. ` +
+            `Se conservan los hábitos locales; se aplica el resto del estado remoto normalmente.`
+          );
+          mostrarAvisoVaciadoSospechoso(
+            { habitos: localHabitosCount, tareas: contarActivos(state.tareas), metas: contarActivos(state.metas) },
+            'hábitos',
+            'El dato remoto llegó sin hábitos y no se aplicó esa parte — se conservaron los tuyos.',
+            '⚠️ Hábitos protegidos al sincronizar'
+          );
+        }
         Object.assign(state, restoRemoto);
       }
       window.lastKnownCounts = {
@@ -7892,6 +7953,10 @@ document.addEventListener('visibilitychange', async () => {
     const data = snap.data();
     const remoteState = JSON.parse(data.state);
     const remotePf = data.pulsoData ? JSON.parse(data.pulsoData) : { transactions: [], fixedPayments: [] };
+    normalizarIdsRemoto(remoteState.tareas);
+    normalizarIdsRemoto(remoteState.metas);
+    normalizarIdsRemoto(remotePf.transactions);
+    normalizarIdsRemoto(remotePf.fixedPayments);
 
     state.tareas = mergeCollectionById(state.tareas, remoteState.tareas);
     state.metas  = mergeCollectionById(state.metas, remoteState.metas);
@@ -7902,6 +7967,25 @@ document.addEventListener('visibilitychange', async () => {
     const remoteTs = data.updatedAt || '0';
     if (remoteTs > localTs) {
       const { tareas, metas, ...restoRemoto } = remoteState;
+      // Misma guarda de sanidad del lado de lectura que en attachFirestoreListener: no
+      // dejar que un remoto sin hábitos pise hábitos locales con datos al volver a
+      // primer plano. habitoChecks se conserva junto con habitos (indexado por posición).
+      const remoteHabitosCount = (restoRemoto.habitos || []).length;
+      const localHabitosCount  = (state.habitos || []).length;
+      if (remoteHabitosCount === 0 && localHabitosCount > 0) {
+        delete restoRemoto.habitos;
+        delete restoRemoto.habitoChecks;
+        console.warn(
+          `⚠️ Resync: el snapshot remoto llegó sin hábitos, pero acá hay ${localHabitosCount}. ` +
+          `Se conservan los hábitos locales; se aplica el resto del estado remoto normalmente.`
+        );
+        mostrarAvisoVaciadoSospechoso(
+          { habitos: localHabitosCount, tareas: contarActivos(state.tareas), metas: contarActivos(state.metas) },
+          'hábitos',
+          'El dato remoto llegó sin hábitos y no se aplicó esa parte — se conservaron los tuyos.',
+          '⚠️ Hábitos protegidos al sincronizar'
+        );
+      }
       Object.assign(state, restoRemoto);
     }
     window.lastKnownCounts = {
