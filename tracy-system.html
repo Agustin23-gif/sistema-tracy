@@ -4023,9 +4023,9 @@ function getEtiqueta(etiquetaId) {
 function tagPillHtml(etiquetaId, taskId) {
   const et = getEtiqueta(etiquetaId);
   if (et) {
-    return `<span class="task-tag" style="background:${et.color}1A;color:${et.color}" onclick="mostrarDropdownEtiqueta(event, ${taskId})">${escHtml(et.nombre)}</span>`;
+    return `<span class="task-tag" style="background:${et.color}1A;color:${et.color}" onclick="mostrarDropdownEtiqueta(event, '${taskId}')">${escHtml(et.nombre)}</span>`;
   }
-  return `<span class="task-tag" style="background:rgba(0,0,0,0.06);color:var(--muted)" onclick="mostrarDropdownEtiqueta(event, ${taskId})">Sin etiqueta</span>`;
+  return `<span class="task-tag" style="background:rgba(0,0,0,0.06);color:var(--muted)" onclick="mostrarDropdownEtiqueta(event, '${taskId}')">Sin etiqueta</span>`;
 }
 
 // Clean today's check key for new day
@@ -4931,9 +4931,9 @@ function renderTareas() {
     `${pendientesCnt} pendiente${pendientesCnt !== 1 ? 's' : ''}`;
 
   function checkHtml(t) {
-    if (t.estado === 'en_curso')   return `<div class="task-check en-curso"  onclick="toggleTarea(${t.id})"></div>`;
-    if (t.estado === 'completada') return `<div class="task-check completada" onclick="toggleTarea(${t.id})"><i data-lucide="check" style="width:12px;height:12px;color:#fff"></i></div>`;
-    return `<div class="task-check" onclick="toggleTarea(${t.id})"></div>`;
+    if (t.estado === 'en_curso')   return `<div class="task-check en-curso"  onclick="toggleTarea('${t.id}')"></div>`;
+    if (t.estado === 'completada') return `<div class="task-check completada" onclick="toggleTarea('${t.id}')"><i data-lucide="check" style="width:12px;height:12px;color:#fff"></i></div>`;
+    return `<div class="task-check" onclick="toggleTarea('${t.id}')"></div>`;
   }
 
   function estadoPill(t) {
@@ -4947,12 +4947,12 @@ function renderTareas() {
     return `
       <div class="task-item${t.estado === 'completada' ? ' done' : ''}${esRana ? ' es-rana' : ''}">
         ${checkHtml(t)}
-        <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana(${t.id})" title="Rana del día">🐸</button>
+        <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana('${t.id}')" title="Rana del día">🐸</button>
         <span class="task-text" id="tarea-texto-${t.id}-panel">${escHtml(t.texto)}</span>
         ${estadoPill(t)}
         ${tagPillHtml(t.etiquetaId, t.id)}
-        <button class="task-del task-edit" onclick="editarTarea(${t.id}, 'panel')"><i data-lucide="pencil"></i></button>
-        <button class="task-del" onclick="deleteTarea(${t.id})">×</button>
+        <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'panel')"><i data-lucide="pencil"></i></button>
+        <button class="task-del" onclick="deleteTarea('${t.id}')">×</button>
       </div>`;
   }
 
@@ -5168,9 +5168,9 @@ function renderTareasLista() {
   const completadas= filtered.filter(t => t.estado === 'completada');
 
   function checkHtml(t) {
-    if (t.estado === 'en_curso')   return `<div class="task-check en-curso"  onclick="toggleTareaPage(${t.id})"></div>`;
-    if (t.estado === 'completada') return `<div class="task-check completada" onclick="toggleTareaPage(${t.id})"><i data-lucide="check" style="width:12px;height:12px;color:#fff"></i></div>`;
-    return `<div class="task-check" onclick="toggleTareaPage(${t.id})"></div>`;
+    if (t.estado === 'en_curso')   return `<div class="task-check en-curso"  onclick="toggleTareaPage('${t.id}')"></div>`;
+    if (t.estado === 'completada') return `<div class="task-check completada" onclick="toggleTareaPage('${t.id}')"><i data-lucide="check" style="width:12px;height:12px;color:#fff"></i></div>`;
+    return `<div class="task-check" onclick="toggleTareaPage('${t.id}')"></div>`;
   }
   function estadoPill(t) {
     if (t.estado === 'en_curso')   return `<span class="estado-pill estado-en-curso">En curso</span>`;
@@ -5182,12 +5182,12 @@ function renderTareasLista() {
     return `
       <div class="task-item tarea-page-item${t.estado === 'completada' ? ' done' : ''}${esRana ? ' es-rana' : ''}">
         ${checkHtml(t)}
-        <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana(${t.id})" title="Rana del día">🐸</button>
+        <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana('${t.id}')" title="Rana del día">🐸</button>
         <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
         ${estadoPill(t)}
         ${tagPillHtml(t.etiquetaId, t.id)}
-        <button class="task-del task-edit" onclick="editarTarea(${t.id}, 'pagina')"><i data-lucide="pencil"></i></button>
-        <button class="task-del" onclick="deleteTareaPage(${t.id})">×</button>
+        <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'pagina')"><i data-lucide="pencil"></i></button>
+        <button class="task-del" onclick="deleteTareaPage('${t.id}')">×</button>
       </div>`;
   }
 
@@ -5283,7 +5283,7 @@ function mostrarDropdownEtiqueta(e, id) {
   dropdown.style.top = (rect.bottom + window.scrollY + 4) + 'px';
   dropdown.style.left = (rect.left + window.scrollX) + 'px';
   dropdown.innerHTML = state.etiquetas.map(et =>
-    `<div class="etiqueta-dropdown-item" style="color:${et.color}" onclick="cambiarEtiquetaTarea(${id}, ${et.id})">${escHtml(et.nombre)}</div>`
+    `<div class="etiqueta-dropdown-item" style="color:${et.color}" onclick="cambiarEtiquetaTarea('${id}', ${et.id})">${escHtml(et.nombre)}</div>`
   ).join('');
   document.body.appendChild(dropdown);
 }
