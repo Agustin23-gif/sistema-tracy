@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sistema-tracy-v3';
+const CACHE_NAME = 'sistema-tracy-v4';
 const urlsToCache = ['./tracy-system.html'];
 
 // Instalar SW y cachear recursos
@@ -19,8 +19,18 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Interceptar fetch para modo offline
+// Interceptar fetch para modo offline — SOLO peticiones GET del propio origin (la app y
+// sus assets estáticos). Todo lo demás se deja pasar sin tocar: en particular, las
+// conexiones streaming/long-polling que Firestore abre hacia firestore.googleapis.com
+// (y el resto de dominios de Firebase/Google) para sincronización en tiempo real
+// (onSnapshot) no toleran que el Service Worker se interponga con caches.match()/fetch()
+// — eso producía "FetchEvent.respondWith received an error: Load failed" de forma
+// intermitente y cortaba la sincronización.
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
     caches.match(event.request).then(response => response || fetch(event.request))
   );
