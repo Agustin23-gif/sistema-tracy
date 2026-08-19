@@ -3934,11 +3934,7 @@ if (!state.portadaTareas) state.portadaTareas = 'naranja';
 // Migrar tareas del formato boolean (completada) al formato de 3 estados
 state.tareas.forEach(t => { if (!t.estado) t.estado = t.completada ? 'completada' : 'sin_empezar'; });
 
-// ── SINCRONIZACIÓN POR ID (tareas, metas, transacciones y pagos fijos de Finanzas) ──
-// Hábitos quedan fuera de este merge por id a propósito: el historial de racha
-// (state.habitoChecks) está indexado por posición en el array, no por id, y migrarlo
-// es un cambio de mucho más riesgo para el dato más sensible de la app. Hábitos siguen
-// resolviéndose con "el documento más nuevo pisa entero", como antes.
+// ── SINCRONIZACIÓN POR ID (tareas, metas, hábitos, transacciones y pagos fijos) ──
 function _uid(prefix) {
   return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 9);
 }
@@ -3990,8 +3986,95 @@ function mergeCollectionById(localArr, remoteArr) {
   });
   return Array.from(porId.values());
 }
+
+// ── MIGRACIÓN DE HÁBITOS A ID (una sola vez, retroactiva) ──
+// Hasta ahora, state.habitoChecks estaba indexado por POSICIÓN en state.habitos
+// ([fecha][índice]), no por id — eso hacía que dos dispositivos pudieran pisarse datos
+// entre sí (el documento entero "más nuevo" pisaba al otro, sin fusionar). Esta función
+// le asigna id a cada hábito preexistente y reindexa habitoChecks a [fecha][id].
+//
+// El id se genera como 'habito_legacy_' + índice actual — DETERMINÍSTICO, a propósito,
+// en vez de con _uid() (que es aleatorio). Como los hábitos preexistentes ya están hoy
+// sincronizados y en el mismo orden en ambos dispositivos, dos dispositivos que corran
+// esta función de forma independiente (cada uno con su propia copia local, sin verse
+// entre sí todavía) llegan SIEMPRE al mismo id para "el mismo" hábito. Si en cambio
+// usara _uid() acá, cada dispositivo generaría un id distinto para el hábito de la
+// posición 0, y el merge por id los trataría como dos hábitos diferentes — duplicando
+// cada hábito preexistente en vez de fusionarlo. Los hábitos NUEVOS (creados después de
+// esta migración, vía saveHabito/obAgregarHabito) sí usan _uid('habito') normal, porque
+// nacen en un solo dispositivo a la vez — igual que tareas y metas.
+//
+// Idempotente: si TODOS los hábitos ya tienen id, no toca nada (asume que habitoChecks
+// ya fue reindexado en la pasada anterior — volver a mapear índice→id lo destruiría).
+function migrarHabitosLegacy(habitos, habitoChecks) {
+  habitos = habitos || [];
+  const faltanIds = habitos.some(h => h && h.id === undefined);
+  if (!faltanIds) return habitoChecks || {};
+
+  const now = new Date().toISOString();
+  const idPorIndice = habitos.map((h, i) => {
+    if (h.id === undefined || h.id === null) {
+      h.id = 'habito_legacy_' + i;
+      h.updatedAt = h.updatedAt || now;
+    }
+    return h.id;
+  });
+
+  const nuevosChecks = {};
+  Object.keys(habitoChecks || {}).forEach(fecha => {
+    const dia = habitoChecks[fecha] || {};
+    const nuevoDia = {};
+    idPorIndice.forEach((id, idx) => {
+      if (Object.prototype.hasOwnProperty.call(dia, idx)) nuevoDia[id] = dia[idx];
+    });
+    if (Object.keys(nuevoDia).length) nuevosChecks[fecha] = nuevoDia;
+  });
+  return nuevosChecks;
+}
+
+// Combina dos habitoChecks (ya indexados por id) fecha por fecha e id por id.
+// idsValidos limita el resultado a ids que existen en el array de hábitos ya fusionado,
+// para que un id que no exista en ninguno de los dos lados no deje un check fantasma.
+// Ante un conflicto real (ambos lados tienen valor para la misma fecha+id y difieren),
+// se resuelve con el mismo criterio de "documento más nuevo" que ya se usaba antes para
+// todo el bloque de hábitos (remoteEsMasNuevo).
+function mergeHabitoChecksById(localChecks, remoteChecks, idsValidos, remoteEsMasNuevo) {
+  const idSet = new Set(idsValidos);
+  const fechas = new Set([
+    ...Object.keys(localChecks || {}),
+    ...Object.keys(remoteChecks || {})
+  ]);
+  const resultado = {};
+  fechas.forEach(fecha => {
+    const local  = (localChecks && localChecks[fecha]) || {};
+    const remoto = (remoteChecks && remoteChecks[fecha]) || {};
+    const dia = {};
+    idSet.forEach(id => {
+      const tieneLocal  = Object.prototype.hasOwnProperty.call(local, id);
+      const tieneRemoto = Object.prototype.hasOwnProperty.call(remoto, id);
+      if (tieneLocal && tieneRemoto) dia[id] = remoteEsMasNuevo ? remoto[id] : local[id];
+      else if (tieneLocal)  dia[id] = local[id];
+      else if (tieneRemoto) dia[id] = remoto[id];
+    });
+    if (Object.keys(dia).length) resultado[fecha] = dia;
+  });
+  return resultado;
+}
+
 asegurarIdsYTimestamps(state.tareas, 'tarea');
 asegurarIdsYTimestamps(state.metas, 'meta');
+if (!state.habitos) state.habitos = [];
+if (!state.habitoChecks) state.habitoChecks = {};
+// Backup explícito pre-migración: se guarda en Firestore ni bien haya sesión (ver
+// _initAuthListener), ADEMÁS de los backups automáticos que ya existen. Solo se captura
+// si hace falta migrar algo (si ya estaban todos con id, no hay nada que respaldar).
+if (state.habitos.some(h => h && h.id === undefined)) {
+  window._habitosPreMigracionSnapshot = {
+    habitos: JSON.parse(JSON.stringify(state.habitos)),
+    habitoChecks: JSON.parse(JSON.stringify(state.habitoChecks))
+  };
+}
+state.habitoChecks = migrarHabitosLegacy(state.habitos, state.habitoChecks);
 if (!state.escudoUsado) state.escudoUsado = '';
 if (!state.hitosVistos) state.hitosVistos = [];
 if (state.portadaImagen === undefined) state.portadaImagen = null;
@@ -4152,15 +4235,18 @@ function getFraseDelDia() {
 }
 
 function calcularRachaGlobal() {
-  if (!state.habitos.length) return 0;
-  const total    = state.habitos.length;
+  const habitosActivos = activos(state.habitos);
+  if (!habitosActivos.length) return 0;
+  const total    = habitosActivos.length;
   const mesActual = todayKey.slice(0, 7);
   let streak = 0;
   const d = new Date();
   for (let i = 0; i < 365; i++) {
     const key    = d.toISOString().split('T')[0];
     const checks = state.habitoChecks[key] || {};
-    const done   = Object.values(checks).filter(Boolean).length;
+    // Solo cuenta checks de hábitos actualmente activos: un hábito borrado no debe
+    // seguir "completando el día" con un check fantasma que quedó en habitoChecks.
+    const done   = habitosActivos.filter(h => checks[h.id]).length;
     const shieldProtectsToday = (i === 0) && (state.escudoUsado === mesActual);
     if (done >= total || shieldProtectsToday) { streak++; d.setDate(d.getDate() - 1); }
     else break;
@@ -4254,9 +4340,10 @@ function renderInicio() {
   }
 
   // Anillo de progreso
+  const habitosActivosInicio = activos(state.habitos);
   const checks = state.habitoChecks[todayKey] || {};
-  const totalH = state.habitos.length;
-  const doneH  = Object.values(checks).filter(Boolean).length;
+  const totalH = habitosActivosInicio.length;
+  const doneH  = habitosActivosInicio.filter(h => checks[h.id]).length;
   const pctH   = totalH ? doneH / totalH : 0;
   const circ   = 2 * Math.PI * 38;
   document.getElementById('inicioRingArc')
@@ -4310,14 +4397,15 @@ function renderInicio() {
   // Estadísticas del mes — tarjetas grandes
   document.getElementById('inicioMesLabel').textContent = MESES[month];
   const mesEl = document.getElementById('inicioMesStats');
-  if (!state.habitos.length) {
+  const habitosActivosMes = activos(state.habitos);
+  if (!habitosActivosMes.length) {
     mesEl.innerHTML = '<p class="inicio-en-curso-empty">Agregá hábitos para ver estadísticas del mes.</p>';
   } else {
-    mesEl.innerHTML = state.habitos.map((h, hi) => {
+    mesEl.innerHTML = habitosActivosMes.map(h => {
       let completed = 0;
       for (let d = 1; d <= daysElapsed; d++) {
         const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        if (state.habitoChecks[key] && state.habitoChecks[key][hi]) completed++;
+        if (state.habitoChecks[key] && state.habitoChecks[key][h.id]) completed++;
       }
       const pct      = Math.round((completed / daysElapsed) * 100);
       const color    = h.color || '#C9A84C';
@@ -4359,8 +4447,9 @@ function renderInicio() {
         numClass = 'futuro';
       } else {
         const dc = state.habitoChecks[key] || {};
-        const done = Object.values(dc).filter(Boolean).length;
-        dotClass = (state.habitos.length > 0 && done >= state.habitos.length)
+        const habitosActivosDia = activos(state.habitos);
+        const done = habitosActivosDia.filter(h => dc[h.id]).length;
+        dotClass = (habitosActivosDia.length > 0 && done >= habitosActivosDia.length)
           ? 'completo' : 'incompleto';
       }
 
@@ -4538,9 +4627,10 @@ function saveMeta() {
 
 // ── RENDER HÁBITOS ──
 function renderHabitos() {
+  const habitosActivos = activos(state.habitos);
   const checks = state.habitoChecks[todayKey] || {};
-  const total = state.habitos.length;
-  const done  = Object.values(checks).filter(Boolean).length;
+  const total = habitosActivos.length;
+  const done  = habitosActivos.filter(h => checks[h.id]).length;
 
   // Update meter
   const pct = total ? Math.round((done / total) * 100) : 0;
@@ -4553,7 +4643,7 @@ function renderHabitos() {
     new Date().toLocaleDateString('es-PY', dateOpts);
 
   const container = document.getElementById('habitos-list');
-  if (!state.habitos.length) {
+  if (!habitosActivos.length) {
     container.innerHTML = `
       <div class="empty">
         <div class="empty-icon">🔄</div>
@@ -4565,9 +4655,9 @@ function renderHabitos() {
 
   const gridBase = new Date();
 
-  container.innerHTML = state.habitos.map((h, hi) => {
-    const checked = checks[hi] || false;
-    const streak = calcStreak(hi);
+  container.innerHTML = habitosActivos.map(h => {
+    const checked = checks[h.id] || false;
+    const streak = calcStreak(h.id);
     const color = h.color || '#C9A84C';
     const catEmoji = h.categoria.split(' ')[0];
     const catIcon  = CATEGORIA_ICON[catEmoji] || 'activity';
@@ -4578,7 +4668,7 @@ function renderHabitos() {
       const dd = new Date(gridBase);
       dd.setDate(gridBase.getDate() - d);
       const key = dd.toISOString().split('T')[0];
-      const isDone = !!(state.habitoChecks[key] && state.habitoChecks[key][hi]);
+      const isDone = !!(state.habitoChecks[key] && state.habitoChecks[key][h.id]);
       const bg = isDone ? color : color + '26';
       dotsHtml += `<div class="hdot" style="background:${bg}"></div>`;
     }
@@ -4592,10 +4682,10 @@ function renderHabitos() {
             <div class="habit-streak">${streak > 0 ? `<i data-lucide="flame" style="width:14px;height:14px;vertical-align:-2px;color:#f97316"></i> <span style="font-family:'Geist Mono',monospace;font-weight:600">${streak}</span> días seguidos` : 'Sin racha aún'}</div>
           </div>
           <div class="habit-card-actions">
-            <button class="habit-del habit-edit" onclick="editarHabito(${hi})"><i data-lucide="pencil"></i></button>
-            <button class="habit-del" onclick="deleteHabito(${hi})">×</button>
+            <button class="habit-del habit-edit" onclick="editarHabito('${h.id}')"><i data-lucide="pencil"></i></button>
+            <button class="habit-del" onclick="deleteHabito('${h.id}')">×</button>
             <div class="habit-check-big ${checked ? 'checked' : ''}"
-                 onclick="toggleHabito(${hi})"></div>
+                 onclick="toggleHabito('${h.id}')"></div>
           </div>
         </div>
         <div class="habit-dots-grid">${dotsHtml}</div>
@@ -4604,9 +4694,9 @@ function renderHabitos() {
   if (window.lucide) lucide.createIcons();
 }
 
-function toggleHabito(idx) {
+function toggleHabito(id) {
   if (!state.habitoChecks[todayKey]) state.habitoChecks[todayKey] = {};
-  state.habitoChecks[todayKey][idx] = !state.habitoChecks[todayKey][idx];
+  state.habitoChecks[todayKey][id] = !state.habitoChecks[todayKey][id];
   saveState();
   renderHoy();
   const racha = calcularRachaGlobal();
@@ -4614,12 +4704,12 @@ function toggleHabito(idx) {
   if (window.lucide) lucide.createIcons();
 }
 
-function calcStreak(habitoIdx) {
+function calcStreak(habitoId) {
   let streak = 0;
   const d = new Date();
   for (let i = 0; i < 365; i++) {
     const key = d.toISOString().split('T')[0];
-    if (state.habitoChecks[key] && state.habitoChecks[key][habitoIdx]) {
+    if (state.habitoChecks[key] && state.habitoChecks[key][habitoId]) {
       streak++;
       d.setDate(d.getDate() - 1);
     } else { break; }
@@ -4627,21 +4717,16 @@ function calcStreak(habitoIdx) {
   return streak;
 }
 
-function deleteHabito(idx) {
+// Soft-delete (igual que tareas/metas): NO se saca del array. Si se sacara (splice),
+// un dispositivo que todavía no vio el borrado seguiría teniendo el hábito con ese id,
+// y mergeCollectionById lo "conservaría" al mergear — resucitando un hábito borrado con
+// todo su historial. Con soft-delete, el tombstone (eliminado:true) viaja en el merge
+// igual que cualquier otra actualización, y activos()/contarActivos() lo ocultan en toda
+// la UI. El historial de los demás hábitos (indexado por id, no por posición) no se toca.
+function deleteHabito(id) {
   if (confirm('¿Eliminar este hábito?')) {
-    const oldLen = state.habitos.length;
-    state.habitos.splice(idx, 1);
-    // Rebuild checks: remap old indices skipping the deleted one
-    const newChecks = {};
-    Object.keys(state.habitoChecks).forEach(day => {
-      newChecks[day] = {};
-      const dayData = state.habitoChecks[day];
-      let newIdx = 0;
-      for (let oldIdx = 0; oldIdx < oldLen; oldIdx++) {
-        if (oldIdx !== idx) newChecks[day][newIdx++] = dayData[oldIdx] || false;
-      }
-    });
-    state.habitoChecks = newChecks;
+    const h = state.habitos.find(h => h.id === id);
+    if (h) marcarEliminado(h);
     saveState();
     renderHoy();
   }
@@ -4657,7 +4742,7 @@ function selectHabitoColor(el) {
 }
 
 function openHabitoModal() {
-  const editando = window.editandoHabitoIdx !== undefined;
+  const editando = window.editandoHabitoId !== undefined;
   document.getElementById('habitoModalTitle').textContent = editando ? 'Editar hábito' : 'Nuevo Hábito';
   document.getElementById('habitoModalSaveBtn').textContent = editando ? 'Guardar cambios' : 'Guardar hábito';
   if (!editando) {
@@ -4670,32 +4755,37 @@ function openHabitoModal() {
   }
   document.getElementById('habitoModal').classList.add('open');
 }
-function editarHabito(idx) {
-  const habito = state.habitos[idx];
+function editarHabito(id) {
+  const habito = state.habitos.find(h => h.id === id);
+  if (!habito) return;
   document.getElementById('habito-nombre').value = habito.nombre;
   document.getElementById('habito-categoria').value = habito.categoria;
   selectedHabitoColor = habito.color || '#C9A84C';
   document.querySelectorAll('#colorSwatches .color-swatch').forEach(s => {
     s.classList.toggle('selected', s.dataset.color === selectedHabitoColor);
   });
-  window.editandoHabitoIdx = idx;
+  window.editandoHabitoId = id;
   openHabitoModal();
 }
 function closeHabitoModal() {
   document.getElementById('habitoModal').classList.remove('open');
-  window.editandoHabitoIdx = undefined;
+  window.editandoHabitoId = undefined;
 }
 function saveHabito() {
   const nombre = document.getElementById('habito-nombre').value.trim();
   const categoria = document.getElementById('habito-categoria').value;
   if (!nombre) { alert('Escribí el nombre del hábito.'); return; }
-  if (window.editandoHabitoIdx !== undefined) {
-    state.habitos[window.editandoHabitoIdx].nombre = nombre;
-    state.habitos[window.editandoHabitoIdx].categoria = categoria;
-    state.habitos[window.editandoHabitoIdx].color = selectedHabitoColor;
-    window.editandoHabitoIdx = undefined;
+  if (window.editandoHabitoId !== undefined) {
+    const h = state.habitos.find(h => h.id === window.editandoHabitoId);
+    if (h) {
+      h.nombre = nombre;
+      h.categoria = categoria;
+      h.color = selectedHabitoColor;
+      h.updatedAt = new Date().toISOString();
+    }
+    window.editandoHabitoId = undefined;
   } else {
-    state.habitos.push({ nombre, categoria, color: selectedHabitoColor });
+    state.habitos.push({ id: _uid('habito'), nombre, categoria, color: selectedHabitoColor, updatedAt: new Date().toISOString() });
   }
   saveState();
   closeHabitoModal();
@@ -4713,7 +4803,8 @@ function renderHoy() {
 // ── RENDER ESTADÍSTICAS DEL MES ──
 function renderMonthStats() {
   const container = document.getElementById('month-stats-list');
-  const total = state.habitos.length;
+  const habitosActivosMS = activos(state.habitos);
+  const total = habitosActivosMS.length;
 
   const now = new Date();
   const year = now.getFullYear();
@@ -4730,11 +4821,11 @@ function renderMonthStats() {
     return;
   }
 
-  const stats = state.habitos.map((h, hi) => {
+  const stats = habitosActivosMS.map(h => {
     let completed = 0;
     for (let d = 1; d <= daysElapsed; d++) {
       const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-      if (state.habitoChecks[key] && state.habitoChecks[key][hi]) completed++;
+      if (state.habitoChecks[key] && state.habitoChecks[key][h.id]) completed++;
     }
     const pct = Math.round((completed / daysElapsed) * 100);
     return { h, completed, pct };
@@ -4763,7 +4854,8 @@ let calendarMonth = new Date().getMonth();
 let calendarYear  = new Date().getFullYear();
 
 function renderCalendario() {
-  const total = state.habitos.length;
+  const habitosActivosCal = activos(state.habitos);
+  const total = habitosActivosCal.length;
   const year  = calendarYear;
   const month = calendarMonth;
   const firstDay  = new Date(year, month, 1);
@@ -4794,7 +4886,7 @@ function renderCalendario() {
     let doneCnt = 0;
     if (!isFuture && total > 0) {
       const dc = state.habitoChecks[key] || {};
-      doneCnt = state.habitos.filter((_, hi) => dc[hi]).length;
+      doneCnt = habitosActivosCal.filter(h => dc[h.id]).length;
       totalDone += doneCnt;
       totalPossible += total;
     }
@@ -5506,6 +5598,7 @@ function importarBackup(e) {
         Object.assign(state, parsed);
         asegurarIdsYTimestamps(state.tareas, 'tarea');
         asegurarIdsYTimestamps(state.metas, 'meta');
+        state.habitoChecks = migrarHabitosLegacy(state.habitos, state.habitoChecks);
         saveState();
         renderInicio();
         renderHoy();
@@ -6544,8 +6637,9 @@ function programarRecordatorio(horaStr) {
     if (ahora.getHours() === hora && ahora.getMinutes() === minuto) {
       const todayK = ahora.toISOString().split('T')[0];
       const checks = state.habitoChecks[todayK] || {};
-      const completados = Object.values(checks).filter(Boolean).length;
-      const total = state.habitos.length;
+      const habitosActivosNotif = activos(state.habitos);
+      const completados = habitosActivosNotif.filter(h => checks[h.id]).length;
+      const total = habitosActivosNotif.length;
       if (completados < total) mostrarNotificacion();
     }
   }, 60000);
@@ -6553,7 +6647,7 @@ function programarRecordatorio(horaStr) {
 
 function obtenerMensajeAleatorio() {
   const completados = calcularHabitosHoy();
-  const total = state.habitos.length;
+  const total = contarActivos(state.habitos);
   const pendientes = total - completados;
   const mensajes = [
     `¡Tenés ${pendientes} hábito${pendientes > 1 ? 's' : ''} por completar hoy!`,
@@ -6582,7 +6676,7 @@ async function mostrarNotificacion() {
 function calcularHabitosHoy() {
   const todayK = new Date().toISOString().split('T')[0];
   const checks = state.habitoChecks[todayK] || {};
-  return Object.values(checks).filter(Boolean).length;
+  return activos(state.habitos).filter(h => checks[h.id]).length;
 }
 
 function iniciarNotificacionesSiActivas() {
@@ -6718,8 +6812,9 @@ const AVATAR_MSGS = {
 function getAvatarState() {
   const hora = new Date().getHours();
   const checks = state.habitoChecks[todayKey] || {};
-  const totalH = state.habitos.length;
-  const doneH  = Object.values(checks).filter(Boolean).length;
+  const habitosActivosAvatar = activos(state.habitos);
+  const totalH = habitosActivosAvatar.length;
+  const doneH  = habitosActivosAvatar.filter(h => checks[h.id]).length;
   if (hora >= 23) return 'sleeping';
   if (totalH > 0 && doneH === totalH) return 'happy';
   if (totalH > 0 && doneH < totalH)  return 'motivating';
@@ -7634,13 +7729,27 @@ async function saveToFirestore() {
         normalizarIdsRemoto(remoteState.metas);
         normalizarIdsRemoto(remotePf.transactions);
         normalizarIdsRemoto(remotePf.fixedPayments);
+        // Migra hábitos legacy del remoto (idempotente) ANTES de mergear — así, si el
+        // remoto todavía no pasó por esta migración, sus ids se calculan con el mismo
+        // criterio determinístico (posición) que los locales y coinciden en vez de
+        // duplicarse. Ver nota junto a migrarHabitosLegacy.
+        remoteState.habitoChecks = migrarHabitosLegacy(remoteState.habitos, remoteState.habitoChecks);
       }
     } catch (e) {
       console.warn('No se pudo leer el remoto antes de guardar — se guarda el estado local tal cual:', e);
     }
     if (remoteState) {
-      state.tareas = mergeCollectionById(state.tareas, remoteState.tareas);
-      state.metas  = mergeCollectionById(state.metas, remoteState.metas);
+      state.tareas  = mergeCollectionById(state.tareas, remoteState.tareas);
+      state.metas   = mergeCollectionById(state.metas, remoteState.metas);
+      state.habitos = mergeCollectionById(state.habitos, remoteState.habitos);
+      // Sin timestamp de documento para comparar acá (a diferencia del lado de lectura):
+      // esta función está a punto de persistir el estado local, así que ante un conflicto
+      // real (misma fecha+id con valor distinto en ambos lados) gana el valor local, que
+      // refleja la interacción más reciente de este dispositivo.
+      state.habitoChecks = mergeHabitoChecksById(
+        state.habitoChecks, remoteState.habitoChecks,
+        state.habitos.map(h => h.id), false
+      );
     }
     if (remotePf) {
       pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
@@ -7649,13 +7758,14 @@ async function saveToFirestore() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     localStorage.setItem(PF_STORAGE_KEY, JSON.stringify(pf_data));
 
-    // Guarda de sanidad: no pises datos remotos reales con un estado vacío. Hábitos
-    // quedan fuera del merge por id (ver nota junto a mergeCollectionById), así que acá
-    // siguen siendo el chequeo más importante; tareas/metas ya vienen fusionadas arriba,
-    // así que solo cuentan los activos (no tombstones) como señal real de "hay datos".
-    // Se evalúa cada colección por separado (no con AND global): si SOLO los hábitos se
-    // vacían pero tareas/metas siguen con datos, la guarda tiene que activarse igual.
-    const habitosCount = (state.habitos || []).length;
+    // Guarda de sanidad: no pises datos remotos reales con un estado vacío. Tareas,
+    // metas y hábitos ya vienen fusionados por id arriba (aditivo, nunca destructivo),
+    // así que esto es una red de seguridad extra, no la protección principal — cubre el
+    // caso de que el estado LOCAL se haya vaciado por otra vía (bug, corrupción) y ese
+    // vacío esté a punto de escribirse. Cuenta solo los activos (no tombstones).
+    // Se evalúa cada colección por separado (no con AND global): si SOLO una se vacía
+    // pero las demás siguen con datos, la guarda tiene que activarse igual.
+    const habitosCount = contarActivos(state.habitos);
     const tareasCount  = contarActivos(state.tareas);
     const metasCount   = contarActivos(state.metas);
     const ultimo = window.lastKnownCounts || { habitos: 0, tareas: 0, metas: 0 };
@@ -7697,6 +7807,9 @@ async function saveToFirestore() {
 const MAX_BACKUPS = 15;
 
 // Escribe usuarios/{uid}/backups/{updatedAt} y purga los más viejos si hay más de MAX_BACKUPS.
+// Los backups especiales de pre-migración ('pre-migracion-...') quedan afuera de la
+// purga — son una red de seguridad puntual, no parte de la rotación automática, y no
+// deberían poder desaparecer solos por acumulación de guardados normales.
 async function guardarBackupVersionado(payload) {
   if (!window.currentUser || !window.firebaseFns) return;
   try {
@@ -7705,13 +7818,53 @@ async function guardarBackupVersionado(payload) {
     await setDoc(doc(backupsRef, payload.updatedAt), payload);
 
     const snap = await getDocs(query(backupsRef, orderBy('updatedAt', 'desc')));
-    const excedentes = snap.docs.slice(MAX_BACKUPS);
+    const candidatos = snap.docs.filter(d => !d.id.startsWith('pre-migracion-'));
+    const excedentes = candidatos.slice(MAX_BACKUPS);
     if (excedentes.length) {
       await Promise.all(excedentes.map(d => deleteDoc(d.ref)));
       console.log(`Backups: purgados ${excedentes.length} backup(s) viejo(s), quedan ${MAX_BACKUPS}.`);
     }
   } catch (e) {
     console.error('Error guardando backup versionado:', e);
+  }
+}
+
+// Backup explícito, ADEMÁS de los backups automáticos de arriba, tomado ANTES de migrar
+// state.habitos/habitoChecks al esquema por id — para poder revertir manualmente desde
+// Firebase Console si algo sale mal con la migración. Se corre una sola vez por
+// dispositivo (bandera en localStorage): si falla (sin red, por ejemplo), no marca la
+// bandera, para reintentar en el próximo login.
+const HABITOS_BACKUP_FLAG = 'tracy_habitos_backup_pre_migracion_hecho';
+async function backupPreMigracionHabitosSiHaceFalta(uid) {
+  if (localStorage.getItem(HABITOS_BACKUP_FLAG)) return;
+  if (!window._habitosPreMigracionSnapshot) {
+    // No había nada que migrar en este dispositivo (los hábitos ya tenían id) —
+    // no hace falta backup, no hay riesgo de esta migración acá.
+    localStorage.setItem(HABITOS_BACKUP_FLAG, '1');
+    return;
+  }
+  if (!window.firebaseFns) return;
+  try {
+    const { doc, setDoc } = window.firebaseFns;
+    const ts = new Date().toISOString();
+    // Mismo shape que un backup normal (data.state = JSON de un objeto con las claves a
+    // restaurar) para que restaurarBackup(id) funcione tal cual con este backup también.
+    // Como acá state SOLO trae habitos/habitoChecks, Object.assign(state, remoteState)
+    // en restaurarBackup() pisa ÚNICAMENTE esas dos claves — no toca tareas/metas/etc.
+    const payload = {
+      motivo: 'pre-migracion-habitos-a-id',
+      creadoEn: ts,
+      updatedAt: ts,
+      state: JSON.stringify({
+        habitos: window._habitosPreMigracionSnapshot.habitos,
+        habitoChecks: window._habitosPreMigracionSnapshot.habitoChecks
+      })
+    };
+    await setDoc(doc(window.firebaseDb, 'usuarios', uid, 'backups', `pre-migracion-habitos-${ts}`), payload);
+    localStorage.setItem(HABITOS_BACKUP_FLAG, '1');
+    console.log('Backup pre-migración de hábitos guardado en Firestore:', `pre-migracion-habitos-${ts}`);
+  } catch (e) {
+    console.error('No se pudo guardar el backup pre-migración de hábitos (se reintenta en el próximo login):', e);
   }
 }
 
@@ -7729,7 +7882,7 @@ async function listarBackups() {
     return {
       id: d.id,
       updatedAt: data.updatedAt,
-      habitos: (st.habitos || []).length,
+      habitos: contarActivos(st.habitos),
       tareas: contarActivos(st.tareas),
       metas: contarActivos(st.metas)
     };
@@ -7753,6 +7906,7 @@ async function restaurarBackup(backupId) {
   state = Object.assign(state, remoteState);
   asegurarIdsYTimestamps(state.tareas, 'tarea');
   asegurarIdsYTimestamps(state.metas, 'meta');
+  state.habitoChecks = migrarHabitosLegacy(state.habitos, state.habitoChecks);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   localStorage.setItem(STORAGE_KEY + '_ts', data.updatedAt);
   if (data.pulsoData) {
@@ -7791,50 +7945,56 @@ function attachFirestoreListener(uid) {
       normalizarIdsRemoto(remoteState.metas);
       normalizarIdsRemoto(remotePf.transactions);
       normalizarIdsRemoto(remotePf.fixedPayments);
-
-      // Merge por id de tareas/metas/transacciones/pagos fijos — SIEMPRE, sin importar
-      // si este snapshot remoto es "más nuevo" que el local a nivel de documento. Un
-      // merge por id nunca puede perder datos (solo agrega o actualiza por ítem), así
-      // que aplicarlo incondicionalmente es lo que evita la pérdida cuando este
-      // dispositivo estuvo cerrado y el otro agregó algo mientras tanto.
-      // Hábitos/habitoChecks quedan fuera (ver nota junto a mergeCollectionById).
-      state.tareas = mergeCollectionById(state.tareas, remoteState.tareas);
-      state.metas  = mergeCollectionById(state.metas, remoteState.metas);
-      pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
-      pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
+      // Migra hábitos legacy del remoto (idempotente) ANTES de mergear — ver nota junto
+      // a migrarHabitosLegacy sobre por qué el id tiene que ser determinístico acá.
+      remoteState.habitoChecks = migrarHabitosLegacy(remoteState.habitos, remoteState.habitoChecks);
 
       const localTs  = localStorage.getItem(STORAGE_KEY + '_ts') || '0';
       const remoteTs = data.updatedAt || '0';
+
+      // Merge por id de tareas/metas/hábitos/transacciones/pagos fijos — SIEMPRE, sin
+      // importar si este snapshot remoto es "más nuevo" que el local a nivel de
+      // documento. Un merge por id nunca puede perder datos (solo agrega o actualiza por
+      // ítem), así que aplicarlo incondicionalmente es lo que evita la pérdida cuando
+      // este dispositivo estuvo cerrado y el otro agregó algo mientras tanto.
+      state.tareas  = mergeCollectionById(state.tareas, remoteState.tareas);
+      state.metas   = mergeCollectionById(state.metas, remoteState.metas);
+      state.habitos = mergeCollectionById(state.habitos, remoteState.habitos);
+      state.habitoChecks = mergeHabitoChecksById(
+        state.habitoChecks, remoteState.habitoChecks,
+        state.habitos.map(h => h.id), remoteTs > localTs
+      );
+      pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
+      pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
+
+      // Guarda de sanidad del lado de lectura: esto ya NO puede pisar hábitos locales
+      // (el merge por id de arriba es aditivo, nunca destructivo), así que acá queda
+      // como aviso — si el remoto vino sin hábitos mientras acá hay, algo raro pasó del
+      // otro lado y vale la pena que el usuario lo sepa, aunque sus datos ya estén a salvo.
+      const remoteHabitosCount = contarActivos(remoteState.habitos);
+      const localHabitosCount  = contarActivos(state.habitos);
+      if (remoteHabitosCount === 0 && localHabitosCount > 0) {
+        console.warn(
+          `⚠️ Sincronización: el snapshot remoto llegó sin hábitos, pero acá hay ${localHabitosCount}. ` +
+          `El merge por id ya protege tus hábitos locales — esto es solo un aviso.`
+        );
+        mostrarAvisoVaciadoSospechoso(
+          { habitos: localHabitosCount, tareas: contarActivos(state.tareas), metas: contarActivos(state.metas) },
+          'hábitos',
+          'El dato remoto llegó sin hábitos — tus hábitos locales están a salvo (el merge por id no los pisa).',
+          '⚠️ Aviso de sincronización'
+        );
+      }
+
       if (remoteTs > localTs) {
-        // Hábitos y el resto de campos del documento (no cubiertos por el merge por id):
-        // sigue el criterio de siempre, "el documento más nuevo pisa entero".
-        const { tareas, metas, ...restoRemoto } = remoteState;
-        // Guarda de sanidad del lado de lectura: si el remoto llega sin hábitos pero acá
-        // hay hábitos con datos, no los pisamos — solo el "documento más nuevo pisa
-        // entero" queda sin proteger para hábitos (no están en el merge por id), así que
-        // esta es la única defensa contra que un vaciado accidental en OTRO dispositivo
-        // se propague acá con solo abrir la app. habitoChecks se conserva junto con
-        // habitos porque el historial de racha está indexado por posición en ese array.
-        const remoteHabitosCount = (restoRemoto.habitos || []).length;
-        const localHabitosCount  = (state.habitos || []).length;
-        if (remoteHabitosCount === 0 && localHabitosCount > 0) {
-          delete restoRemoto.habitos;
-          delete restoRemoto.habitoChecks;
-          console.warn(
-            `⚠️ Sincronización: el snapshot remoto llegó sin hábitos, pero acá hay ${localHabitosCount}. ` +
-            `Se conservan los hábitos locales; se aplica el resto del estado remoto normalmente.`
-          );
-          mostrarAvisoVaciadoSospechoso(
-            { habitos: localHabitosCount, tareas: contarActivos(state.tareas), metas: contarActivos(state.metas) },
-            'hábitos',
-            'El dato remoto llegó sin hábitos y no se aplicó esa parte — se conservaron los tuyos.',
-            '⚠️ Hábitos protegidos al sincronizar'
-          );
-        }
+        // El resto de los campos del documento (no cubiertos por merge por id, ej.
+        // ajustes/preferencias): sigue el criterio de siempre, "el documento más nuevo
+        // pisa entero".
+        const { tareas, metas, habitos, habitoChecks, ...restoRemoto } = remoteState;
         Object.assign(state, restoRemoto);
       }
       window.lastKnownCounts = {
-        habitos: (state.habitos || []).length,
+        habitos: contarActivos(state.habitos),
         tareas: contarActivos(state.tareas),
         metas: contarActivos(state.metas)
       };
@@ -7842,7 +8002,7 @@ function attachFirestoreListener(uid) {
       localStorage.setItem(PF_STORAGE_KEY, JSON.stringify(pf_data));
       localStorage.setItem(STORAGE_KEY + '_ts', remoteTs > localTs ? remoteTs : localTs);
       renderAll();
-      console.log('Estado sincronizado desde Firestore (merge por id + hábitos si corresponde)');
+      console.log('Estado sincronizado desde Firestore (merge por id: tareas, metas, hábitos, finanzas)');
       setSyncStatus('ok');
     },
     (error) => {
@@ -7930,6 +8090,7 @@ function _initAuthListener() {
       window.lastKnownCounts = { habitos: 0, tareas: 0, metas: 0 };
       actualizarUILogin(user);
       setSyncStatus('loading');
+      backupPreMigracionHabitosSiHaceFalta(user.uid);
       attachFirestoreListener(user.uid);
     } else {
       window.firstSyncDone = false;
@@ -7957,39 +8118,44 @@ document.addEventListener('visibilitychange', async () => {
     normalizarIdsRemoto(remoteState.metas);
     normalizarIdsRemoto(remotePf.transactions);
     normalizarIdsRemoto(remotePf.fixedPayments);
-
-    state.tareas = mergeCollectionById(state.tareas, remoteState.tareas);
-    state.metas  = mergeCollectionById(state.metas, remoteState.metas);
-    pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
-    pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
+    remoteState.habitoChecks = migrarHabitosLegacy(remoteState.habitos, remoteState.habitoChecks);
 
     const localTs  = localStorage.getItem(STORAGE_KEY + '_ts') || '0';
     const remoteTs = data.updatedAt || '0';
+
+    state.tareas  = mergeCollectionById(state.tareas, remoteState.tareas);
+    state.metas   = mergeCollectionById(state.metas, remoteState.metas);
+    state.habitos = mergeCollectionById(state.habitos, remoteState.habitos);
+    state.habitoChecks = mergeHabitoChecksById(
+      state.habitoChecks, remoteState.habitoChecks,
+      state.habitos.map(h => h.id), remoteTs > localTs
+    );
+    pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
+    pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
+
+    // Misma guarda de sanidad del lado de lectura que en attachFirestoreListener: ya es
+    // solo un aviso, el merge por id de arriba es el que realmente protege los hábitos.
+    const remoteHabitosCount = contarActivos(remoteState.habitos);
+    const localHabitosCount  = contarActivos(state.habitos);
+    if (remoteHabitosCount === 0 && localHabitosCount > 0) {
+      console.warn(
+        `⚠️ Resync: el snapshot remoto llegó sin hábitos, pero acá hay ${localHabitosCount}. ` +
+        `El merge por id ya protege tus hábitos locales — esto es solo un aviso.`
+      );
+      mostrarAvisoVaciadoSospechoso(
+        { habitos: localHabitosCount, tareas: contarActivos(state.tareas), metas: contarActivos(state.metas) },
+        'hábitos',
+        'El dato remoto llegó sin hábitos — tus hábitos locales están a salvo (el merge por id no los pisa).',
+        '⚠️ Aviso de sincronización'
+      );
+    }
+
     if (remoteTs > localTs) {
-      const { tareas, metas, ...restoRemoto } = remoteState;
-      // Misma guarda de sanidad del lado de lectura que en attachFirestoreListener: no
-      // dejar que un remoto sin hábitos pise hábitos locales con datos al volver a
-      // primer plano. habitoChecks se conserva junto con habitos (indexado por posición).
-      const remoteHabitosCount = (restoRemoto.habitos || []).length;
-      const localHabitosCount  = (state.habitos || []).length;
-      if (remoteHabitosCount === 0 && localHabitosCount > 0) {
-        delete restoRemoto.habitos;
-        delete restoRemoto.habitoChecks;
-        console.warn(
-          `⚠️ Resync: el snapshot remoto llegó sin hábitos, pero acá hay ${localHabitosCount}. ` +
-          `Se conservan los hábitos locales; se aplica el resto del estado remoto normalmente.`
-        );
-        mostrarAvisoVaciadoSospechoso(
-          { habitos: localHabitosCount, tareas: contarActivos(state.tareas), metas: contarActivos(state.metas) },
-          'hábitos',
-          'El dato remoto llegó sin hábitos y no se aplicó esa parte — se conservaron los tuyos.',
-          '⚠️ Hábitos protegidos al sincronizar'
-        );
-      }
+      const { tareas, metas, habitos, habitoChecks, ...restoRemoto } = remoteState;
       Object.assign(state, restoRemoto);
     }
     window.lastKnownCounts = {
-      habitos: (state.habitos || []).length,
+      habitos: contarActivos(state.habitos),
       tareas: contarActivos(state.tareas),
       metas: contarActivos(state.metas)
     };
@@ -8069,7 +8235,7 @@ function obAgregarHabito() {
   const input = document.getElementById('obHabitoInput');
   const nombre = input.value.trim();
   if (!nombre) return;
-  state.habitos.push({ nombre, categoria: '🎯 Productividad', color: '#C9A84C' });
+  state.habitos.push({ id: _uid('habito'), nombre, categoria: '🎯 Productividad', color: '#C9A84C', updatedAt: new Date().toISOString() });
   saveState();
   input.value = '';
   document.getElementById('obHabitoConfirm').style.display = 'block';
