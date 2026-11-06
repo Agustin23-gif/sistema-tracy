@@ -63,6 +63,7 @@
 
   body.dark-mode {
     --bg:        #0F1A2E;
+    --gold:      #FF6A2B;
     --surface:   #1A2744;
     --card:      #1E2D40;
     --text:      #F0EDE6;
@@ -3235,6 +3236,89 @@
     .pf-quick-amount-input { font-size: 42px; }
     .pf-quick-amount-input, .pf-quick-note-input { font-size: max(16px, 1em); }
   }
+
+  /* ── PROGRESO: ÁREAS, XP, FICHAS Y RELOJ ── */
+  /* Espacio final para que la barra inferior y el botón flotante no tapen el último elemento. */
+  #progresoContenido, #premiosContenido, #relojContenido { padding-bottom: 210px; }
+  :root { --ficha: #B7830F; --ficha-bg: rgba(224,165,38,0.16); --xp-track: rgba(0,0,0,0.08); }
+  body.dark-mode { --ficha: #E0A526; --xp-track: rgba(255,255,255,0.10); }
+  body.dark-mode input[type="time"] { color-scheme: dark; }
+  .xp-bar { height: 10px; border-radius: 5px; background: var(--xp-track); overflow: hidden; }
+  .xp-bar-fill { height: 100%; border-radius: 5px; background: var(--gold); transition: width 0.7s cubic-bezier(.2,.8,.2,1); }
+  .ficha-chip {
+    display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px; border: none;
+    background: var(--ficha-bg); color: var(--ficha); font-family: 'Geist Mono', monospace; font-size: 0.78rem;
+    font-weight: 700; white-space: nowrap;
+  }
+  button.ficha-chip { cursor: pointer; }
+  .ficha-chip svg { width: 13px; height: 13px; }
+  .progreso-card {
+    display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 16px; margin-bottom: 18px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px; cursor: pointer;
+  }
+  .progreso-nivel {
+    flex-shrink: 0; width: 52px; height: 52px; border-radius: 50%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; border: 3px solid var(--gold); color: var(--text); line-height: 1;
+  }
+  .progreso-nivel strong { font-family: 'Geist Mono', monospace; font-size: 1.15rem; font-weight: 800; }
+  .progreso-nivel span { font-size: 0.56rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; }
+  .progreso-info { flex: 1; min-width: 0; }
+  .progreso-fila { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
+  .progreso-titulo { font-size: 0.86rem; font-weight: 700; color: var(--text); }
+  .progreso-datos { display: flex; justify-content: space-between; gap: 8px; margin-top: 6px; font-family: 'Geist Mono', monospace; font-size: 0.68rem; color: var(--muted); }
+  .habit-recompensa { display: inline-flex; align-items: center; margin-left: 6px; padding: 1px 7px; border-radius: 999px; background: var(--input-bg); font-family: 'Geist Mono', monospace; font-size: 0.66rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
+  .habit-recompensa.doble { background: var(--ficha-bg); color: var(--ficha); }
+  .areas-top { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 28px; }
+  .area-mini { padding: 12px 10px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); cursor: pointer; text-align: left; font-family: 'Geist', sans-serif; color: var(--text); min-width: 0; }
+  .area-mini svg { width: 18px; height: 18px; color: var(--gold); }
+  .area-mini-nombre { display: block; margin-top: 6px; font-size: 0.78rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .area-mini-nivel { display: block; margin: 2px 0 7px; font-family: 'Geist Mono', monospace; font-size: 0.66rem; color: var(--muted); }
+  .area-mini .xp-bar { height: 6px; }
+  .area-fila { display: flex; gap: 12px; align-items: center; padding: 14px; margin-bottom: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; }
+  .area-icono { flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: rgba(232,69,10,0.12); color: var(--gold); }
+  .area-icono svg { width: 20px; height: 20px; }
+  .progreso-ayuda { font-size: 0.78rem; line-height: 1.5; color: var(--muted); margin: 4px 0 18px; }
+  .recompensa-toast {
+    position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom)); z-index: 950; width: min(92vw, 380px);
+    padding: 14px 16px; border-radius: 16px; background: var(--card); border: 2px solid var(--gold);
+    box-shadow: 0 10px 32px rgba(0,0,0,0.28); color: var(--text); pointer-events: none;
+    opacity: 0; transform: translate(-50%, 16px); transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .recompensa-toast.show { opacity: 1; transform: translate(-50%, 0); }
+  .recompensa-toast-pie { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+  .recompensa-doble { background: rgba(232,69,10,0.14); color: var(--gold); }
+  .premios-saldo { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; margin-bottom: 18px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; }
+  .premios-saldo-num { font-family: 'Geist Mono', monospace; font-size: 2rem; font-weight: 800; color: var(--ficha); line-height: 1; }
+  .premios-saldo-txt { font-size: 0.74rem; color: var(--muted); margin-top: 5px; }
+  .premios-form { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 10px; align-items: end; }
+  .premios-form .form-group { margin-bottom: 10px; }
+  .premios-msg { min-height: 18px; font-size: 0.76rem; color: var(--danger); margin-bottom: 8px; }
+  .premios-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 24px; }
+  .premio-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 14px 8px 10px; text-align: center; background: var(--card); border: 1px solid var(--border); border-radius: 14px; min-width: 0; }
+  .premio-card svg { width: 22px; height: 22px; color: var(--ficha); }
+  .premio-nombre { width: 100%; min-height: 2.3em; font-size: 0.78rem; font-weight: 600; line-height: 1.15; overflow-wrap: anywhere; }
+  .premio-canjear { width: 100%; }
+  .premio-canjear:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+  .premio-borrar { position: absolute; top: 2px; right: 2px; width: 28px; height: 28px; border: none; background: none; color: var(--muted); font-size: 1rem; cursor: pointer; }
+  .progreso-subtitulo { font-size: 0.82rem; font-weight: 700; color: var(--text); margin: 0 0 10px; }
+  .canje-fila, .bloque-fila { display: flex; align-items: center; gap: 10px; padding: 10px 60px 10px 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+  .canje-fila > span:first-child, .bloque-texto { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .progreso-vacio { padding: 18px 12px; text-align: center; font-size: 0.8rem; color: var(--muted); }
+  .reloj-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+  .reloj-fecha { flex: 1; text-align: center; font-size: 0.86rem; font-weight: 700; color: var(--text); text-transform: capitalize; }
+  .reloj-wrap { max-width: 320px; margin: 0 auto 18px; }
+  .reloj-wrap svg { display: block; width: 100%; height: auto; }
+  .reloj-marca { fill: var(--muted); font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 600; }
+  .reloj-hora { fill: var(--text); font-family: 'Geist Mono', monospace; font-size: 28px; font-weight: 800; }
+  .reloj-sub { fill: var(--muted); font-family: 'Geist', sans-serif; font-size: 11px; }
+  .bloque-punto { flex-shrink: 0; width: 12px; height: 12px; border-radius: 50%; }
+  .bloque-hora { display: block; margin-top: 2px; font-family: 'Geist Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+  .reloj-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .reloj-form .form-group { margin-bottom: 8px; }
+  .reloj-form .reloj-titulo-campo { grid-column: 1 / -1; }
+  @media (prefers-reduced-motion: reduce) {
+    .xp-bar-fill, .recompensa-toast { transition: none; }
+  }
 </style>
 </head>
 <body>
@@ -3325,6 +3409,18 @@
     <button class="mas-close" onclick="cerrarMasPanel()">✕</button>
   </div>
   <div class="mas-options">
+    <button class="mas-option" onclick="irAMas('progreso')">
+      <i data-lucide="trending-up"></i>
+      <span>Progreso</span>
+    </button>
+    <button class="mas-option" onclick="irAMas('premios')">
+      <i data-lucide="gift"></i>
+      <span>Premios</span>
+    </button>
+    <button class="mas-option" onclick="irAMas('reloj')">
+      <i data-lucide="clock"></i>
+      <span>Reloj del día</span>
+    </button>
     <button class="mas-option" onclick="irAMas('metas')">
       <i data-lucide="target"></i>
       <span>Metas</span>
@@ -3397,6 +3493,9 @@
       <!-- Hitos -->
       <div id="rachaHitos" class="racha-hitos-row"></div>
 
+      <!-- Áreas más fuertes -->
+      <div id="inicioAreas"></div>
+
       <!-- Estadísticas del mes -->
       <h3 class="inicio-section-title">Este mes — <span id="inicioMesLabel"></span></h3>
       <div id="inicioMesStats" style="margin-bottom:28px"></div>
@@ -3463,6 +3562,9 @@
       </div>
       <button class="btn btn-gold" onclick="openHabitoModal()">+ Nuevo hábito</button>
     </div>
+
+    <!-- Progreso: nivel, XP y fichas -->
+    <div id="progresoCard"></div>
 
     <!-- Rana del Día -->
     <div id="ranaDelDiaBlock"></div>
@@ -3605,7 +3707,43 @@
     <div id="pf-app"></div>
   </section>
 
+  <!-- ══ PROGRESO ══ -->
+  <section id="sec-progreso" class="section">
+    <div class="sec-header">
+      <div>
+        <h2>Progreso</h2>
+        <p>Tu nivel y tus Áreas</p>
+      </div>
+    </div>
+    <div id="progresoContenido"></div>
+  </section>
+
+  <!-- ══ PREMIOS ══ -->
+  <section id="sec-premios" class="section">
+    <div class="sec-header">
+      <div>
+        <h2>Premios</h2>
+        <p>Canjeá tus fichas por recompensas que elegís vos</p>
+      </div>
+    </div>
+    <div id="premiosContenido"></div>
+  </section>
+
+  <!-- ══ RELOJ ══ -->
+  <section id="sec-reloj" class="section">
+    <div class="sec-header">
+      <div>
+        <h2>Reloj del día</h2>
+        <p>Tu día en bloques de tiempo</p>
+      </div>
+    </div>
+    <div id="relojContenido"></div>
+  </section>
+
 </main>
+
+<!-- Aviso de recompensa al completar -->
+<div class="recompensa-toast" id="recompensaToast" role="status" aria-live="polite"></div>
 
 <!-- ══ MODAL CELEBRACIÓN ══ -->
 <div class="celebracion-overlay" id="celebracionModal">
@@ -3987,6 +4125,17 @@ function mergeCollectionById(localArr, remoteArr) {
   return Array.from(porId.values());
 }
 
+// Premios, canjes y bloques del reloj siguen el mismo merge por id. Se excluyen del
+// "resto del documento" que pisa entero, para que un dispositivo con una versión vieja
+// no pueda borrarlos: lo que él no conozca se conserva aquí y se vuelve a escribir.
+const COLECCIONES_PROGRESO = ['premios', 'canjes', 'bloques'];
+function mergeColeccionesProgreso(remoteState) {
+  COLECCIONES_PROGRESO.forEach(nombre => {
+    normalizarIdsRemoto(remoteState[nombre]);
+    state[nombre] = mergeCollectionById(state[nombre], remoteState[nombre]);
+  });
+}
+
 // ── MIGRACIÓN DE HÁBITOS A ID (una sola vez, retroactiva) ──
 // Hasta ahora, state.habitoChecks estaba indexado por POSICIÓN en state.habitos
 // ([fecha][índice]), no por id — eso hacía que dos dispositivos pudieran pisarse datos
@@ -4063,6 +4212,10 @@ function mergeHabitoChecksById(localChecks, remoteChecks, idsValidos, remoteEsMa
 
 asegurarIdsYTimestamps(state.tareas, 'tarea');
 asegurarIdsYTimestamps(state.metas, 'meta');
+COLECCIONES_PROGRESO.forEach(nombre => {
+  if (!state[nombre]) state[nombre] = [];
+  asegurarIdsYTimestamps(state[nombre], nombre);
+});
 if (!state.habitos) state.habitos = [];
 if (!state.habitoChecks) state.habitoChecks = {};
 // Backup explícito pre-migración: se guarda en Firestore ni bien haya sesión (ver
@@ -4169,7 +4322,7 @@ aplicarModoOscuro();
 
 // ── TABS ──
 // Tabs que ya no tienen botón propio en el nav — viven dentro del panel "Más"
-const TABS_EN_MAS = ['metas', 'vision', 'calendario', 'ajustes'];
+const TABS_EN_MAS = ['progreso', 'premios', 'reloj', 'metas', 'vision', 'calendario', 'ajustes'];
 
 function marcarTabActivo(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -4190,6 +4343,9 @@ function renderSeccion(tab) {
   if (tab === 'calendario') renderCalendario();
   if (tab === 'tareas')     renderPaginaTareas();
   if (tab === 'finanzas')   pf_render();
+  if (tab === 'progreso')   renderProgreso();
+  if (tab === 'premios')    renderPremios();
+  if (tab === 'reloj')      renderReloj();
   actualizarBadgeVision();
 }
 
@@ -4409,6 +4565,8 @@ function renderInicio() {
       <div class="racha-big-label">día${racha !== 1 ? 's' : ''}</div>
     </div>`;
   if (window.lucide) lucide.createIcons();
+
+  renderAreasTop();
 
   // Hitos
   const proximoHito = HITOS_RACHA.find(h => h > racha);
@@ -4705,7 +4863,7 @@ function renderHabitos() {
           <div class="habit-cat-icon"><i data-lucide="${catIcon}" style="width:20px;height:20px"></i></div>
           <div class="habit-info">
             <div class="habit-name">${escHtml(h.nombre)}</div>
-            <div class="habit-streak">${streak > 0 ? `<i data-lucide="flame" style="width:14px;height:14px;vertical-align:-2px;color:#f97316"></i> <span style="font-family:'Geist Mono',monospace;font-weight:600">${streak}</span> días seguidos` : 'Sin racha aún'}</div>
+            <div class="habit-streak">${streak > 0 ? `<i data-lucide="flame" style="width:14px;height:14px;vertical-align:-2px;color:${colorLlama(streak)}"></i> <span style="font-family:'Geist Mono',monospace;font-weight:600">${streak}</span> días seguidos` : 'Sin racha aún'}<span class="habit-recompensa${esCheckDoble(todayKey, h.id) ? ' doble' : ''}">+${XP_POR_CHECK * multiplicadorCheck(todayKey, h.id)} XP</span></div>
           </div>
           <div class="habit-card-actions">
             <button class="habit-del habit-edit" onclick="editarHabito('${h.id}')"><i data-lucide="pencil"></i></button>
@@ -4722,9 +4880,12 @@ function renderHabitos() {
 
 function toggleHabito(id) {
   if (!state.habitoChecks[todayKey]) state.habitoChecks[todayKey] = {};
+  const habito = state.habitos.find(h => h.id === id);
+  const areaAntes = habito ? calcularAreas().find(a => a.categoria === habito.categoria) : null;
   state.habitoChecks[todayKey][id] = !state.habitoChecks[todayKey][id];
   saveState();
   renderHoy();
+  if (habito && state.habitoChecks[todayKey][id]) celebrarHabito(habito, areaAntes);
   const racha = calcularRachaGlobal();
   document.getElementById('headerRachaDias').textContent = racha;
   if (window.lucide) lucide.createIcons();
@@ -4819,7 +4980,402 @@ function saveHabito() {
 }
 
 // ── RENDER HOY ──
+// ── PROGRESO: ÁREAS, XP Y FICHAS ──
+// La XP y las fichas ganadas NO se guardan: se calculan desde habitoChecks y tareas.
+// Así no agregan nada que sincronizar, desmarcar un hábito las descuenta solo, y dos
+// dispositivos llegan siempre al mismo número. Los hábitos con soft-delete se cuentan
+// a propósito: borrar un hábito no debe restarle nivel a su Área.
+const XP_POR_CHECK = 10;
+const FICHAS_POR_CHECK = 2;
+const FICHAS_POR_TAREA = 3;
+
+function hashTexto(texto) {
+  let h = 0;
+  for (let i = 0; i < texto.length; i++) h = (h * 31 + texto.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+// "Día doble": determinístico por fecha+hábito (1 de cada 10, aprox.). Sin Math.random,
+// para que el mismo check valga lo mismo en todos los dispositivos y al recalcular.
+function esCheckDoble(fecha, habitoId) { return hashTexto(fecha + '|' + habitoId) % 10 === 0; }
+function multiplicadorCheck(fecha, habitoId) { return esCheckDoble(fecha, habitoId) ? 2 : 1; }
+
+function nivelDesdeXP(xp, base, paso) {
+  let nivel = 1, restante = xp, costo = base;
+  while (restante >= costo) { restante -= costo; nivel++; costo += paso; }
+  return { nivel, xp, xpEnNivel: restante, xpParaSubir: costo, pct: Math.round((restante / costo) * 100) };
+}
+function nivelArea(xp)   { return nivelDesdeXP(xp, 50, 25); }
+function nivelGlobal(xp) { return nivelDesdeXP(xp, 100, 50); }
+
+function calcularAreas() {
+  const porCategoria = new Map();
+  const asegurar = categoria => {
+    const cat = categoria || '🎯 General';
+    if (!porCategoria.has(cat)) {
+      const partes = cat.split(' ');
+      porCategoria.set(cat, {
+        categoria: cat,
+        nombre: partes.slice(1).join(' ') || cat,
+        icono: CATEGORIA_ICON[partes[0]] || 'activity',
+        xp: 0
+      });
+    }
+    return porCategoria.get(cat);
+  };
+  const habitoPorId = new Map();
+  (state.habitos || []).forEach(h => {
+    habitoPorId.set(h.id, h);
+    if (!h.eliminado) asegurar(h.categoria);
+  });
+  Object.keys(state.habitoChecks || {}).forEach(fecha => {
+    const dia = state.habitoChecks[fecha] || {};
+    Object.keys(dia).forEach(id => {
+      const h = habitoPorId.get(id);
+      if (dia[id] && h) asegurar(h.categoria).xp += XP_POR_CHECK * multiplicadorCheck(fecha, id);
+    });
+  });
+  return Array.from(porCategoria.values())
+    .map(a => Object.assign(a, nivelArea(a.xp)))
+    .sort((a, b) => b.xp - a.xp);
+}
+
+function calcularFichas() {
+  let ganadas = 0;
+  const idsHabitos = new Set((state.habitos || []).map(h => h.id));
+  Object.keys(state.habitoChecks || {}).forEach(fecha => {
+    const dia = state.habitoChecks[fecha] || {};
+    Object.keys(dia).forEach(id => {
+      if (dia[id] && idsHabitos.has(id)) ganadas += FICHAS_POR_CHECK * multiplicadorCheck(fecha, id);
+    });
+  });
+  ganadas += (state.tareas || []).filter(t => t.estado === 'completada').length * FICHAS_POR_TAREA;
+  const gastadas = activos(state.canjes).reduce((suma, c) => suma + (Number(c.costo) || 0), 0);
+  return { ganadas, gastadas, saldo: ganadas - gastadas };
+}
+
+function renderProgresoCard() {
+  const cont = document.getElementById('progresoCard');
+  if (!cont) return;
+  const xpTotal = calcularAreas().reduce((suma, a) => suma + a.xp, 0);
+  const g = nivelGlobal(xpTotal);
+  const fichas = calcularFichas();
+  cont.innerHTML = `
+    <div class="progreso-card" onclick="switchTabProgrammatic('progreso')">
+      <div class="progreso-nivel"><strong>${g.nivel}</strong><span>nivel</span></div>
+      <div class="progreso-info">
+        <div class="progreso-fila">
+          <span class="progreso-titulo">Tu progreso</span>
+          <button class="ficha-chip" onclick="event.stopPropagation();switchTabProgrammatic('premios')" aria-label="Ver premios"><i data-lucide="coins"></i>${fichas.saldo}</button>
+        </div>
+        <div class="xp-bar"><div class="xp-bar-fill" style="width:${g.pct}%"></div></div>
+        <div class="progreso-datos"><span>${g.xpEnNivel} / ${g.xpParaSubir} XP</span><span>${g.pct}%</span></div>
+      </div>
+    </div>`;
+  if (window.lucide) lucide.createIcons();
+}
+
+function renderAreasTop() {
+  const cont = document.getElementById('inicioAreas');
+  if (!cont) return;
+  const top = calcularAreas().slice(0, 3);
+  if (!top.length) { cont.innerHTML = ''; return; }
+  cont.innerHTML = `
+    <h3 class="inicio-section-title">Tus Áreas más fuertes</h3>
+    <div class="areas-top">${top.map(a => `
+      <button class="area-mini" onclick="switchTabProgrammatic('progreso')">
+        <i data-lucide="${a.icono}"></i>
+        <span class="area-mini-nombre">${escHtml(a.nombre)}</span>
+        <span class="area-mini-nivel">Nivel ${a.nivel}</span>
+        <div class="xp-bar"><div class="xp-bar-fill" style="width:${a.pct}%"></div></div>
+      </button>`).join('')}</div>`;
+  if (window.lucide) lucide.createIcons();
+}
+
+function renderProgreso() {
+  const cont = document.getElementById('progresoContenido');
+  if (!cont) return;
+  const areas = calcularAreas();
+  const xpTotal = areas.reduce((suma, a) => suma + a.xp, 0);
+  const g = nivelGlobal(xpTotal);
+  cont.innerHTML = `
+    <div class="progreso-card" style="cursor:default">
+      <div class="progreso-nivel"><strong>${g.nivel}</strong><span>nivel</span></div>
+      <div class="progreso-info">
+        <div class="progreso-fila"><span class="progreso-titulo">${xpTotal} XP en total</span></div>
+        <div class="xp-bar"><div class="xp-bar-fill" style="width:${g.pct}%"></div></div>
+        <div class="progreso-datos"><span>${g.xpEnNivel} / ${g.xpParaSubir} XP</span><span>${g.pct}%</span></div>
+      </div>
+    </div>
+    <p class="progreso-ayuda">Cada hábito cumplido suma ${XP_POR_CHECK} XP a su Área. Algunos días vale el doble.</p>
+    ${areas.length ? areas.map(a => `
+      <div class="area-fila">
+        <div class="area-icono"><i data-lucide="${a.icono}"></i></div>
+        <div class="progreso-info">
+          <div class="progreso-fila" style="margin-bottom:6px"><span class="progreso-titulo">${escHtml(a.nombre)}</span><span class="ficha-chip" style="background:none;padding:0;color:var(--muted)">Nivel ${a.nivel}</span></div>
+          <div class="xp-bar"><div class="xp-bar-fill" style="width:${a.pct}%"></div></div>
+          <div class="progreso-datos"><span>${a.xpEnNivel} / ${a.xpParaSubir} XP</span><span>${a.pct}%</span></div>
+        </div>
+      </div>`).join('') : '<div class="progreso-vacio">Creá un hábito para empezar a subir de nivel.</div>'}`;
+  if (window.lucide) lucide.createIcons();
+}
+
+// ── AVISO AL COMPLETAR ──
+let _recompensaTimer = null;
+function mostrarRecompensa(html) {
+  const toast = document.getElementById('recompensaToast');
+  if (!toast) return;
+  toast.innerHTML = html;
+  if (window.lucide) lucide.createIcons();
+  void toast.offsetWidth;
+  toast.classList.add('show');
+  clearTimeout(_recompensaTimer);
+  _recompensaTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+function celebrarHabito(habito, areaAntes) {
+  const mult = multiplicadorCheck(todayKey, habito.id);
+  const area = calcularAreas().find(a => a.categoria === habito.categoria);
+  if (!area) return;
+  const subio = areaAntes && area.nivel > areaAntes.nivel;
+  mostrarRecompensa(`
+    <div class="progreso-fila">
+      <span class="progreso-titulo">${escHtml(area.nombre)} · ${subio ? '¡Nivel ' + area.nivel + '!' : 'Nivel ' + area.nivel}</span>
+      <span class="ficha-chip recompensa-doble">+${XP_POR_CHECK * mult} XP</span>
+    </div>
+    <div class="xp-bar"><div class="xp-bar-fill" id="recompensaBarra" style="width:${subio ? 0 : (areaAntes ? areaAntes.pct : 0)}%"></div></div>
+    <div class="recompensa-toast-pie">
+      <span class="ficha-chip"><i data-lucide="coins"></i>+${FICHAS_POR_CHECK * mult}</span>
+      ${mult > 1 ? '<span class="ficha-chip recompensa-doble">Día doble</span>' : ''}
+    </div>`);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const barra = document.getElementById('recompensaBarra');
+    if (barra) barra.style.width = area.pct + '%';
+  }));
+}
+
+function celebrarTarea() {
+  mostrarRecompensa(`
+    <div class="progreso-fila" style="margin-bottom:0">
+      <span class="progreso-titulo">Tarea completada</span>
+      <span class="ficha-chip"><i data-lucide="coins"></i>+${FICHAS_POR_TAREA}</span>
+    </div>`);
+}
+
+// ── LLAMA QUE EVOLUCIONA (mismos hitos que la racha global) ──
+function colorLlama(dias) {
+  if (dias >= 100) return '#2563EB';
+  if (dias >= 60)  return '#9333EA';
+  if (dias >= 30)  return '#DC2626';
+  if (dias >= 14)  return '#EA580C';
+  if (dias >= 7)   return '#EAB308';
+  return '#F97316';
+}
+
+// ── PREMIOS ──
+// Premios y canjes sí son datos guardados, en colecciones con merge por id. El saldo
+// nunca se guarda: siempre es fichas ganadas menos canjes activos. Si dos dispositivos
+// sin conexión canjean a la vez, se conservan los dos canjes y el saldo puede quedar
+// negativo; no se pierde ni se duplica nada, y no se puede canjear hasta recuperarlo.
+function renderPremios(mensaje) {
+  const cont = document.getElementById('premiosContenido');
+  if (!cont) return;
+  const fichas = calcularFichas();
+  const premios = activos(state.premios);
+  const canjes = activos(state.canjes).slice().sort((a, b) => (b.fecha || '').localeCompare(a.fecha || '')).slice(0, 10);
+  cont.innerHTML = `
+    <div class="premios-saldo">
+      <div>
+        <div class="premios-saldo-num">${fichas.saldo}</div>
+        <div class="premios-saldo-txt">fichas disponibles</div>
+      </div>
+      <div class="premios-saldo-txt" style="text-align:right">Hábito cumplido: +${FICHAS_POR_CHECK}<br>Tarea completada: +${FICHAS_POR_TAREA}</div>
+    </div>
+    <div class="premios-form">
+      <div class="form-group"><label for="premio-nombre">Nuevo premio</label><input type="text" id="premio-nombre" maxlength="40" placeholder="Ej: Un capítulo de mi serie"/></div>
+      <div class="form-group"><label for="premio-costo">Fichas</label><input type="number" id="premio-costo" min="1" step="1" inputmode="numeric" placeholder="50"/></div>
+    </div>
+    <div class="premios-msg" id="premiosMsg">${mensaje ? escHtml(mensaje) : ''}</div>
+    <button class="btn btn-gold" style="width:100%;margin-bottom:22px" onclick="agregarPremio()">Agregar premio</button>
+    ${premios.length ? `<div class="premios-grid">${premios.map(p => `
+      <div class="premio-card">
+        <button class="premio-borrar" onclick="eliminarPremio('${p.id}')" aria-label="Borrar ${escHtml(p.nombre)}">×</button>
+        <i data-lucide="gift"></i>
+        <div class="premio-nombre">${escHtml(p.nombre)}</div>
+        <span class="ficha-chip"><i data-lucide="coins"></i>${p.costo}</span>
+        <button class="btn btn-gold btn-sm premio-canjear" ${fichas.saldo < p.costo ? 'disabled' : ''} onclick="canjearPremio('${p.id}')">Canjear</button>
+      </div>`).join('')}</div>` : '<div class="progreso-vacio">Todavía no hay premios. Agregá el primero.</div>'}
+    <h3 class="progreso-subtitulo">Últimos canjes</h3>
+    ${canjes.length ? canjes.map(c => `
+      <div class="canje-fila">
+        <span>${escHtml(c.nombre)}</span>
+        <span class="ficha-chip">−${c.costo}</span>
+        <button class="btn btn-ghost btn-sm" onclick="deshacerCanje('${c.id}')">Deshacer</button>
+      </div>`).join('') : '<div class="progreso-vacio">Aún no canjeaste ningún premio.</div>'}`;
+  if (window.lucide) lucide.createIcons();
+}
+
+function agregarPremio() {
+  const nombre = document.getElementById('premio-nombre').value.trim();
+  const costo = Number(document.getElementById('premio-costo').value);
+  if (!nombre) { document.getElementById('premiosMsg').textContent = 'Escribí el nombre del premio.'; return; }
+  if (!Number.isInteger(costo) || costo < 1) { document.getElementById('premiosMsg').textContent = 'El costo debe ser un número entero mayor que 0.'; return; }
+  if (!state.premios) state.premios = [];
+  state.premios.push({ id: _uid('premio'), nombre, costo, updatedAt: new Date().toISOString() });
+  saveState();
+  renderPremios();
+}
+
+function eliminarPremio(id) {
+  const premio = (state.premios || []).find(p => p.id === id);
+  if (!premio || !confirm(`¿Borrar el premio "${premio.nombre}"? Tus canjes anteriores se mantienen.`)) return;
+  marcarEliminado(premio);
+  saveState();
+  renderPremios();
+}
+
+function canjearPremio(id) {
+  const premio = activos(state.premios).find(p => p.id === id);
+  if (!premio) return;
+  if (calcularFichas().saldo < premio.costo) { renderPremios('No te alcanzan las fichas para este premio.'); return; }
+  if (!confirm(`¿Canjear "${premio.nombre}" por ${premio.costo} fichas?`)) return;
+  if (!state.canjes) state.canjes = [];
+  const ahora = new Date().toISOString();
+  // El nombre y el costo se copian: el canje no cambia si después se borra el premio.
+  state.canjes.push({ id: _uid('canje'), premioId: premio.id, nombre: premio.nombre, costo: premio.costo, fecha: ahora, updatedAt: ahora });
+  saveState();
+  renderPremios();
+}
+
+function deshacerCanje(id) {
+  const canje = (state.canjes || []).find(c => c.id === id);
+  if (!canje || !confirm(`¿Deshacer el canje de "${canje.nombre}"? Recuperás ${canje.costo} fichas.`)) return;
+  marcarEliminado(canje);
+  saveState();
+  renderPremios();
+}
+
+// ── RELOJ DEL DÍA ──
+const RELOJ_CX = 150, RELOJ_CY = 150, RELOJ_R = 112;
+let relojFecha = null;
+
+function minutosDe(hhmm) {
+  const [h, m] = String(hhmm).split(':').map(Number);
+  return h * 60 + m;
+}
+function puntoReloj(minutos, radio) {
+  const angulo = (minutos / 1440) * 2 * Math.PI - Math.PI / 2;
+  return { x: RELOJ_CX + radio * Math.cos(angulo), y: RELOJ_CY + radio * Math.sin(angulo) };
+}
+function arcoReloj(inicio, fin) {
+  const a = puntoReloj(inicio, RELOJ_R), b = puntoReloj(fin, RELOJ_R);
+  const grande = fin - inicio > 720 ? 1 : 0;
+  return `M${a.x.toFixed(2)} ${a.y.toFixed(2)}A${RELOJ_R} ${RELOJ_R} 0 ${grande} 1 ${b.x.toFixed(2)} ${b.y.toFixed(2)}`;
+}
+function cambiarDiaReloj(delta) {
+  const [y, m, d] = (relojFecha || todayKey).split('-').map(Number);
+  relojFecha = fechaLocal(new Date(y, m - 1, d + delta));
+  renderReloj();
+}
+function volverHoyReloj() { relojFecha = null; renderReloj(); }
+
+function renderReloj(mensaje) {
+  const cont = document.getElementById('relojContenido');
+  if (!cont) return;
+  const fecha = relojFecha || todayKey;
+  const esHoy = fecha === todayKey;
+  const [y, m, d] = fecha.split('-').map(Number);
+  const etiquetaFecha = new Date(y, m - 1, d).toLocaleDateString('es-PY', { weekday: 'long', day: 'numeric', month: 'long' });
+  const bloques = activos(state.bloques).filter(b => b.fecha === fecha).sort((a, b) => a.inicio.localeCompare(b.inicio));
+  const ahora = new Date();
+  const minAhora = ahora.getHours() * 60 + ahora.getMinutes();
+  const horaAhora = String(ahora.getHours()).padStart(2, '0') + ':' + String(ahora.getMinutes()).padStart(2, '0');
+  const siguiente = bloques.find(b => minutosDe(b.fin) > minAhora);
+  const minutosTotales = bloques.reduce((suma, b) => suma + minutosDe(b.fin) - minutosDe(b.inicio), 0);
+  const totalTexto = `${Math.floor(minutosTotales / 60)} h ${String(minutosTotales % 60).padStart(2, '0')} min`;
+  let subCentro = totalTexto + ' planificadas';
+  if (esHoy) {
+    if (!siguiente) subCentro = bloques.length ? 'Sin más bloques hoy' : 'Sin bloques hoy';
+    else if (minutosDe(siguiente.inicio) <= minAhora) subCentro = 'Ahora: ' + siguiente.titulo;
+    else subCentro = siguiente.inicio + ': ' + siguiente.titulo;
+  }
+  if (subCentro.length > 26) subCentro = subCentro.slice(0, 25) + '…';
+
+  const marcas = [];
+  for (let h = 0; h < 24; h++) {
+    const mayor = h % 6 === 0;
+    const a = puntoReloj(h * 60, RELOJ_R - 16), b = puntoReloj(h * 60, RELOJ_R - (mayor ? 25 : 21));
+    marcas.push(`<line x1="${a.x.toFixed(2)}" y1="${a.y.toFixed(2)}" x2="${b.x.toFixed(2)}" y2="${b.y.toFixed(2)}" stroke="var(--muted)" stroke-width="${mayor ? 1.5 : 1}" opacity="${mayor ? 0.9 : 0.45}"/>`);
+  }
+  const etiquetas = [0, 6, 12, 18].map(h => {
+    const p = puntoReloj(h * 60, RELOJ_R - 37);
+    return `<text class="reloj-marca" x="${p.x.toFixed(2)}" y="${(p.y + 4).toFixed(2)}" text-anchor="middle">${String(h).padStart(2, '0')}</text>`;
+  }).join('');
+  const arcos = bloques.map(b => `<path d="${arcoReloj(minutosDe(b.inicio), minutosDe(b.fin))}" fill="none" stroke="${escHtml(b.color || '#E8450A')}" stroke-width="22"><title>${escHtml(b.titulo)}: ${b.inicio} a ${b.fin}</title></path>`).join('');
+  let aguja = '';
+  if (esHoy) {
+    const a = puntoReloj(minAhora, RELOJ_R - 14), b = puntoReloj(minAhora, RELOJ_R + 15);
+    aguja = `<line x1="${a.x.toFixed(2)}" y1="${a.y.toFixed(2)}" x2="${b.x.toFixed(2)}" y2="${b.y.toFixed(2)}" stroke="var(--text)" stroke-width="2.5" stroke-linecap="round"/>`;
+  }
+
+  cont.innerHTML = `
+    <div class="reloj-nav">
+      <button class="btn btn-ghost btn-sm" onclick="cambiarDiaReloj(-1)" aria-label="Día anterior">‹</button>
+      <div class="reloj-fecha">${etiquetaFecha}</div>
+      ${esHoy ? '' : '<button class="btn btn-ghost btn-sm" onclick="volverHoyReloj()">Hoy</button>'}
+      <button class="btn btn-ghost btn-sm" onclick="cambiarDiaReloj(1)" aria-label="Día siguiente">›</button>
+    </div>
+    <div class="reloj-wrap">
+      <svg viewBox="0 0 300 300" role="img" aria-label="Reloj de 24 horas con ${bloques.length} bloques">
+        <circle cx="${RELOJ_CX}" cy="${RELOJ_CY}" r="${RELOJ_R}" fill="none" stroke="var(--xp-track)" stroke-width="22"/>
+        ${marcas.join('')}${etiquetas}${arcos}${aguja}
+        <text class="reloj-hora" x="${RELOJ_CX}" y="${RELOJ_CY + 6}" text-anchor="middle">${esHoy ? horaAhora : totalTexto.split(' min')[0]}</text>
+        <text class="reloj-sub" x="${RELOJ_CX}" y="${RELOJ_CY + 26}" text-anchor="middle">${escHtml(subCentro)}</text>
+      </svg>
+    </div>
+    <div class="reloj-form">
+      <div class="form-group reloj-titulo-campo"><label for="bloque-titulo">Nuevo bloque</label><input type="text" id="bloque-titulo" maxlength="40" placeholder="Ej: Gimnasio"/></div>
+      <div class="form-group"><label for="bloque-inicio">Desde</label><input type="time" id="bloque-inicio"/></div>
+      <div class="form-group"><label for="bloque-fin">Hasta</label><input type="time" id="bloque-fin"/></div>
+    </div>
+    <div class="premios-msg" id="relojMsg">${mensaje ? escHtml(mensaje) : ''}</div>
+    <button class="btn btn-gold" style="width:100%;margin-bottom:20px" onclick="agregarBloque()">Agregar bloque</button>
+    ${bloques.length ? bloques.map(b => `
+      <div class="bloque-fila">
+        <span class="bloque-punto" style="background:${escHtml(b.color || '#E8450A')}"></span>
+        <div class="bloque-texto">${escHtml(b.titulo)}<span class="bloque-hora">${b.inicio} a ${b.fin}</span></div>
+        <button class="btn btn-ghost btn-sm" onclick="eliminarBloque('${b.id}')">Borrar</button>
+      </div>`).join('') : '<div class="progreso-vacio">No hay bloques en este día.</div>'}`;
+}
+
+function agregarBloque() {
+  const titulo = document.getElementById('bloque-titulo').value.trim();
+  const inicio = document.getElementById('bloque-inicio').value;
+  const fin = document.getElementById('bloque-fin').value;
+  const fecha = relojFecha || todayKey;
+  const avisar = texto => { document.getElementById('relojMsg').textContent = texto; };
+  if (!titulo) return avisar('Escribí un nombre para el bloque.');
+  if (!inicio || !fin) return avisar('Elegí la hora de inicio y la de fin.');
+  if (fin <= inicio) return avisar('La hora de fin debe ser posterior a la de inicio, dentro del mismo día.');
+  const delDia = activos(state.bloques).filter(b => b.fecha === fecha);
+  const choca = delDia.find(b => inicio < b.fin && b.inicio < fin);
+  if (choca) return avisar(`Se superpone con "${choca.titulo}" (${choca.inicio} a ${choca.fin}).`);
+  if (!state.bloques) state.bloques = [];
+  const color = ETIQUETA_COLORES[delDia.length % ETIQUETA_COLORES.length];
+  state.bloques.push({ id: _uid('bloque'), fecha, titulo, inicio, fin, color, updatedAt: new Date().toISOString() });
+  saveState();
+  renderReloj();
+}
+
+function eliminarBloque(id) {
+  const bloque = (state.bloques || []).find(b => b.id === id);
+  if (!bloque || !confirm(`¿Borrar el bloque "${bloque.titulo}"?`)) return;
+  marcarEliminado(bloque);
+  saveState();
+  renderReloj();
+}
+
 function renderHoy() {
+  renderProgresoCard();
   renderRanaDelDia();
   renderHabitos();
   renderMonthStats();
@@ -5034,6 +5590,7 @@ function toggleTarea(id) {
   t.completada = t.estado === 'completada'; // backwards compat
   t.updatedAt = new Date().toISOString();
   saveState();
+  if (t.completada) celebrarTarea();
   renderTareas();
   if (document.getElementById('sec-tareas').classList.contains('active')) renderTareasLista();
 }
@@ -5260,6 +5817,7 @@ function toggleTareaPage(id) {
   t.completada = t.estado === 'completada';
   t.updatedAt = new Date().toISOString();
   saveState();
+  if (t.completada) celebrarTarea();
   renderTareasLista();
   renderTareas();
 }
@@ -7618,6 +8176,7 @@ function completarRana() {
   rana.completada = true;
   rana.updatedAt = new Date().toISOString();
   saveState();
+  celebrarTarea();
   renderRanaDelDia();
   renderTareas();
   if (document.getElementById('sec-tareas') && document.getElementById('sec-tareas').classList.contains('active')) {
@@ -7773,6 +8332,7 @@ async function saveToFirestore() {
       state.tareas  = mergeCollectionById(state.tareas, remoteState.tareas);
       state.metas   = mergeCollectionById(state.metas, remoteState.metas);
       state.habitos = mergeCollectionById(state.habitos, remoteState.habitos);
+      mergeColeccionesProgreso(remoteState);
       // Sin timestamp de documento para comparar acá (a diferencia del lado de lectura):
       // esta función está a punto de persistir el estado local, así que ante un conflicto
       // real (misma fecha+id con valor distinto en ambos lados) gana el valor local, que
@@ -7991,6 +8551,7 @@ function attachFirestoreListener(uid) {
       state.tareas  = mergeCollectionById(state.tareas, remoteState.tareas);
       state.metas   = mergeCollectionById(state.metas, remoteState.metas);
       state.habitos = mergeCollectionById(state.habitos, remoteState.habitos);
+      mergeColeccionesProgreso(remoteState);
       state.habitoChecks = mergeHabitoChecksById(
         state.habitoChecks, remoteState.habitoChecks,
         state.habitos.map(h => h.id), remoteTs > localTs
@@ -8021,7 +8582,7 @@ function attachFirestoreListener(uid) {
         // El resto de los campos del documento (no cubiertos por merge por id, ej.
         // ajustes/preferencias): sigue el criterio de siempre, "el documento más nuevo
         // pisa entero".
-        const { tareas, metas, habitos, habitoChecks, ...restoRemoto } = remoteState;
+        const { tareas, metas, habitos, habitoChecks, premios, canjes, bloques, ...restoRemoto } = remoteState;
         Object.assign(state, restoRemoto);
       }
       window.lastKnownCounts = {
@@ -8043,9 +8604,21 @@ function attachFirestoreListener(uid) {
   );
 }
 
+// Refresca Progreso, Premios o Reloj si llega una sincronización con la pantalla abierta,
+// salvo que se esté escribiendo en un campo: redibujar borraría lo que se está tipeando.
+function renderSeccionProgresoActiva() {
+  const activa = document.querySelector('#sec-progreso.active, #sec-premios.active, #sec-reloj.active');
+  if (!activa || activa.contains(document.activeElement)) return;
+  if (activa.id === 'sec-progreso') renderProgreso();
+  if (activa.id === 'sec-premios') renderPremios();
+  if (activa.id === 'sec-reloj') renderReloj();
+}
+
 function renderAll() {
   renderInicio();
   renderHabitos();
+  renderProgresoCard();
+  renderSeccionProgresoActiva();
   renderMetas();
   renderVision();
   renderCalendario();
@@ -8157,6 +8730,7 @@ document.addEventListener('visibilitychange', async () => {
     state.tareas  = mergeCollectionById(state.tareas, remoteState.tareas);
     state.metas   = mergeCollectionById(state.metas, remoteState.metas);
     state.habitos = mergeCollectionById(state.habitos, remoteState.habitos);
+    mergeColeccionesProgreso(remoteState);
     state.habitoChecks = mergeHabitoChecksById(
       state.habitoChecks, remoteState.habitoChecks,
       state.habitos.map(h => h.id), remoteTs > localTs
@@ -8182,7 +8756,7 @@ document.addEventListener('visibilitychange', async () => {
     }
 
     if (remoteTs > localTs) {
-      const { tareas, metas, habitos, habitoChecks, ...restoRemoto } = remoteState;
+      const { tareas, metas, habitos, habitoChecks, premios, canjes, bloques, ...restoRemoto } = remoteState;
       Object.assign(state, restoRemoto);
     }
     window.lastKnownCounts = {
