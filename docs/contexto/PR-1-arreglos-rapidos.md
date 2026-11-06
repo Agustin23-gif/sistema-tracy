@@ -1,6 +1,6 @@
 # PR #1: Arreglos rápidos (fechas en hora local, guarda de Lucide y notificaciones)
 
-https://github.com/Agustin23-gif/sistema-tracy/pull/1 (rama `fix/arreglos-rapidos`, abierto el 06/11/2026). Corresponde al paso 1 de "Próximos pasos" de la [revisión](REVISION-2026-11-06.md).
+https://github.com/Agustin23-gif/sistema-tracy/pull/1 (rama `fix/arreglos-rapidos`). **Se cerró sin mergear**: los mismos arreglos se publicaron directo en `main` y `gh-pages` con el commit `d443a33` (ver [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md)). En ese commit el service worker quedó en `v6` con red primero para el HTML. Corresponde al paso 1 de "Próximos pasos" de la [revisión](REVISION-2026-11-06.md).
 
 ## Qué cambia
 
