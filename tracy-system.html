@@ -12,7 +12,7 @@
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://unpkg.com/lucide@1.60.0/dist/umd/lucide.min.js"></script>
 <script type="module">
   import { initializeApp }
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -4125,8 +4125,34 @@ function tagPillHtml(etiquetaId, taskId) {
   return `<span class="task-tag" style="background:rgba(0,0,0,0.06);color:var(--muted)" onclick="mostrarDropdownEtiqueta(event, '${taskId}')">Sin etiqueta</span>`;
 }
 
-// Clean today's check key for new day
-const todayKey = new Date().toISOString().split('T')[0];
+// ── FECHAS EN HORA LOCAL ──
+// Clave de día 'YYYY-MM-DD' en la hora local del dispositivo. Antes se usaba
+// toISOString().split('T')[0], que devuelve la fecha en UTC: en Argentina (UTC-3),
+// desde las 21:00 la app ya consideraba que era "mañana".
+function fechaLocal(d = new Date()) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+// Clave del día de ayer en hora local (restando un día de calendario, no 24 h).
+function fechaLocalAyer() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return fechaLocal(d);
+}
+
+// "Hoy" se recalcula si la app sigue abierta (o vuelve de segundo plano) después de
+// la medianoche — si no, quedaba fijo en el día en que se abrió la app.
+let todayKey = fechaLocal();
+function actualizarHoySiCambio() {
+  const nuevo = fechaLocal();
+  if (nuevo === todayKey) return;
+  todayKey = nuevo;
+  renderHeaderFecha();
+  renderAll();
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') actualizarHoySiCambio();
+});
+setInterval(actualizarHoySiCambio, 60000);
 
 // ── MODO OSCURO ──
 function aplicarModoOscuro() {
@@ -4242,7 +4268,7 @@ function calcularRachaGlobal() {
   let streak = 0;
   const d = new Date();
   for (let i = 0; i < 365; i++) {
-    const key    = d.toISOString().split('T')[0];
+    const key    = fechaLocal(d);
     const checks = state.habitoChecks[key] || {};
     // Solo cuenta checks de hábitos actualmente activos: un hábito borrado no debe
     // seguir "completando el día" con un check fantasma que quedó en habitoChecks.
@@ -4382,7 +4408,7 @@ function renderInicio() {
       <div class="racha-big-num">${racha}</div>
       <div class="racha-big-label">día${racha !== 1 ? 's' : ''}</div>
     </div>`;
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
 
   // Hitos
   const proximoHito = HITOS_RACHA.find(h => h > racha);
@@ -4435,7 +4461,7 @@ function renderInicio() {
     LETRAS_DIA.map((letra, i) => {
       const dia = new Date(startOfWeek);
       dia.setDate(startOfWeek.getDate() + i);
-      const key    = dia.toISOString().split('T')[0];
+      const key    = fechaLocal(dia);
       const isHoy  = key === todayKey;
       const isFut  = dia > nowMidnight;
 
@@ -4667,7 +4693,7 @@ function renderHabitos() {
     for (let d = 89; d >= 0; d--) {
       const dd = new Date(gridBase);
       dd.setDate(gridBase.getDate() - d);
-      const key = dd.toISOString().split('T')[0];
+      const key = fechaLocal(dd);
       const isDone = !!(state.habitoChecks[key] && state.habitoChecks[key][h.id]);
       const bg = isDone ? color : color + '26';
       dotsHtml += `<div class="hdot" style="background:${bg}"></div>`;
@@ -4708,7 +4734,7 @@ function calcStreak(habitoId) {
   let streak = 0;
   const d = new Date();
   for (let i = 0; i < 365; i++) {
-    const key = d.toISOString().split('T')[0];
+    const key = fechaLocal(d);
     if (state.habitoChecks[key] && state.habitoChecks[key][habitoId]) {
       streak++;
       d.setDate(d.getDate() - 1);
@@ -5521,8 +5547,13 @@ function eliminarEtiqueta(id) {
   const tareasAfectadas = state.tareas.filter(t => t.etiquetaId === id);
   if (tareasAfectadas.length > 0) {
     if (!confirm(`Esta etiqueta tiene ${tareasAfectadas.length} tarea(s). ¿Eliminar igual?`)) return;
+    const ahora = new Date().toISOString();
     state.tareas.forEach(t => {
-      if (t.etiquetaId === id) t.etiquetaId = null;
+      if (t.etiquetaId === id) {
+        t.etiquetaId = null;
+        // Sin esto, el merge por id con el otro dispositivo le devolvía la etiqueta vieja.
+        t.updatedAt = ahora;
+      }
     });
   }
   state.etiquetas = state.etiquetas.filter(e => e.id !== id);
@@ -5556,7 +5587,7 @@ document.addEventListener('keydown', function(e) {
 
 // ── BACKUP ──
 function exportarBackup() {
-  const fecha = new Date().toISOString().split('T')[0];
+  const fecha = fechaLocal();
   const payload = { ...state, pulsoFinanciero: pf_data };
   const json  = JSON.stringify(payload, null, 2);
   const blob  = new Blob([json], { type: 'application/json' });
@@ -6635,7 +6666,7 @@ function programarRecordatorio(horaStr) {
   window._notifInterval = setInterval(() => {
     const ahora = new Date();
     if (ahora.getHours() === hora && ahora.getMinutes() === minuto) {
-      const todayK = ahora.toISOString().split('T')[0];
+      const todayK = fechaLocal(ahora);
       const checks = state.habitoChecks[todayK] || {};
       const habitosActivosNotif = activos(state.habitos);
       const completados = habitosActivosNotif.filter(h => checks[h.id]).length;
@@ -6674,7 +6705,7 @@ async function mostrarNotificacion() {
 }
 
 function calcularHabitosHoy() {
-  const todayK = new Date().toISOString().split('T')[0];
+  const todayK = fechaLocal();
   const checks = state.habitoChecks[todayK] || {};
   return activos(state.habitos).filter(h => checks[h.id]).length;
 }
@@ -7504,7 +7535,7 @@ function vizReiniciar() {
 function _registrarSesionViz() {
   const r = state.rachaVisualizacion;
   if (r.ultimaFecha === todayKey) { actualizarBadgeVision(); return; }
-  const ayer = new Date(new Date() - 86400000).toISOString().split('T')[0];
+  const ayer = fechaLocalAyer();
   r.dias = r.ultimaFecha === ayer ? (r.dias || 0) + 1 : 1;
   r.ultimaFecha = todayKey;
   saveState();
@@ -7513,7 +7544,7 @@ function _registrarSesionViz() {
 
 // ── BADGE VISIÓN ──
 function visualizacionCompletadaHoy() {
-  const hoy = new Date().toISOString().split('T')[0];
+  const hoy = fechaLocal();
   return state.rachaVisualizacion &&
          state.rachaVisualizacion.ultimaFecha === hoy;
 }
@@ -8184,14 +8215,15 @@ if (window.firebaseReady) {
 }
 
 // ── INIT ──
-(function initHeader() {
+function renderHeaderFecha() {
   const now = new Date();
   const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
   const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   document.getElementById('hCalDay').textContent = now.getDate();
   document.getElementById('hCalMonth').textContent = `${meses[now.getMonth()]} ${now.getFullYear()}`;
   document.getElementById('hCalWeekday').textContent = dias[now.getDay()];
-})();
+}
+renderHeaderFecha();
 
 renderInicio();
 showAvatarBubble('inicio');
@@ -8200,21 +8232,9 @@ iniciarNotificacionesSiActivas();
 actualizarBadgeVision();
 if (window.lucide) lucide.createIcons();
 
-// Pedir permiso de notificaciones al cargar
-async function solicitarPermisoNotificaciones() {
-  if ('Notification' in window && Notification.permission === 'default') {
-    const permiso = await Notification.requestPermission();
-    if (permiso === 'granted') {
-      new Notification('Sistema Tracy', {
-        body: '✅ Notificaciones activadas correctamente',
-        icon: './icon-192.png'
-      });
-    }
-  }
-}
-
-// Llamar después de 2 segundos para no interrumpir la carga
-setTimeout(solicitarPermisoNotificaciones, 2000);
+// El permiso de notificaciones ya no se pide automáticamente al cargar: los navegadores
+// (y iOS en particular) exigen que salga de un gesto del usuario. Se pide desde el botón
+// de activar recordatorio (activarRecordatorio → pedirPermisoNotificaciones).
 
 // ── ONBOARDING ──
 let obStepActual = 1;
