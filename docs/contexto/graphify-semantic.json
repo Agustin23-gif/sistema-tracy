@@ -13,7 +13,7 @@
   },
   {
    "id": "docs_contexto_arquitectura_arquitectura",
-   "label": "Arquitectura de Sistema Tracy",
+   "label": "Arquitectura de Steadfast",
    "file_type": "document",
    "source_file": "docs/contexto/ARQUITECTURA.md",
    "source_location": null,
@@ -487,7 +487,7 @@
   },
   {
    "id": "docs_contexto_estado_actual_estado",
-   "label": "Estado actual y flujo de trabajo",
+   "label": "Estado actual y flujo de trabajo (08/11)",
    "file_type": "document",
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",
    "source_location": null,
@@ -630,8 +630,8 @@
    "contributor": "Claude"
   },
   {
-   "id": "docs_contexto_estado_actual_pend_tarjetas_tarea",
-   "label": "Pendiente: tarjetas de tarea",
+   "id": "docs_contexto_estado_actual_pend_probar_sync",
+   "label": "Pendiente: probar sincronización real entre dispositivos",
    "file_type": "concept",
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",
    "source_location": null,
@@ -641,13 +641,146 @@
    "contributor": "Claude"
   },
   {
-   "id": "docs_contexto_estado_actual_pend_probar_sync",
-   "label": "Pendiente: probar sincronización real entre dispositivos",
+   "id": "docs_contexto_estado_actual_steadfast",
+   "label": "Steadfast: nombre nuevo (hupomoné, Santiago 1:2-4)",
    "file_type": "concept",
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",
    "source_location": null,
    "source_url": null,
-   "captured_at": "2026-11-06",
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude",
+   "rationale": "Constancia como \"permanecer bajo carga\"; se mantuvieron archivo, ids de Firebase y claves tracy_* para no perder datos."
+  },
+  {
+   "id": "docs_contexto_estado_actual_logo_columna",
+   "label": "Logo: columna blanca sobre naranja (icon.svg)",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_splash",
+   "label": "Pantalla de entrada con lema Santiago 1:4",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_regla_naranja",
+   "label": "Regla: siempre naranja, diseño minimalista",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_ee8da9e",
+   "label": "Commit ee8da9e: encabezado compacto",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_d7ca04b",
+   "label": "Commits d7ca04b/9ee9e70: Steadfast, logo y splash",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_71fcef5",
+   "label": "Commit 71fcef5: tareas en el celular",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_tarjetas",
+   "label": "Commits 0d393d9/e89b298/b98aa2e: vista de tarjetas",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_e65acfe",
+   "label": "Commit e65acfe: temporizador de la rana",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_712dc3e",
+   "label": "Commit 712dc3e: recordatorio por tarea con calendario",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_vista_tarjetas",
+   "label": "Vista Tarjetas: notas adhesivas por estado",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_rana_timer",
+   "label": "Temporizador de la rana (estimadoMin, ranaTimer.finEn)",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_recordatorio_tarea",
+   "label": "Recordatorio por tarea (.ics / Google Calendar)",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-08",
    "author": null,
    "contributor": "Claude"
   }
@@ -2255,16 +2388,6 @@
   },
   {
    "source": "docs_contexto_estado_actual_estado",
-   "target": "docs_contexto_estado_actual_pend_tarjetas_tarea",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
-   "source_location": null,
-   "weight": 1.0
-  },
-  {
-   "source": "docs_contexto_estado_actual_estado",
    "target": "docs_contexto_estado_actual_pend_probar_sync",
    "relation": "references",
    "confidence": "EXTRACTED",
@@ -2294,16 +2417,6 @@
    "weight": 1.0
   },
   {
-   "source": "docs_contexto_estado_actual_pend_tarjetas_tarea",
-   "target": "tracy_system_rendertareaslista",
-   "relation": "references",
-   "confidence": "INFERRED",
-   "confidence_score": 0.85,
-   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
-   "source_location": null,
-   "weight": 1.0
-  },
-  {
    "source": "docs_contexto_estado_actual_pend_barra_inferior",
    "target": "docs_contexto_estado_actual_commit_a7e8ede",
    "relation": "conceptually_related_to",
@@ -2324,8 +2437,488 @@
    "weight": 1.0
   },
   {
-   "source": "docs_contexto_estado_actual_pend_tarjetas_tarea",
-   "target": "docs_contexto_estado_actual_commit_a7e8ede",
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_steadfast",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_steadfast",
+   "target": "docs_contexto_estado_actual_logo_columna",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_steadfast",
+   "target": "docs_contexto_estado_actual_splash",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_regla_naranja",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_regla_naranja",
+   "target": "docs_contexto_estado_actual_logo_columna",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_logo_columna",
+   "target": "generate_icon",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_logo_columna",
+   "target": "manifest",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_ee8da9e",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_d7ca04b",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_71fcef5",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_tarjetas",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_e65acfe",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_712dc3e",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_d7ca04b",
+   "target": "docs_contexto_estado_actual_steadfast",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_d7ca04b",
+   "target": "service_worker",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_ee8da9e",
+   "target": "tracy_system_renderheaderfecha",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_tarjetas",
+   "target": "docs_contexto_estado_actual_vista_tarjetas",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_vista_tarjetas",
+   "target": "tracy_system_setvistatareas",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_vista_tarjetas",
+   "target": "tracy_system_rendertareaslista_colornota",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_vista_tarjetas",
+   "target": "tracy_system_tintasobre",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_vista_tarjetas",
+   "target": "tracy_system_rendertareaslista_notahtml",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_vista_tarjetas",
+   "target": "tracy_system_rendertareaslista_rananotahtml",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_vista_tarjetas",
+   "target": "tracy_system_saludarrana",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_e65acfe",
+   "target": "docs_contexto_estado_actual_rana_timer",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_ranatimerestado",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_ranatimerhtml",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_ranatimerchiphtml",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_empezartimerrana",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_pausartimerrana",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_seguirtimerrana",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_sumartiemporana",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_reiniciartimerrana",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_ajustarestimadorana",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_avisarfinrana",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_tickrana",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "tracy_system_asegurartickrana",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_712dc3e",
+   "target": "docs_contexto_estado_actual_recordatorio_tarea",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_recordatorio_tarea",
+   "target": "tracy_system_abrirrecordatorio",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_recordatorio_tarea",
+   "target": "tracy_system_guardarrecordatoriotarea",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_recordatorio_tarea",
+   "target": "tracy_system_recordatoriochiphtml",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_recordatorio_tarea",
+   "target": "tracy_system_descargaricstarea",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_recordatorio_tarea",
+   "target": "tracy_system_googlecalendarurl",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_recordatorio_tarea",
+   "target": "tracy_system_revisarrecordatorios",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_recordatorio_tarea",
+   "target": "tracy_system_fecharecordatorio",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_timer",
+   "target": "docs_contexto_estado_actual_regla_rana_manual",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_recordatorio_tarea",
+   "target": "docs_contexto_revision_2026_11_06_bug_recordatorios",
+   "relation": "rationale_for",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_pend_probar_sync",
+   "target": "docs_contexto_estado_actual_rana_timer",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_pend_probar_sync",
+   "target": "docs_contexto_estado_actual_recordatorio_tarea",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_vista_tarjetas",
+   "target": "docs_contexto_estado_actual_regla_rana_manual",
    "relation": "conceptually_related_to",
    "confidence": "INFERRED",
    "confidence_score": 0.75,
@@ -2376,6 +2969,19 @@
     "docs_contexto_estado_actual_reloj_dia",
     "docs_contexto_estado_actual_recompensas",
     "docs_contexto_estado_actual_sync_progreso"
+   ],
+   "relation": "form",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md"
+  },
+  {
+   "id": "tareas_08_11",
+   "label": "Mejoras de Tareas del 08/11",
+   "nodes": [
+    "docs_contexto_estado_actual_vista_tarjetas",
+    "docs_contexto_estado_actual_rana_timer",
+    "docs_contexto_estado_actual_recordatorio_tarea"
    ],
    "relation": "form",
    "confidence": "EXTRACTED",

@@ -1,14 +1,14 @@
-# Arquitectura de Sistema Tracy
+# Arquitectura de Steadfast (antes Sistema Tracy)
 
 PWA personal de productividad inspirada en Brian Tracy: hábitos, metas, tareas, visión (afirmaciones y visualización) y finanzas personales (Pulso Financiero).
 
 ## Archivos
 
-- `tracy-system.html`: toda la app en un único archivo (~8.3k líneas: ~3.200 de CSS, ~650 de HTML y ~4.400 de JavaScript, unas 254 funciones). Sin framework, sin bundler, sin `package.json`, sin tests.
+- `tracy-system.html`: toda la app en un único archivo (~9.600 líneas al 08/11/2026; en la revisión del 06/11 eran 8.3k: ~3.200 de CSS, ~650 de HTML y ~4.400 de JavaScript). El nombre del archivo se mantuvo después del renombre a Steadfast. Sin framework, sin bundler, sin `package.json`, sin tests.
   - Primer `<script type="module">` (línea 16): inicializa Firebase (Auth con Google + Firestore) y expone las funciones de sesión y sincronización en `window`.
   - Segundo `<script>` (línea 3896): el resto de la app (estado, render, hábitos, tareas, metas, visión, finanzas, pomodoro, onboarding, notificaciones).
-- `service-worker.js` (`sistema-tracy-v6`): red primero para el HTML y el manifest; cache primero para íconos, Lucide, SDK de Firebase y fuentes (precacheados para uso sin conexión). No intercepta Firestore. Tiene un handler `push` sin servidor que envíe pushes.
-- `manifest.json` + íconos (`icon-192.png`, `icon-512.png`, `apple-touch-icon.png`) generados con `generate-icon.js` (usa `canvas` de Node, no declarado en ningún `package.json`).
+- `service-worker.js` (`sistema-tracy-v7`): red primero para el HTML y el manifest; cache primero para íconos, Lucide, SDK de Firebase y fuentes (precacheados para uso sin conexión). No intercepta Firestore. Tiene un handler `push` sin servidor que envíe pushes.
+- `manifest.json` + íconos (`icon-192.png`, `icon-512.png`, `apple-touch-icon.png`) generados desde `icon.svg` con `generate-icon.js` (usa Playwright, no declarado en ningún `package.json`).
 
 ## Dependencias por CDN
 
@@ -38,7 +38,8 @@ Funciones `renderX()` (`renderInicio`, `renderMetas`, `renderRanaDelDia`, …) r
 - Inicio: saludo (`obtenerNombreUsuario`), clima, versículo, racha con escudo, hitos, mascota zorro, estadísticas del mes.
 - Hoy / Hábitos: CRUD de hábitos, check diario, calendario mensual.
 - Progreso (Áreas con XP y niveles), Premios (fichas y canjes) y Reloj del día (bloques horarios): pestañas dentro de "Más". Ver [ESTADO-ACTUAL.md](ESTADO-ACTUAL.md).
-- Tareas: 3 estados, etiquetas (hasta 10), edición inline, portada personalizable (color o imagen), "La Rana del Día" (siempre manual).
+- Tareas: 3 estados, etiquetas (hasta 10), edición inline, portada personalizable (color o imagen), vista Lista o Tarjetas (notas adhesivas), recordatorio por tarea con .ics y Google Calendar, "La Rana del Día" (siempre manual) con temporizador.
+- Pantalla de entrada (`#splash`) con el logo de columna y Santiago 1:4.
 - Metas: razón, fecha límite y pasos con progreso (indexadas por posición en el array).
 - Visión: afirmaciones, modo visualización, racha de visualización, recordatorio.
 - Finanzas: movimientos, pagos fijos con atrasos, métodos de pago, registro rápido.

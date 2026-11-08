@@ -1,4 +1,4 @@
-# Contexto del proyecto Sistema Tracy
+# Contexto del proyecto Steadfast (antes Sistema Tracy)
 
 Esta carpeta guarda el contexto del proyecto para retomarlo después (vos o una IA) sin tener que releer todo el código.
 
