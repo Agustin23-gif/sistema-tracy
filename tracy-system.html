@@ -86,30 +86,31 @@
   header {
     background: var(--bg);
     border-bottom: 1px solid var(--border);
-    padding: calc(14px + env(safe-area-inset-top)) 24px 14px;
+    padding: calc(10px + env(safe-area-inset-top)) 24px 10px;
     position: sticky;
     top: 0;
     z-index: 100;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+    gap: 18px;
   }
   .header-cal {
     display: flex;
-    align-items: baseline;
-    gap: 14px;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
   }
   .header-cal-day {
     font-family: 'Geist Mono', monospace;
-    font-size: 5.5rem;
+    font-size: 2.4rem;
     font-weight: 800;
-    line-height: 0.9;
+    line-height: 1;
     color: var(--text);
-    letter-spacing: -3px;
+    letter-spacing: -1.5px;
   }
-  .header-cal-info { display: flex; flex-direction: column; gap: 3px; }
+  .header-cal-info { display: flex; flex-direction: column; gap: 2px; }
   .header-cal-month {
+    white-space: nowrap;
     font-size: 0.82rem;
     font-weight: 600;
     color: var(--text);
@@ -122,12 +123,28 @@
     text-transform: uppercase;
     letter-spacing: 1px;
   }
-  .header-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
+  .header-brand {
+    padding-left: 18px;
+    border-left: 1px solid var(--border);
+    flex-shrink: 0;
   }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .theme-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: none; border: 1px solid var(--border); cursor: pointer;
+    color: var(--muted); transition: color 0.15s, border-color 0.15s;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--muted); }
+  .theme-btn svg, .theme-btn i { width: 16px; height: 16px; }
+  .theme-btn .theme-ico-sun { display: none; }
+  body.dark-mode .theme-btn .theme-ico-sun { display: block; }
+  body.dark-mode .theme-btn .theme-ico-moon { display: none; }
   .header-brand-name {
     font-family: 'Geist', sans-serif;
     font-size: 1rem;
@@ -150,7 +167,10 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 0;
+    max-width: 380px;
+    margin-left: auto;
   }
   .daily-meter span {
     font-size: 0.7rem;
@@ -160,9 +180,10 @@
     white-space: nowrap;
   }
   .meter-bar {
-    width: 100px;
+    flex: 1;
+    min-width: 40px;
     height: 6px;
-    background: rgba(0,0,0,0.08);
+    background: rgba(var(--muted-rgb),0.2);
     border-radius: 99px;
     overflow: hidden;
   }
@@ -1900,18 +1921,37 @@
     user-select: none;
   }
 
+  /* HEADER: hasta 900px pasa a dos filas (la barra de Hoy abajo, a lo ancho); en móvil se oculta la marca */
+  @media (max-width: 900px) {
+    header {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-areas: "cal brand actions" "meter meter meter";
+      row-gap: 8px;
+    }
+    .header-cal { grid-area: cal; }
+    .header-brand { grid-area: brand; }
+    .header-brand-sub { display: none; }
+    .header-actions { grid-area: actions; }
+    .daily-meter { grid-area: meter; max-width: none; margin-left: 0; }
+  }
+  @media (max-width: 640px) {
+    header {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "cal actions" "meter meter";
+    }
+    .header-brand, .theme-btn { display: none; }
+  }
+
   @media (max-width: 480px) {
     /* HEADER */
     header {
-      padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
-      gap: 10px;
+      padding: calc(8px + env(safe-area-inset-top)) 14px 10px;
+      column-gap: 10px;
     }
-    .header-cal-day { font-size: 3.5rem; }
+    .header-cal-day { font-size: 2rem; }
     .header-cal-month, .header-cal-weekday { font-size: 11px; }
-    .header-brand-name { font-size: 0.72rem; }
-    .header-brand-sub { display: none; }
-    .meter-bar { width: 70px; }
-    .header-right { gap: 12px; }
+    .header-actions { gap: 8px; }
 
     /* NAV */
     nav { padding: 6px 10px calc(6px + env(safe-area-inset-bottom)); }
@@ -3331,29 +3371,26 @@
       <div class="header-cal-weekday" id="hCalWeekday"></div>
     </div>
   </div>
-  <div class="header-right">
-    <div>
-      <div class="header-brand-name">Sistema Tracy</div>
-      <span class="header-brand-sub">Metas · Hábitos · Acción</span>
+  <div class="header-brand">
+    <div class="header-brand-name">Sistema Tracy</div>
+    <span class="header-brand-sub">Metas · Hábitos · Acción</span>
+  </div>
+  <div class="daily-meter">
+    <span>Hoy</span>
+    <div class="meter-bar">
+      <div class="meter-fill" id="meterFill" style="width:0%"></div>
     </div>
+    <span class="meter-pct" id="meterPct">0%</span>
+  </div>
+  <div class="header-actions">
     <div id="headerRachaChip" class="racha-chip">
       <i data-lucide="flame"></i>
       <span id="headerRachaDias">0</span>
     </div>
-    <div class="daily-meter">
-      <span>Hoy</span>
-      <div class="meter-bar">
-        <div class="meter-fill" id="meterFill" style="width:0%"></div>
-      </div>
-      <span class="meter-pct" id="meterPct">0%</span>
-    </div>
-    <div class="dark-toggle-wrap">
-      <i data-lucide="sun"></i>
-      <div class="dark-toggle" id="darkToggle" onclick="toggleDarkMode()" role="button" aria-label="Modo oscuro">
-        <div class="dark-toggle-thumb"></div>
-      </div>
-      <i data-lucide="moon"></i>
-    </div>
+    <button class="theme-btn" onclick="toggleDarkMode()" title="Cambiar tema" aria-label="Cambiar entre modo claro y oscuro">
+      <i data-lucide="moon" class="theme-ico-moon"></i>
+      <i data-lucide="sun" class="theme-ico-sun"></i>
+    </button>
     <button class="header-finanzas-btn" onclick="pf_abrirPanelRapido()" title="Registrar movimiento" aria-label="Registrar movimiento">
       <i data-lucide="plus-circle"></i>
     </button>
@@ -3377,6 +3414,7 @@
           <div class="auth-dropdown-status" id="authDropdownStatus">✅ Sincronizado</div>
           <div class="auth-dropdown-lastsync" id="authDropdownLastSync"></div>
         </div>
+        <button class="auth-dropdown-item" onclick="toggleDarkMode()">Cambiar tema claro / oscuro</button>
         <button class="auth-dropdown-item danger" onclick="logoutGoogle()">Cerrar sesión</button>
       </div>
     </div>
