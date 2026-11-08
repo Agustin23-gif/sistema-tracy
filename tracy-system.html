@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title>Sistema Tracy — Metas & Hábitos</title>
+<title>Steadfast — Metas & Hábitos</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Sistema Tracy">
+<meta name="apple-mobile-web-app-title" content="Steadfast">
 <meta name="theme-color" content="#F5F0EB">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="./manifest.json">
@@ -2935,6 +2935,7 @@
     line-height: 1.25;
     margin-bottom: 12px;
   }
+  .ob-cita { display: inline-block; margin-top: 8px; font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: .06em; color: rgba(255,255,255,0.55); }
   .ob-subtitle { font-size: 16px; color: rgba(255,255,255,0.7); line-height: 1.5; margin-bottom: 36px; }
   .ob-icon { width: 64px; height: 64px; color: #E8450A; margin-bottom: 20px; }
   .ob-title-light {
@@ -3372,8 +3373,8 @@
     </div>
   </div>
   <div class="header-brand">
-    <div class="header-brand-name">Sistema Tracy</div>
-    <span class="header-brand-sub">Metas · Hábitos · Acción</span>
+    <div class="header-brand-name">Steadfast</div>
+    <span class="header-brand-sub" title="Así que dejen que crezca, pues una vez que su constancia se haya desarrollado plenamente, serán perfectos y completos, y no les faltará nada. (Santiago 1:4)">Constancia · Santiago 1:4</span>
   </div>
   <div class="daily-meter">
     <span>Hoy</span>
@@ -3972,8 +3973,8 @@
 
   <div class="ob-step" id="obStep1">
     <div class="ob-emoji-bienvenida">🦊</div>
-    <h1 class="ob-title">BIENVENIDO A SISTEMA TRACY</h1>
-    <p class="ob-subtitle">Tu sistema personal de hábitos, metas y productividad</p>
+    <h1 class="ob-title">BIENVENIDO A STEADFAST</h1>
+    <p class="ob-subtitle">“Así que dejen que crezca, pues una vez que su constancia se haya desarrollado plenamente, serán perfectos y completos, y no les faltará nada.”<br><span class="ob-cita">Santiago 1:4</span></p>
     <button class="ob-btn-primary" onclick="obSiguiente()">Comenzar →</button>
   </div>
 
@@ -6190,7 +6191,7 @@ function exportarBackup() {
   const url   = URL.createObjectURL(blob);
   const a     = document.createElement('a');
   a.href      = url;
-  a.download  = `sistema-tracy-backup-${fecha}.json`;
+  a.download  = `steadfast-backup-${fecha}.json`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -7291,7 +7292,7 @@ async function mostrarNotificacion() {
   if (navigator.serviceWorker && navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', mensaje });
   } else if (Notification.permission === 'granted') {
-    new Notification('Sistema Tracy 🔥', {
+    new Notification('Steadfast 🔥', {
       body: mensaje,
       icon: './icon-192.png',
       tag: 'recordatorio-habitos',
@@ -7344,7 +7345,7 @@ async function activarNotificacionesSafari() {
   }
   const permiso = await Notification.requestPermission();
   if (permiso === 'granted') {
-    new Notification('Sistema Tracy', {
+    new Notification('Steadfast', {
       body: '✅ ¡Notificaciones activadas! Te avisaremos cuando termine el Pomodoro.',
       icon: './icon-192.png'
     });
@@ -7716,7 +7717,7 @@ function updatePomoDisplay() {
   if (numEl) numEl.textContent = `${mins}:${secs}`;
   const arc = document.getElementById('pomoRingArc');
   if (arc) arc.setAttribute('stroke-dasharray', `${prog.toFixed(2)} ${circ.toFixed(2)}`);
-  document.title = `${mins}:${secs} — Sistema Tracy`;
+  document.title = `${mins}:${secs} — Steadfast`;
   updateFabPomoLabel();
 }
 
@@ -7757,7 +7758,7 @@ function pausePomo() {
   pomoRunning = false;
   clearInterval(pomoInterval);
   pomoInterval = null;
-  document.title = 'Sistema Tracy — Metas & Hábitos';
+  document.title = 'Steadfast — Metas & Hábitos';
   updatePomoDot();
   if (pomoOpen) renderPomoPanel();
 }
@@ -7768,7 +7769,7 @@ function resetPomo() {
   clearInterval(pomoInterval);
   pomoInterval = null;
   pomoSeconds  = pomoMode === 'work' ? POMO_WORK : POMO_BREAK;
-  document.title = 'Sistema Tracy — Metas & Hábitos';
+  document.title = 'Steadfast — Metas & Hábitos';
   updatePomoDot();
   if (pomoOpen) renderPomoPanel();
 }
@@ -7780,7 +7781,7 @@ function skipPomo() {
   pomoInterval = null;
   pomoMode     = pomoMode === 'work' ? 'break' : 'work';
   pomoSeconds  = pomoMode === 'work' ? POMO_WORK : POMO_BREAK;
-  document.title = 'Sistema Tracy — Metas & Hábitos';
+  document.title = 'Steadfast — Metas & Hábitos';
   updatePomoDot();
   if (pomoOpen) renderPomoPanel();
 }
@@ -7792,7 +7793,7 @@ function switchPomoMode(mode) {
   pomoInterval = null;
   pomoMode     = mode;
   pomoSeconds  = mode === 'work' ? POMO_WORK : POMO_BREAK;
-  document.title = 'Sistema Tracy — Metas & Hábitos';
+  document.title = 'Steadfast — Metas & Hábitos';
   updatePomoDot();
   if (pomoOpen) renderPomoPanel();
 }
@@ -7813,7 +7814,7 @@ function pomoDone() {
   clearInterval(pomoInterval);
   pomoInterval = null;
   pomoRunning  = false;
-  document.title = 'Sistema Tracy — Metas & Hábitos';
+  document.title = 'Steadfast — Metas & Hábitos';
   playBell();
   if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
 
@@ -7831,7 +7832,7 @@ function pomoDone() {
   if (navigator.serviceWorker && navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', mensaje });
   } else if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification('Sistema Tracy', { body: mensaje, icon: './icon-192.png' });
+    new Notification('Steadfast', { body: mensaje, icon: './icon-192.png' });
   }
 
   updatePomoDot();
