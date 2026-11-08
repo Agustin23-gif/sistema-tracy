@@ -1,7 +1,7 @@
 {
-  "name": "Sistema Tracy",
-  "short_name": "Tracy",
-  "description": "App de hábitos y metas basada en Brian Tracy",
+  "name": "Steadfast",
+  "short_name": "Steadfast",
+  "description": "Hábitos y metas con constancia. Santiago 1:4",
   "start_url": "./tracy-system.html",
   "display": "standalone",
   "background_color": "#F5F0EB",

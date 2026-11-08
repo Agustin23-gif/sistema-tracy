@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title>Sistema Tracy — Metas & Hábitos</title>
+<title>Steadfast — Metas & Hábitos</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Sistema Tracy">
+<meta name="apple-mobile-web-app-title" content="Steadfast">
 <meta name="theme-color" content="#F5F0EB">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="./manifest.json">
@@ -86,30 +86,31 @@
   header {
     background: var(--bg);
     border-bottom: 1px solid var(--border);
-    padding: calc(14px + env(safe-area-inset-top)) 24px 14px;
+    padding: calc(10px + env(safe-area-inset-top)) 24px 10px;
     position: sticky;
     top: 0;
     z-index: 100;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+    gap: 18px;
   }
   .header-cal {
     display: flex;
-    align-items: baseline;
-    gap: 14px;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
   }
   .header-cal-day {
     font-family: 'Geist Mono', monospace;
-    font-size: 5.5rem;
+    font-size: 2.4rem;
     font-weight: 800;
-    line-height: 0.9;
+    line-height: 1;
     color: var(--text);
-    letter-spacing: -3px;
+    letter-spacing: -1.5px;
   }
-  .header-cal-info { display: flex; flex-direction: column; gap: 3px; }
+  .header-cal-info { display: flex; flex-direction: column; gap: 2px; }
   .header-cal-month {
+    white-space: nowrap;
     font-size: 0.82rem;
     font-weight: 600;
     color: var(--text);
@@ -122,12 +123,28 @@
     text-transform: uppercase;
     letter-spacing: 1px;
   }
-  .header-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
+  .header-brand {
+    padding-left: 18px;
+    border-left: 1px solid var(--border);
+    flex-shrink: 0;
   }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .theme-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: none; border: 1px solid var(--border); cursor: pointer;
+    color: var(--muted); transition: color 0.15s, border-color 0.15s;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--muted); }
+  .theme-btn svg, .theme-btn i { width: 16px; height: 16px; }
+  .theme-btn .theme-ico-sun { display: none; }
+  body.dark-mode .theme-btn .theme-ico-sun { display: block; }
+  body.dark-mode .theme-btn .theme-ico-moon { display: none; }
   .header-brand-name {
     font-family: 'Geist', sans-serif;
     font-size: 1rem;
@@ -150,7 +167,10 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-shrink: 0;
+    flex: 1;
+    min-width: 0;
+    max-width: 380px;
+    margin-left: auto;
   }
   .daily-meter span {
     font-size: 0.7rem;
@@ -160,9 +180,10 @@
     white-space: nowrap;
   }
   .meter-bar {
-    width: 100px;
+    flex: 1;
+    min-width: 40px;
     height: 6px;
-    background: rgba(0,0,0,0.08);
+    background: rgba(var(--muted-rgb),0.2);
     border-radius: 99px;
     overflow: hidden;
   }
@@ -1882,6 +1903,29 @@
     margin-bottom: 8px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   }
+  /* Las etiquetas van en línea en pantallas anchas */
+  .tarea-meta { display: contents; }
+  /* En el celular: el texto usa todo el ancho y las etiquetas pasan abajo */
+  @media (max-width: 640px) {
+    .tarea-page-item {
+      display: grid;
+      grid-template-columns: auto auto minmax(0, 1fr) auto auto auto;
+      grid-template-areas: "check rana text bell edit del" ". . meta . . .";
+      column-gap: 8px;
+      row-gap: 6px;
+      align-items: start;
+      padding: 12px 10px 12px 14px !important;
+    }
+    .tarea-page-item > .task-check { grid-area: check; }
+    .tarea-page-item > .rana-btn { grid-area: rana; }
+    .tarea-page-item > .task-text,
+    .tarea-page-item > .tarea-edit-input { grid-area: text; font-size: 0.9rem; }
+    .tarea-page-item > .task-edit { grid-area: edit; padding-top: 3px; }
+    .tarea-page-item > .task-del:not(.task-edit) { grid-area: del; }
+    .tarea-page-item > .recordatorio-btn { grid-area: bell; padding-top: 3px; }
+    .tarea-page-item .tarea-meta { grid-area: meta; display: flex; flex-wrap: wrap; gap: 6px; }
+    .tarea-page-item .tarea-meta:empty { display: none; }
+  }
   .page-completadas-toggle {
     display: flex;
     align-items: center;
@@ -1900,18 +1944,37 @@
     user-select: none;
   }
 
+  /* HEADER: hasta 900px pasa a dos filas (la barra de Hoy abajo, a lo ancho); en móvil se oculta la marca */
+  @media (max-width: 900px) {
+    header {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-areas: "cal brand actions" "meter meter meter";
+      row-gap: 8px;
+    }
+    .header-cal { grid-area: cal; }
+    .header-brand { grid-area: brand; }
+    .header-brand-sub { display: none; }
+    .header-actions { grid-area: actions; }
+    .daily-meter { grid-area: meter; max-width: none; margin-left: 0; }
+  }
+  @media (max-width: 640px) {
+    header {
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "cal actions" "meter meter";
+    }
+    .header-brand, .theme-btn { display: none; }
+  }
+
   @media (max-width: 480px) {
     /* HEADER */
     header {
-      padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
-      gap: 10px;
+      padding: calc(8px + env(safe-area-inset-top)) 14px 10px;
+      column-gap: 10px;
     }
-    .header-cal-day { font-size: 3.5rem; }
+    .header-cal-day { font-size: 2rem; }
     .header-cal-month, .header-cal-weekday { font-size: 11px; }
-    .header-brand-name { font-size: 0.72rem; }
-    .header-brand-sub { display: none; }
-    .meter-bar { width: 70px; }
-    .header-right { gap: 12px; }
+    .header-actions { gap: 8px; }
 
     /* NAV */
     nav { padding: 6px 10px calc(6px + env(safe-area-inset-bottom)); }
@@ -2405,6 +2468,188 @@
     .pomo-panel.open { transform: translateY(0); opacity: 1; }
   }
 
+  /* ── TAREAS: VISTA DE TARJETAS ── */
+  .tareas-page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .vista-toggle { display: inline-flex; background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 3px; flex-shrink: 0; }
+  .vista-toggle button {
+    font-family: 'Geist', sans-serif; font-size: 0.78rem; font-weight: 600; border: 0; background: transparent;
+    color: var(--muted); padding: 6px 12px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .vista-toggle button svg { width: 14px; height: 14px; }
+  .vista-toggle button.active { background: var(--gold); color: #fff; }
+  .vista-toggle button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* Tablero: columnas por estado con notas adhesivas del color de su etiqueta */
+  .tablero { display: grid; grid-template-columns: repeat(var(--ncols, 3), minmax(0, 360px)); gap: 22px; align-items: start; }
+  .tablero-col-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; font-weight: 600; font-size: 0.92rem; }
+  .tablero-col-head > span:first-child { display: flex; align-items: center; gap: 8px; }
+  .tablero-col-barra { width: 4px; height: 18px; border-radius: 2px; display: inline-block; }
+  .tablero-col-n { font-family: 'Geist Mono', monospace; font-size: 0.8rem; color: var(--muted); }
+  .tablero-pila { display: flex; flex-direction: column; gap: 18px; }
+  .tablero-ver-mas {
+    margin-top: 14px; width: 100%; font-family: 'Geist', sans-serif; font-size: 0.78rem; font-weight: 600;
+    background: transparent; border: 1px dashed var(--border); color: var(--muted); border-radius: 8px; padding: 8px; cursor: pointer;
+  }
+  .nota {
+    --et: #9A9A9A; --tinta: #FFFFFF;
+    position: relative; border-radius: 4px; padding: 18px 14px 11px; min-height: 118px;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+    background: var(--et); color: var(--tinta);
+    box-shadow: 0 10px 18px -8px rgba(50,30,15,.28), 0 1px 2px rgba(50,30,15,.14);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  /* Cada nota tiene su inclinación; al pasar el mouse se endereza y se levanta,
+     y las vecinas se corren para dejarle lugar (como un mazo de cartas). */
+  .nota { --rot: 0deg; --dy: 0px; --esc: 1; transform: translateY(var(--dy)) rotate(var(--rot)) scale(var(--esc));
+          transition: transform .45s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease; }
+  .nota:nth-child(4n+1) { --rot: -1.6deg; }
+  .nota:nth-child(4n+2) { --rot: 1.2deg; }
+  .nota:nth-child(4n+3) { --rot: -0.6deg; }
+  .nota:nth-child(4n+4) { --rot: 1.8deg; }
+  @media (hover: hover) {
+    .tablero-pila .nota:hover { --rot: 0deg; --dy: -6px; --esc: 1.04; z-index: 2;
+      box-shadow: 0 22px 30px -12px rgba(50,30,15,.38), 0 2px 4px rgba(50,30,15,.14); }
+    .tablero-pila .nota:hover ~ .nota { --dy: 10px; }
+    .tablero-pila .nota:has(~ .nota:hover) { --dy: -10px; }
+    .tablero-pila:has(.nota:hover) .nota:not(:hover) { --esc: .97; }
+    .tablero-pila .nota:hover + .nota { --rot: 3deg; }
+    .tablero-pila .nota:has(+ .nota:hover) { --rot: -3deg; }
+  }
+  @media (prefers-reduced-motion: reduce) { .nota { transition: none; } }
+  .nota-cinta {
+    position: absolute; top: -10px; width: 64px; height: 22px; pointer-events: none;
+    background: rgba(255,255,255,.55); border: 1px solid rgba(0,0,0,.06);
+  }
+  body.dark-mode .nota-cinta { background: rgba(255,255,255,.3); border-color: rgba(255,255,255,.08); }
+  .nota-doblez::after {
+    content: ''; position: absolute; right: 0; bottom: 0; width: 22px; height: 22px; border-top-left-radius: 4px;
+    background: linear-gradient(135deg, rgba(0,0,0,.2) 0 50%, var(--bg) 50%);
+  }
+  .nota .task-text { font-size: 0.92rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; color: inherit; }
+  .nota .tarea-edit-input { font-size: 0.92rem; font-weight: 600; border-bottom-color: currentColor !important; }
+  .nota-pie { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .nota .task-tag { background: rgba(255,255,255,.22) !important; color: inherit !important; }
+  .nota-acciones { display: flex; align-items: center; gap: 2px; }
+  .nota-acciones .task-del, .nota-acciones .rana-btn { color: inherit; opacity: 0; transition: opacity .15s; }
+  .nota-acciones .task-del:hover { color: inherit; }
+  .nota:hover .nota-acciones .task-del, .nota:hover .nota-acciones .rana-btn,
+  .nota:focus-within .nota-acciones .task-del, .nota:focus-within .nota-acciones .rana-btn { opacity: .7; }
+  .nota-acciones .rana-btn { font-size: 15px; }
+  .nota-acciones .task-check { margin-left: 4px; border-color: currentColor; background: transparent; opacity: .75; }
+  .nota-acciones .task-check.en-curso { opacity: 1; background: radial-gradient(circle, currentColor 0 4px, transparent 5px); }
+  .nota-acciones .task-check.en-curso::after { display: none; }
+  .nota-acciones .task-check.completada { opacity: 1; background: currentColor; }
+  .nota-acciones .task-check.completada svg { color: var(--et) !important; stroke: var(--et) !important; }
+  @media (hover: none) { .nota-acciones .task-del, .nota-acciones .rana-btn { opacity: .6; } }
+  .nota.done { opacity: .6; }
+  .nota.done .task-text { text-decoration: line-through; }
+  @media (max-width: 720px) {
+    .tablero { grid-template-columns: 1fr; gap: 26px; }
+    .tablero-pila { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .nota { min-height: 104px; padding: 16px 11px 9px; }
+    .nota .task-text { font-size: 0.84rem; }
+    .nota-pie { flex-wrap: wrap; }
+  }
+
+  /* Rana del día: nota grande, inclinada y pegada con cinta */
+  .rana-zona { display: flex; justify-content: center; padding: 16px 0 34px; }
+  .nota.rana-nota {
+    width: min(340px, 90%); transform: rotate(-4deg); padding: 28px 20px 16px; gap: 14px; cursor: default;
+    box-shadow: 0 18px 30px -10px rgba(50,30,15,.35), 0 2px 4px rgba(50,30,15,.16);
+    transition: transform .35s cubic-bezier(.3,1.5,.5,1), box-shadow .35s ease;
+  }
+  .rana-nota .nota-cinta { left: 50%; margin-left: -46px; top: -12px; width: 92px; transform: rotate(3deg); }
+  .rana-nota .task-text { font-size: 1.2rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.25; }
+  .rana-nota-label {
+    font-family: 'Geist Mono', monospace; font-size: 0.68rem; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; display: flex; align-items: center; gap: 6px; opacity: .9;
+  }
+  .rana-nota .nota-acciones .rana-btn, .rana-nota .nota-acciones .task-del { opacity: .7; }
+  .rana-hecha-btn {
+    font-family: 'Geist', sans-serif; font-size: 0.8rem; font-weight: 700; border: 0; border-radius: 8px;
+    padding: 8px 12px; cursor: pointer; white-space: nowrap; background: var(--tinta); color: var(--et); margin-left: 6px;
+  }
+  /* Al pasar el mouse se despega un poco y se mueve; en el iPhone, al tocarla y al entrar a Tareas */
+  @keyframes ranaSaludoVuelta {
+    0%   { transform: rotate(-4deg); }
+    30%  { transform: rotate(1deg) translateY(-8px) scale(1.03); }
+    55%  { transform: rotate(-6deg) translateY(-4px) scale(1.02); }
+    80%  { transform: rotate(-2.5deg) translateY(-1px); }
+    100% { transform: rotate(-4deg); }
+  }
+  @media (hover: hover) {
+    .nota.rana-nota:hover {
+      transform: rotate(-1deg) translateY(-8px) scale(1.03);
+      box-shadow: 0 28px 40px -14px rgba(50,30,15,.4), 0 2px 4px rgba(50,30,15,.16);
+    }
+  }
+  .nota.rana-nota.saluda { animation: ranaSaludoVuelta .9s ease-out; }
+  @media (prefers-reduced-motion: reduce) {
+    .nota.rana-nota:hover { transform: rotate(-4deg); } .nota.rana-nota.saluda { animation: none; }
+  }
+
+  /* Temporizador de la rana: tiempo estimado ajustable que corre con hora de fin guardada */
+  .rana-timer {
+    display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap;
+    background: color-mix(in srgb, currentColor 14%, transparent); border-radius: 10px; padding: 4px;
+    font-family: 'Geist', sans-serif;
+  }
+  .rana-timer-btn {
+    border: 0; background: transparent; color: inherit; font: inherit; font-size: 0.8rem; font-weight: 700;
+    min-width: 28px; height: 28px; padding: 0 8px; border-radius: 7px; cursor: pointer; line-height: 1;
+  }
+  .rana-timer-btn:hover { background: color-mix(in srgb, currentColor 16%, transparent); }
+  .rana-timer-btn.principal { background: color-mix(in srgb, currentColor 22%, transparent); }
+  .rana-timer-tiempo {
+    font-family: 'Geist Mono', monospace; font-size: 0.85rem; font-weight: 600; padding: 0 4px;
+    font-variant-numeric: tabular-nums; min-width: 58px; text-align: center;
+  }
+  .rana-timer.corriendo .rana-timer-tiempo { font-size: 1rem; }
+  .rana-timer.fin { animation: ranaTimerFin 1s ease-in-out 3; }
+  @keyframes ranaTimerFin { 50% { background: color-mix(in srgb, currentColor 35%, transparent); } }
+  .rana-timer-chip {
+    font-family: 'Geist Mono', monospace; font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 99px;
+    background: rgba(232,69,10,.12); color: var(--gold); font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .rana-nota .rana-timer-fila { display: flex; }
+
+  /* Recordatorio de tarea (día y hora) */
+  .recordatorio-chip {
+    font-size: 0.66rem; font-weight: 600; padding: 2px 8px; border-radius: 99px; cursor: pointer; white-space: nowrap;
+    background: rgba(91,140,255,.12); color: #3D6BE0; flex-shrink: 0;
+  }
+  body.dark-mode .recordatorio-chip { color: #9DB8FF; }
+  .recordatorio-chip.vencido { background: rgba(217,64,64,.12); color: var(--danger); }
+  .nota .recordatorio-chip { background: rgba(255,255,255,.22); color: inherit; align-self: flex-start; }
+  .nota .recordatorio-chip.vencido { background: rgba(0,0,0,.18); }
+  .recordatorio-btn { font-size: 0.85rem !important; }
+  .recordatorio-pop {
+    position: absolute; z-index: 650; width: 280px; max-width: calc(100vw - 24px);
+    background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0,0,0,.18); padding: 14px; display: flex; flex-direction: column; gap: 10px;
+    font-family: 'Geist', sans-serif;
+  }
+  .recordatorio-pop h4 { font-size: 0.85rem; font-weight: 700; margin: 0; }
+  .recordatorio-pop p { font-size: 0.75rem; color: var(--muted); margin: 0; line-height: 1.4; }
+  .recordatorio-pop input {
+    width: 100%; font-family: inherit; font-size: 0.9rem; padding: 9px 10px; border-radius: 9px;
+    border: 1px solid var(--border); background: var(--input-bg); color: var(--text);
+  }
+  .recordatorio-pop-fila { display: flex; gap: 8px; flex-wrap: wrap; }
+  .recordatorio-pop button, .recordatorio-pop a {
+    flex: 1; font-family: inherit; font-size: 0.78rem; font-weight: 600; padding: 9px 10px; border-radius: 9px;
+    border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; text-align: center;
+    text-decoration: none; white-space: nowrap;
+  }
+  .recordatorio-pop .primario { background: var(--gold); border-color: var(--gold); color: #fff; }
+  @media (max-width: 640px) {
+    .recordatorio-pop {
+      position: fixed; left: 12px !important; right: 12px; top: auto !important; width: auto; max-width: none;
+      bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 1200;
+      box-shadow: 0 -6px 40px rgba(0,0,0,.25);
+    }
+  }
+
   /* ── RANA DEL DÍA ── */
   .rana-btn {
     background: none;
@@ -2895,6 +3140,7 @@
     line-height: 1.25;
     margin-bottom: 12px;
   }
+  .ob-cita { display: inline-block; margin-top: 8px; font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: .06em; color: rgba(255,255,255,0.55); }
   .ob-subtitle { font-size: 16px; color: rgba(255,255,255,0.7); line-height: 1.5; margin-bottom: 36px; }
   .ob-icon { width: 64px; height: 64px; color: #E8450A; margin-bottom: 20px; }
   .ob-title-light {
@@ -3316,12 +3562,63 @@
   .reloj-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .reloj-form .form-group { margin-bottom: 8px; }
   .reloj-form .reloj-titulo-campo { grid-column: 1 / -1; }
+
+  /* ══ PANTALLA DE ENTRADA (Steadfast) ══ */
+  .splash { position: fixed; inset: 0; z-index: 100000; background: #E8450A; color: #FFFFFF;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    padding: 24px max(28px, env(safe-area-inset-right, 0px)) 24px max(28px, env(safe-area-inset-left, 0px));
+    text-align: center; cursor: pointer; transition: opacity .5s ease, visibility .5s; }
+  .splash.fuera { opacity: 0; visibility: hidden; pointer-events: none; }
+  .splash-logo { width: 112px; height: 112px; overflow: visible; }
+  .splash-logo rect { fill: #FFFFFF; }
+  .splash-logo .sp-base { transform-origin: 50px 78px; animation: spBase .45s cubic-bezier(.2,.8,.2,1) both; }
+  .splash-logo .sp-fuste { transform-box: fill-box; transform-origin: 50% 100%; animation: spFuste .5s cubic-bezier(.2,.8,.2,1) both; }
+  .splash-logo .sp-f1 { animation-delay: .35s; }
+  .splash-logo .sp-f2 { animation-delay: .47s; }
+  .splash-logo .sp-f3 { animation-delay: .59s; }
+  .splash-logo .sp-capitel { animation: spCapitel .6s cubic-bezier(.3,1.4,.5,1) 1s both; }
+  .splash-nombre { font-family: 'Geist', sans-serif; font-weight: 800; font-size: 34px; letter-spacing: -0.02em; line-height: 1;
+    animation: spTexto .6s ease 1.5s both; }
+  .splash-lema { max-width: 30ch; font-family: 'Geist', sans-serif; font-size: 15px; line-height: 1.55; color: rgba(255,255,255,0.88);
+    margin: 0; animation: spTexto .7s ease 1.85s both; }
+  .splash-cita { display: block; margin-top: 10px; font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: .08em; color: rgba(255,255,255,0.7); }
+  @keyframes spBase { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes spFuste { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes spCapitel { 0% { transform: translateY(-26px); opacity: 0; } 60% { opacity: 1; } 100% { transform: translateY(0); opacity: 1; } }
+  @keyframes spTexto { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .splash-logo .sp-base, .splash-logo .sp-fuste, .splash-logo .sp-capitel, .splash-nombre, .splash-lema { animation: none; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .xp-bar-fill, .recompensa-toast { transition: none; }
   }
 </style>
 </head>
 <body>
+<!-- ══ PANTALLA DE ENTRADA: la columna se arma y aparece el lema ══ -->
+<div class="splash" id="splash" role="img" aria-label="Steadfast. Santiago 1:4">
+  <svg class="splash-logo" viewBox="0 0 100 100" aria-hidden="true">
+    <g transform="translate(0,-1)">
+      <rect class="sp-base" x="29" y="74" width="42" height="8" rx="2"/>
+      <rect class="sp-fuste sp-f1" x="36" y="32" width="7" height="38" rx="2"/>
+      <rect class="sp-fuste sp-f2" x="46.5" y="32" width="7" height="38" rx="2"/>
+      <rect class="sp-fuste sp-f3" x="57" y="32" width="7" height="38" rx="2"/>
+      <rect class="sp-capitel" x="29" y="20" width="42" height="8" rx="2"/>
+    </g>
+  </svg>
+  <div class="splash-nombre">Steadfast</div>
+  <p class="splash-lema">“Así que dejen que crezca, pues una vez que su constancia se haya desarrollado plenamente, serán perfectos y completos, y no les faltará nada.”<span class="splash-cita">SANTIAGO 1:4</span></p>
+</div>
+<script>
+// Se cierra sola a los 6 s (tiempo para leer el lema), o antes si se toca la pantalla. No depende del resto del código.
+(function () {
+  var sp = document.getElementById('splash');
+  var reducido = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function cerrar() { if (!sp || sp.classList.contains('fuera')) return; sp.classList.add('fuera'); setTimeout(function () { sp.remove(); }, 600); }
+  sp.addEventListener('click', cerrar);
+  setTimeout(cerrar, reducido ? 4500 : 6000);
+})();
+</script>
 
 <header>
   <div class="header-cal">
@@ -3331,29 +3628,26 @@
       <div class="header-cal-weekday" id="hCalWeekday"></div>
     </div>
   </div>
-  <div class="header-right">
-    <div>
-      <div class="header-brand-name">Sistema Tracy</div>
-      <span class="header-brand-sub">Metas · Hábitos · Acción</span>
+  <div class="header-brand">
+    <div class="header-brand-name">Steadfast</div>
+    <span class="header-brand-sub" title="Así que dejen que crezca, pues una vez que su constancia se haya desarrollado plenamente, serán perfectos y completos, y no les faltará nada. (Santiago 1:4)">Constancia · Santiago 1:4</span>
+  </div>
+  <div class="daily-meter">
+    <span>Hoy</span>
+    <div class="meter-bar">
+      <div class="meter-fill" id="meterFill" style="width:0%"></div>
     </div>
+    <span class="meter-pct" id="meterPct">0%</span>
+  </div>
+  <div class="header-actions">
     <div id="headerRachaChip" class="racha-chip">
       <i data-lucide="flame"></i>
       <span id="headerRachaDias">0</span>
     </div>
-    <div class="daily-meter">
-      <span>Hoy</span>
-      <div class="meter-bar">
-        <div class="meter-fill" id="meterFill" style="width:0%"></div>
-      </div>
-      <span class="meter-pct" id="meterPct">0%</span>
-    </div>
-    <div class="dark-toggle-wrap">
-      <i data-lucide="sun"></i>
-      <div class="dark-toggle" id="darkToggle" onclick="toggleDarkMode()" role="button" aria-label="Modo oscuro">
-        <div class="dark-toggle-thumb"></div>
-      </div>
-      <i data-lucide="moon"></i>
-    </div>
+    <button class="theme-btn" onclick="toggleDarkMode()" title="Cambiar tema" aria-label="Cambiar entre modo claro y oscuro">
+      <i data-lucide="moon" class="theme-ico-moon"></i>
+      <i data-lucide="sun" class="theme-ico-sun"></i>
+    </button>
     <button class="header-finanzas-btn" onclick="pf_abrirPanelRapido()" title="Registrar movimiento" aria-label="Registrar movimiento">
       <i data-lucide="plus-circle"></i>
     </button>
@@ -3377,6 +3671,7 @@
           <div class="auth-dropdown-status" id="authDropdownStatus">✅ Sincronizado</div>
           <div class="auth-dropdown-lastsync" id="authDropdownLastSync"></div>
         </div>
+        <button class="auth-dropdown-item" onclick="toggleDarkMode()">Cambiar tema claro / oscuro</button>
         <button class="auth-dropdown-item danger" onclick="logoutGoogle()">Cerrar sesión</button>
       </div>
     </div>
@@ -3664,8 +3959,18 @@
 
     <!-- Título -->
     <div class="tareas-page-header">
-      <h2>Mis Tareas</h2>
-      <p id="tareas-page-subtitle" class="tareas-page-sub"></p>
+      <div>
+        <h2>Mis Tareas</h2>
+        <p id="tareas-page-subtitle" class="tareas-page-sub"></p>
+      </div>
+      <div class="vista-toggle" role="group" aria-label="Vista de tareas">
+        <button type="button" id="vistaBtnLista" onclick="setVistaTareas('lista')" aria-pressed="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Lista
+        </button>
+        <button type="button" id="vistaBtnTarjetas" onclick="setVistaTareas('tarjetas')" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tarjetas
+        </button>
+      </div>
     </div>
 
     <!-- Filtros -->
@@ -3934,8 +4239,8 @@
 
   <div class="ob-step" id="obStep1">
     <div class="ob-emoji-bienvenida">🦊</div>
-    <h1 class="ob-title">BIENVENIDO A SISTEMA TRACY</h1>
-    <p class="ob-subtitle">Tu sistema personal de hábitos, metas y productividad</p>
+    <h1 class="ob-title">BIENVENIDO A STEADFAST</h1>
+    <p class="ob-subtitle">“Así que dejen que crezca, pues una vez que su constancia se haya desarrollado plenamente, serán perfectos y completos, y no les faltará nada.”<br><span class="ob-cita">Santiago 1:4</span></p>
     <button class="ob-btn-primary" onclick="obSiguiente()">Comenzar →</button>
   </div>
 
@@ -5759,6 +6064,30 @@ function buildPortadaPanel() {
 let filtroEtiqueta = 'todas';
 let filtroEstado   = 'todas';
 let pagCompletadasCollapsed = true;
+// Vista de la sección Tareas: 'lista' o 'tarjetas'. Se recuerda en este dispositivo.
+const VISTA_TAREAS_KEY = 'steadfast_vista_tareas';
+let vistaTareas = (() => { try { return localStorage.getItem(VISTA_TAREAS_KEY) === 'tarjetas' ? 'tarjetas' : 'lista'; } catch (e) { return 'lista'; } })();
+// Color de texto (blanco u oscuro) que se lee mejor sobre el color de una etiqueta.
+function tintaSobre(hex) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex || '');
+  if (!m) return '#FFFFFF';
+  const n = parseInt(m[1], 16);
+  const lin = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+  const L = 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+  return L > 0.4 ? '#1A1A1A' : '#FFFFFF';
+}
+// La rana se mueve una vez al entrar a Tareas y cada vez que se la toca en el celular.
+let ranaSaludarAlEntrar = false;
+function saludarRana(el) {
+  el.classList.remove('saluda');
+  void el.offsetWidth;
+  el.classList.add('saluda');
+}
+function setVistaTareas(v) {
+  vistaTareas = v === 'tarjetas' ? 'tarjetas' : 'lista';
+  try { localStorage.setItem(VISTA_TAREAS_KEY, vistaTareas); } catch (e) {}
+  renderTareasLista();
+}
 let selectedTagPage = state.etiquetas[0] ? state.etiquetas[0].id : null;
 
 function renderFiltrosEtiqueta() {
@@ -5874,15 +6203,96 @@ function renderTareasLista() {
         ${checkHtml(t)}
         <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana('${t.id}')" title="Rana del día">🐸</button>
         <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
-        ${estadoPill(t)}
-        ${tagPillHtml(t.etiquetaId, t.id)}
+        <div class="tarea-meta">
+          ${esRana && t.estado !== 'completada' ? ranaTimerChipHtml(t) : ''}
+          ${recordatorioChipHtml(t)}
+          ${estadoPill(t)}
+          ${tagPillHtml(t.etiquetaId, t.id)}
+        </div>
+        <button class="task-del task-edit recordatorio-btn" data-recordatorio-de="${t.id}" onclick="abrirRecordatorio(event, '${t.id}')" title="Recordatorio">🔔</button>
         <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'pagina')"><i data-lucide="pencil"></i></button>
         <button class="task-del" onclick="deleteTareaPage('${t.id}')">×</button>
       </div>`;
   }
 
+  // ── Vista de tarjetas: notas adhesivas del color de su etiqueta, en columnas por estado ──
+  function colorNota(t) {
+    const et = getEtiqueta(t.etiquetaId);
+    const color = et ? et.color : '#9A9A9A';
+    return `--et:${color};--tinta:${tintaSobre(color)}`;
+  }
+  function notaHtml(t, i) {
+    const esRana = state.ranaDelDia && state.ranaDelDia.tareaId === t.id && state.ranaDelDia.fecha === todayKey;
+    const cinta = i % 3 === 0 ? `<span class="nota-cinta" style="left:${30 + (i * 17) % 40}%;transform:rotate(${i % 2 ? -4 : 5}deg)"></span>` : '';
+    const clases = 'nota' + (i % 4 === 2 ? ' nota-doblez' : '') + (t.estado === 'completada' ? ' done' : '');
+    return `
+      <div class="${clases}" style="${colorNota(t)}">${cinta}
+        <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
+        ${recordatorioChipHtml(t)}
+        <div class="nota-pie">
+          ${tagPillHtml(t.etiquetaId, t.id)}
+          <div class="nota-acciones">
+            <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana('${t.id}')" title="Rana del día">🐸</button>
+            <button class="task-del task-edit recordatorio-btn" data-recordatorio-de="${t.id}" onclick="abrirRecordatorio(event, '${t.id}')" title="Recordatorio">🔔</button>
+            <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'pagina')" title="Editar"><i data-lucide="pencil"></i></button>
+            <button class="task-del" onclick="deleteTareaPage('${t.id}')" title="Eliminar">×</button>
+            ${checkHtml(t)}
+          </div>
+        </div>
+      </div>`;
+  }
+  function ranaNotaHtml(t) {
+    const saluda = ranaSaludarAlEntrar ? ' saluda' : '';
+    return `
+      <div class="rana-zona">
+        <div class="nota rana-nota${saluda}" style="${colorNota(t)}" ontouchstart="saludarRana(this)" onanimationend="this.classList.remove('saluda')">
+          <span class="nota-cinta"></span>
+          <div class="rana-nota-label">🐸 Rana del día</div>
+          <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
+          ${recordatorioChipHtml(t)}
+          <div class="rana-timer-fila">${ranaTimerHtml(t)}</div>
+          <div class="nota-pie">
+            ${tagPillHtml(t.etiquetaId, t.id)}
+            <div class="nota-acciones">
+              <button class="rana-btn activa" onclick="toggleRana('${t.id}')" title="Quitar como rana del día">🐸</button>
+              <button class="task-del task-edit recordatorio-btn" data-recordatorio-de="${t.id}" onclick="abrirRecordatorio(event, '${t.id}')" title="Recordatorio">🔔</button>
+              <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'pagina')" title="Editar"><i data-lucide="pencil"></i></button>
+              <button class="rana-hecha-btn" onclick="completarRana()">Marcar hecha</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  const enTarjetas = vistaTareas === 'tarjetas';
+  const btnL = document.getElementById('vistaBtnLista');
+  const btnT = document.getElementById('vistaBtnTarjetas');
+  if (btnL && btnT) {
+    btnL.classList.toggle('active', !enTarjetas); btnL.setAttribute('aria-pressed', String(!enTarjetas));
+    btnT.classList.toggle('active', enTarjetas);  btnT.setAttribute('aria-pressed', String(enTarjetas));
+  }
+
   let html = '';
-  if (!filtered.length) {
+  if (filtered.length && enTarjetas) {
+    const ranaId = state.ranaDelDia && state.ranaDelDia.fecha === todayKey ? state.ranaDelDia.tareaId : null;
+    const rana = [...enCurso, ...sinEmpezar].find(t => t.id === ranaId);
+    if (rana) html += ranaNotaHtml(rana);
+    const COMPLETADAS_VISIBLES = 6;
+    const compVisibles = pagCompletadasCollapsed ? completadas.slice(-COMPLETADAS_VISIBLES).reverse() : completadas.slice().reverse();
+    const columnas = [
+      { nombre: 'En curso',    color: '#5B8CFF', total: enCurso.filter(t => t !== rana).length,    tareas: enCurso.filter(t => t !== rana) },
+      { nombre: 'Sin empezar', color: '#9A8F86', total: sinEmpezar.filter(t => t !== rana).length, tareas: sinEmpezar.filter(t => t !== rana) },
+      { nombre: 'Completadas', color: '#4CAF87', total: completadas.length,                         tareas: compVisibles, esComp: true },
+    ].filter(c => c.total);
+    let i = 0;
+    html += `<div class="tablero" style="--ncols:${Math.max(columnas.length, 1)}">` + columnas.map(c => `
+      <div class="tablero-col">
+        <div class="tablero-col-head"><span><i class="tablero-col-barra" style="background:${c.color}"></i>${c.nombre}</span><span class="tablero-col-n">${c.total}</span></div>
+        <div class="tablero-pila">${c.tareas.map(t => notaHtml(t, i++)).join('')}</div>
+        ${c.esComp && c.total > COMPLETADAS_VISIBLES ? `<button class="tablero-ver-mas" onclick="togglePageCompletadas()">${pagCompletadasCollapsed ? `Ver las ${c.total}` : 'Ver menos'}</button>` : ''}
+      </div>`).join('') + `</div>`;
+    ranaSaludarAlEntrar = false;
+  } else if (!filtered.length) {
     html = total
       ? `<div class="empty" style="padding:32px 0"><div class="empty-icon">🔍</div><h3>Sin resultados</h3><p>No hay tareas con esos filtros.</p></div>`
       : `<div class="empty" style="padding:32px 0"><div class="empty-icon">📋</div><h3>Sin tareas</h3><p>Agregá tu primera tarea arriba.</p></div>`;
@@ -5911,6 +6321,7 @@ function renderTareasLista() {
 
 function renderPaginaTareas() {
   applyPortadaBanner();
+  ranaSaludarAlEntrar = true;
   renderTareasLista();
 }
 
@@ -5960,6 +6371,167 @@ function editarTarea(id, origen) {
   input.focus();
   input.select();
 }
+
+// ── RECORDATORIOS DE TAREAS ──
+// t.recordatorio = 'YYYY-MM-DDTHH:MM' en hora local. El aviso confiable con la app cerrada
+// lo da el calendario (archivo .ics con alarma, o Google Calendar); con la app abierta,
+// además, avisa la propia app.
+const DIAS_CORTOS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+function fechaRecordatorio(str) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(str || '');
+  return m ? new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : null;
+}
+function recordatorioTexto(str) {
+  const d = fechaRecordatorio(str);
+  if (!d) return '';
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const dia = new Date(d); dia.setHours(0, 0, 0, 0);
+  const dif = Math.round((dia - hoy) / 86400000);
+  const hora = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  const cuando = dif === 0 ? 'hoy' : dif === 1 ? 'mañana' : dif === -1 ? 'ayer'
+    : `${DIAS_CORTOS[d.getDay()]} ${d.getDate()} ${MESES_CORTOS[d.getMonth()]}`;
+  return `${cuando} · ${hora}`;
+}
+function recordatorioChipHtml(t) {
+  if (!t.recordatorio) return '';
+  const d = fechaRecordatorio(t.recordatorio);
+  const vencido = d && d < new Date() && t.estado !== 'completada';
+  return `<span class="recordatorio-chip${vencido ? ' vencido' : ''}" onclick="abrirRecordatorio(event, '${t.id}')" title="Recordatorio">🔔 ${recordatorioTexto(t.recordatorio)}</span>`;
+}
+function cerrarRecordatorioPop() {
+  const el = document.getElementById('recordatorioPop');
+  if (el) el.remove();
+}
+function abrirRecordatorio(e, id) {
+  e.stopPropagation();
+  cerrarRecordatorioPop();
+  const t = state.tareas.find(x => x.id === id);
+  if (!t) return;
+  let valor = t.recordatorio;
+  if (!valor) {
+    const d = new Date(Date.now() + 60 * 60000);
+    d.setMinutes(0, 0, 0);
+    valor = fechaLocal(d) + 'T' + String(d.getHours()).padStart(2, '0') + ':00';
+  }
+  const pop = document.createElement('div');
+  pop.className = 'recordatorio-pop';
+  pop.id = 'recordatorioPop';
+  pop.onclick = ev => ev.stopPropagation();
+  pop.innerHTML = `
+    <h4>🔔 Recordatorio</h4>
+    <input type="datetime-local" id="recordatorioInput" value="${valor}">
+    <div class="recordatorio-pop-fila">
+      ${t.recordatorio ? `<button onclick="guardarRecordatorioTarea('${id}', true)">Quitar</button>` : ''}
+      <button class="primario" onclick="guardarRecordatorioTarea('${id}')">Guardar</button>
+    </div>
+    ${t.recordatorio ? `
+      <p>Para que te avise aunque la app esté cerrada, agregalo a tu calendario:</p>
+      <div class="recordatorio-pop-fila">
+        <button onclick="descargarIcsTarea('${id}')">📅 Calendario del iPhone</button>
+        <a href="${googleCalendarUrl(t)}" target="_blank" rel="noopener">Google Calendar</a>
+      </div>` : ''}`;
+  document.body.appendChild(pop);
+  const r = e.currentTarget.getBoundingClientRect();
+  const ancho = pop.offsetWidth;
+  const left = Math.min(Math.max(12, r.left + window.scrollX), window.scrollX + document.documentElement.clientWidth - ancho - 12);
+  pop.style.left = left + 'px';
+  pop.style.top = (r.bottom + window.scrollY + 6) + 'px';
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#recordatorioPop')) cerrarRecordatorioPop();
+});
+function guardarRecordatorioTarea(id, quitar) {
+  const t = state.tareas.find(x => x.id === id);
+  if (!t) return;
+  const input = document.getElementById('recordatorioInput');
+  const valor = quitar ? null : (input && input.value ? input.value.slice(0, 16) : null);
+  t.recordatorio = valor;
+  t.recordatorioAvisado = null;
+  t.updatedAt = new Date().toISOString();
+  saveState();
+  renderTareasLista();
+  renderTareas();
+  renderRanaDelDia();
+  if (valor) {
+    try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch (err) {}
+    // Se vuelve a abrir para ofrecer el calendario recién guardado.
+    const ancla = document.querySelector(`[data-recordatorio-de="${id}"]`);
+    if (ancla) abrirRecordatorio({ stopPropagation() {}, currentTarget: ancla }, id);
+  } else {
+    cerrarRecordatorioPop();
+  }
+}
+function fechaCalendario(d) {
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}T${p(d.getHours())}${p(d.getMinutes())}00`;
+}
+function googleCalendarUrl(t) {
+  const d = fechaRecordatorio(t.recordatorio);
+  if (!d) return '#';
+  const fin = new Date(d.getTime() + 15 * 60000);
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+    + '&text=' + encodeURIComponent(t.texto)
+    + '&dates=' + fechaCalendario(d) + '/' + fechaCalendario(fin)
+    + '&details=' + encodeURIComponent('Tarea de Steadfast');
+}
+function descargarIcsTarea(id) {
+  const t = state.tareas.find(x => x.id === id);
+  const d = t && fechaRecordatorio(t.recordatorio);
+  if (!d) return;
+  const fin = new Date(d.getTime() + 15 * 60000);
+  const esc = str => String(str).replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  const ahora = new Date();
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Steadfast//Tareas//ES', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${t.id}-${fechaCalendario(d)}@steadfast`,
+    `DTSTAMP:${fechaCalendario(ahora)}`,
+    `DTSTART:${fechaCalendario(d)}`,
+    `DTEND:${fechaCalendario(fin)}`,
+    `SUMMARY:${esc(t.texto)}`,
+    'DESCRIPTION:Tarea de Steadfast',
+    'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${esc(t.texto)}`, 'TRIGGER:-PT0M', 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'recordatorio.ics';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+// Con la app abierta, avisa cuando llega la hora de un recordatorio.
+function revisarRecordatorios() {
+  const ahora = new Date();
+  let cambio = false;
+  (state.tareas || []).forEach(t => {
+    if (t.eliminado || !t.recordatorio || t.estado === 'completada' || t.recordatorioAvisado === t.recordatorio) return;
+    const d = fechaRecordatorio(t.recordatorio);
+    if (!d || d > ahora) return;
+    t.recordatorioAvisado = t.recordatorio;
+    cambio = true;
+    // Solo suena si la hora llegó hace poco (no al abrir la app días después).
+    if (ahora - d < 10 * 60000) {
+      const mensaje = '🔔 ' + t.texto;
+      if (typeof playBell === 'function') playBell();
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', mensaje });
+      } else if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Steadfast', { body: mensaje, icon: './icon-192.png' });
+      }
+    }
+  });
+  if (cambio) {
+    saveState();
+    if (document.getElementById('sec-tareas')?.classList.contains('active')) renderTareasLista();
+  }
+}
+setInterval(revisarRecordatorios, 30000);
+setTimeout(revisarRecordatorios, 5000);
 
 // ── EDITAR ETIQUETA (dropdown inline) ──
 function mostrarDropdownEtiqueta(e, id) {
@@ -6152,7 +6724,7 @@ function exportarBackup() {
   const url   = URL.createObjectURL(blob);
   const a     = document.createElement('a');
   a.href      = url;
-  a.download  = `sistema-tracy-backup-${fecha}.json`;
+  a.download  = `steadfast-backup-${fecha}.json`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -7253,7 +7825,7 @@ async function mostrarNotificacion() {
   if (navigator.serviceWorker && navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', mensaje });
   } else if (Notification.permission === 'granted') {
-    new Notification('Sistema Tracy 🔥', {
+    new Notification('Steadfast 🔥', {
       body: mensaje,
       icon: './icon-192.png',
       tag: 'recordatorio-habitos',
@@ -7306,7 +7878,7 @@ async function activarNotificacionesSafari() {
   }
   const permiso = await Notification.requestPermission();
   if (permiso === 'granted') {
-    new Notification('Sistema Tracy', {
+    new Notification('Steadfast', {
       body: '✅ ¡Notificaciones activadas! Te avisaremos cuando termine el Pomodoro.',
       icon: './icon-192.png'
     });
@@ -7678,7 +8250,7 @@ function updatePomoDisplay() {
   if (numEl) numEl.textContent = `${mins}:${secs}`;
   const arc = document.getElementById('pomoRingArc');
   if (arc) arc.setAttribute('stroke-dasharray', `${prog.toFixed(2)} ${circ.toFixed(2)}`);
-  document.title = `${mins}:${secs} — Sistema Tracy`;
+  document.title = `${mins}:${secs} — Steadfast`;
   updateFabPomoLabel();
 }
 
@@ -7719,7 +8291,7 @@ function pausePomo() {
   pomoRunning = false;
   clearInterval(pomoInterval);
   pomoInterval = null;
-  document.title = 'Sistema Tracy — Metas & Hábitos';
+  document.title = 'Steadfast — Metas & Hábitos';
   updatePomoDot();
   if (pomoOpen) renderPomoPanel();
 }
@@ -7730,7 +8302,7 @@ function resetPomo() {
   clearInterval(pomoInterval);
   pomoInterval = null;
   pomoSeconds  = pomoMode === 'work' ? POMO_WORK : POMO_BREAK;
-  document.title = 'Sistema Tracy — Metas & Hábitos';
+  document.title = 'Steadfast — Metas & Hábitos';
   updatePomoDot();
   if (pomoOpen) renderPomoPanel();
 }
@@ -7742,7 +8314,7 @@ function skipPomo() {
   pomoInterval = null;
   pomoMode     = pomoMode === 'work' ? 'break' : 'work';
   pomoSeconds  = pomoMode === 'work' ? POMO_WORK : POMO_BREAK;
-  document.title = 'Sistema Tracy — Metas & Hábitos';
+  document.title = 'Steadfast — Metas & Hábitos';
   updatePomoDot();
   if (pomoOpen) renderPomoPanel();
 }
@@ -7754,7 +8326,7 @@ function switchPomoMode(mode) {
   pomoInterval = null;
   pomoMode     = mode;
   pomoSeconds  = mode === 'work' ? POMO_WORK : POMO_BREAK;
-  document.title = 'Sistema Tracy — Metas & Hábitos';
+  document.title = 'Steadfast — Metas & Hábitos';
   updatePomoDot();
   if (pomoOpen) renderPomoPanel();
 }
@@ -7775,7 +8347,7 @@ function pomoDone() {
   clearInterval(pomoInterval);
   pomoInterval = null;
   pomoRunning  = false;
-  document.title = 'Sistema Tracy — Metas & Hábitos';
+  document.title = 'Steadfast — Metas & Hábitos';
   playBell();
   if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
 
@@ -7793,7 +8365,7 @@ function pomoDone() {
   if (navigator.serviceWorker && navigator.serviceWorker.controller) {
     navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', mensaje });
   } else if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification('Sistema Tracy', { body: mensaje, icon: './icon-192.png' });
+    new Notification('Steadfast', { body: mensaje, icon: './icon-192.png' });
   }
 
   updatePomoDot();
@@ -8172,6 +8744,7 @@ function toggleRana(id) {
 function completarRana() {
   const rana = getRanaHoy();
   if (!rana) return;
+  if (state.ranaTimer && state.ranaTimer.tareaId === rana.id) state.ranaTimer = null;
   rana.estado = 'completada';
   rana.completada = true;
   rana.updatedAt = new Date().toISOString();
@@ -8193,6 +8766,157 @@ function quitarRana() {
     renderTareasLista();
   }
 }
+
+// ── TEMPORIZADOR DE LA RANA ──
+// Cada tarea guarda cuántos minutos creés que te lleva (estimadoMin). Al empezar se guarda
+// la hora de fin en state.ranaTimer, así el tiempo sigue bien aunque se bloquee el
+// teléfono, se cierre la app o se abra en otro dispositivo.
+var ranaTimerInterval = null;
+
+function ranaTimerEstado(t) {
+  const rt = state.ranaTimer;
+  if (!rt || rt.tareaId !== t.id) return { modo: 'quieto', seg: (t.estimadoMin || 30) * 60 };
+  if (rt.finEn) {
+    const seg = Math.max(0, Math.round((rt.finEn - Date.now()) / 1000));
+    return { modo: seg > 0 ? 'corriendo' : 'fin', seg };
+  }
+  return { modo: 'pausa', seg: rt.restanteSeg || 0 };
+}
+function fmtSeg(seg) {
+  const h = Math.floor(seg / 3600), m = Math.floor((seg % 3600) / 60), s = seg % 60;
+  return (h ? h + ':' + String(m).padStart(2, '0') : String(m).padStart(2, '0')) + ':' + String(s).padStart(2, '0');
+}
+function fmtMin(min) {
+  return min >= 60 ? `${Math.floor(min / 60)} h${min % 60 ? ' ' + (min % 60) + ' min' : ''}` : `${min} min`;
+}
+function ranaTimerHtml(t) {
+  const e = ranaTimerEstado(t);
+  const id = t.id;
+  let inner;
+  if (e.modo === 'quieto') {
+    const min = t.estimadoMin || 30;
+    inner = `<button class="rana-timer-btn" onclick="ajustarEstimadoRana('${id}', -5)" title="5 minutos menos">−</button>
+      <span class="rana-timer-tiempo">⏱ ${fmtMin(min)}</span>
+      <button class="rana-timer-btn" onclick="ajustarEstimadoRana('${id}', 5)" title="5 minutos más">+</button>
+      <button class="rana-timer-btn principal" onclick="empezarTimerRana('${id}')">▶ Empezar</button>`;
+  } else if (e.modo === 'fin') {
+    inner = `<span class="rana-timer-tiempo">⏰ ¡Tiempo!</span>
+      <button class="rana-timer-btn principal" onclick="sumarTiempoRana(5)">+5 min</button>
+      <button class="rana-timer-btn" onclick="reiniciarTimerRana()" title="Volver a empezar">↺</button>`;
+  } else {
+    const corriendo = e.modo === 'corriendo';
+    inner = `<span class="rana-timer-tiempo" data-rana-timer>${fmtSeg(e.seg)}</span>
+      <button class="rana-timer-btn principal" onclick="${corriendo ? 'pausarTimerRana()' : 'seguirTimerRana()'}" title="${corriendo ? 'Pausar' : 'Seguir'}">${corriendo ? '❚❚' : '▶'}</button>
+      <button class="rana-timer-btn" onclick="sumarTiempoRana(5)" title="5 minutos más">+5</button>
+      <button class="rana-timer-btn" onclick="reiniciarTimerRana()" title="Reiniciar">↺</button>`;
+  }
+  return `<div class="rana-timer ${e.modo}" onclick="event.stopPropagation()">${inner}</div>`;
+}
+// Chip chico para la lista: muestra el tiempo que corre o el estimado.
+function ranaTimerChipHtml(t) {
+  const e = ranaTimerEstado(t);
+  if (e.modo === 'quieto') return `<span class="rana-timer-chip">⏱ ${fmtMin(t.estimadoMin || 30)}</span>`;
+  if (e.modo === 'fin') return `<span class="rana-timer-chip">⏰ ¡Tiempo!</span>`;
+  return `<span class="rana-timer-chip" data-rana-timer>${fmtSeg(e.seg)}</span>`;
+}
+function rerenderRanaTimer() {
+  saveState();
+  renderRanaDelDia();
+  if (document.getElementById('sec-tareas')?.classList.contains('active')) renderTareasLista();
+  asegurarTickRana();
+}
+function ajustarEstimadoRana(id, delta) {
+  const t = state.tareas.find(x => x.id === id);
+  if (!t) return;
+  t.estimadoMin = Math.min(480, Math.max(5, (t.estimadoMin || 30) + delta));
+  t.updatedAt = new Date().toISOString();
+  rerenderRanaTimer();
+}
+function empezarTimerRana(id) {
+  const t = state.tareas.find(x => x.id === id);
+  if (!t) return;
+  const seg = (t.estimadoMin || 30) * 60;
+  state.ranaTimer = { tareaId: id, finEn: Date.now() + seg * 1000, restanteSeg: null, avisado: false };
+  if (t.estado !== 'en_curso') { t.estado = 'en_curso'; t.completada = false; t.updatedAt = new Date().toISOString(); }
+  if (typeof playClick === 'function') playClick();
+  pedirPermisoNotifSiHaceFalta();
+  rerenderRanaTimer();
+}
+function pausarTimerRana() {
+  const rt = state.ranaTimer;
+  if (!rt || !rt.finEn) return;
+  rt.restanteSeg = Math.max(0, Math.round((rt.finEn - Date.now()) / 1000));
+  rt.finEn = null;
+  rerenderRanaTimer();
+}
+function seguirTimerRana() {
+  const rt = state.ranaTimer;
+  if (!rt || rt.finEn) return;
+  rt.finEn = Date.now() + (rt.restanteSeg || 0) * 1000;
+  rt.restanteSeg = null;
+  rerenderRanaTimer();
+}
+function sumarTiempoRana(min) {
+  const rt = state.ranaTimer;
+  if (!rt) return;
+  if (rt.finEn) rt.finEn = Math.max(rt.finEn, Date.now()) + min * 60000;
+  else rt.restanteSeg = (rt.restanteSeg || 0) + min * 60;
+  rt.avisado = false;
+  rerenderRanaTimer();
+}
+function reiniciarTimerRana() {
+  state.ranaTimer = null;
+  rerenderRanaTimer();
+}
+function pedirPermisoNotifSiHaceFalta() {
+  try {
+    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+  } catch (e) {}
+}
+function avisarFinRana() {
+  const rana = state.tareas.find(x => state.ranaTimer && x.id === state.ranaTimer.tareaId);
+  const mensaje = `⏰ Se terminó el tiempo de tu rana${rana ? ': ' + rana.texto : ''}`;
+  if (typeof playBell === 'function') playBell();
+  if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', mensaje });
+  } else if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('Steadfast', { body: mensaje, icon: './icon-192.png' });
+  }
+}
+function tickRana() {
+  const rt = state.ranaTimer;
+  const rana = rt && state.tareas.find(x => x.id === rt.tareaId && !x.eliminado);
+  if (!rt || !rt.finEn || !rana || rana.estado === 'completada') {
+    clearInterval(ranaTimerInterval); ranaTimerInterval = null;
+    if (!pomoRunning) updateFabPomoLabel();
+    return;
+  }
+  const seg = Math.max(0, Math.round((rt.finEn - Date.now()) / 1000));
+  document.querySelectorAll('[data-rana-timer]').forEach(el => { el.textContent = fmtSeg(seg); });
+  const fab = document.getElementById('fabPomoLabel');
+  if (fab && !pomoRunning) { fab.textContent = '🐸 ' + fmtSeg(seg); fab.classList.add('running'); }
+  if (seg <= 0) {
+    clearInterval(ranaTimerInterval); ranaTimerInterval = null;
+    if (!rt.avisado) { rt.avisado = true; avisarFinRana(); saveState(); }
+    if (fab && !pomoRunning) { fab.textContent = 'Pomodoro'; fab.classList.remove('running'); }
+    renderRanaDelDia();
+    if (document.getElementById('sec-tareas')?.classList.contains('active')) renderTareasLista();
+  }
+}
+function asegurarTickRana() {
+  const rt = state.ranaTimer;
+  if (rt && rt.finEn && rt.finEn > Date.now()) {
+    if (!ranaTimerInterval) ranaTimerInterval = setInterval(tickRana, 1000);
+  } else if (rt && rt.finEn && !rt.avisado) {
+    tickRana();
+  } else if (ranaTimerInterval) {
+    clearInterval(ranaTimerInterval); ranaTimerInterval = null;
+    if (!pomoRunning) updateFabPomoLabel();
+  }
+}
+// Al volver a la app (por ejemplo, después de bloquear el teléfono) se actualiza enseguida.
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { asegurarTickRana(); if (ranaTimerInterval) tickRana(); } });
 
 function renderRanaDelDia() {
   const el = document.getElementById('ranaDelDiaBlock');
@@ -8221,10 +8945,12 @@ function renderRanaDelDia() {
              ${tagPillHtml(rana.etiquetaId, rana.id)}
              ${rana.estado === 'en_curso' ? '<span class="estado-pill estado-en-curso">En curso</span>' : ''}
              <button class="rana-dia-completar" onclick="completarRana()">✅ Marcar como completada</button>
-           </div>`
+           </div>
+           <div class="rana-dia-row">${ranaTimerHtml(rana)}</div>`
       }
     </div>`;
   if (window.lucide) lucide.createIcons();
+  asegurarTickRana();
 }
 
 // ── FIREBASE AUTH & SYNC ──
