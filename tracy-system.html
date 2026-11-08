@@ -1903,6 +1903,28 @@
     margin-bottom: 8px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   }
+  /* Las etiquetas van en línea en pantallas anchas */
+  .tarea-meta { display: contents; }
+  /* En el celular: el texto usa todo el ancho y las etiquetas pasan abajo */
+  @media (max-width: 640px) {
+    .tarea-page-item {
+      display: grid;
+      grid-template-columns: auto auto minmax(0, 1fr) auto auto;
+      grid-template-areas: "check rana text edit del" ". . meta . .";
+      column-gap: 8px;
+      row-gap: 6px;
+      align-items: start;
+      padding: 12px 10px 12px 14px !important;
+    }
+    .tarea-page-item > .task-check { grid-area: check; }
+    .tarea-page-item > .rana-btn { grid-area: rana; }
+    .tarea-page-item > .task-text,
+    .tarea-page-item > .tarea-edit-input { grid-area: text; font-size: 0.9rem; }
+    .tarea-page-item > .task-edit { grid-area: edit; padding-top: 3px; }
+    .tarea-page-item > .task-del:not(.task-edit) { grid-area: del; }
+    .tarea-page-item .tarea-meta { grid-area: meta; display: flex; flex-wrap: wrap; gap: 6px; }
+    .tarea-page-item .tarea-meta:empty { display: none; }
+  }
   .page-completadas-toggle {
     display: flex;
     align-items: center;
@@ -5964,8 +5986,10 @@ function renderTareasLista() {
         ${checkHtml(t)}
         <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana('${t.id}')" title="Rana del día">🐸</button>
         <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
-        ${estadoPill(t)}
-        ${tagPillHtml(t.etiquetaId, t.id)}
+        <div class="tarea-meta">
+          ${estadoPill(t)}
+          ${tagPillHtml(t.etiquetaId, t.id)}
+        </div>
         <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'pagina')"><i data-lucide="pencil"></i></button>
         <button class="task-del" onclick="deleteTareaPage('${t.id}')">×</button>
       </div>`;
