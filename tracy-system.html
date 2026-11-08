@@ -2587,6 +2587,31 @@
     .nota.rana-nota:hover { transform: rotate(-4deg); } .nota.rana-nota.saluda { animation: none; }
   }
 
+  /* Temporizador de la rana: tiempo estimado ajustable que corre con hora de fin guardada */
+  .rana-timer {
+    display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap;
+    background: color-mix(in srgb, currentColor 14%, transparent); border-radius: 10px; padding: 4px;
+    font-family: 'Geist', sans-serif;
+  }
+  .rana-timer-btn {
+    border: 0; background: transparent; color: inherit; font: inherit; font-size: 0.8rem; font-weight: 700;
+    min-width: 28px; height: 28px; padding: 0 8px; border-radius: 7px; cursor: pointer; line-height: 1;
+  }
+  .rana-timer-btn:hover { background: color-mix(in srgb, currentColor 16%, transparent); }
+  .rana-timer-btn.principal { background: color-mix(in srgb, currentColor 22%, transparent); }
+  .rana-timer-tiempo {
+    font-family: 'Geist Mono', monospace; font-size: 0.85rem; font-weight: 600; padding: 0 4px;
+    font-variant-numeric: tabular-nums; min-width: 58px; text-align: center;
+  }
+  .rana-timer.corriendo .rana-timer-tiempo { font-size: 1rem; }
+  .rana-timer.fin { animation: ranaTimerFin 1s ease-in-out 3; }
+  @keyframes ranaTimerFin { 50% { background: color-mix(in srgb, currentColor 35%, transparent); } }
+  .rana-timer-chip {
+    font-family: 'Geist Mono', monospace; font-size: 0.68rem; font-weight: 600; padding: 2px 8px; border-radius: 99px;
+    background: rgba(232,69,10,.12); color: var(--gold); font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .rana-nota .rana-timer-fila { display: flex; }
+
   /* ── RANA DEL DÍA ── */
   .rana-btn {
     background: none;
@@ -6141,6 +6166,7 @@ function renderTareasLista() {
         <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana('${t.id}')" title="Rana del día">🐸</button>
         <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
         <div class="tarea-meta">
+          ${esRana && t.estado !== 'completada' ? ranaTimerChipHtml(t) : ''}
           ${estadoPill(t)}
           ${tagPillHtml(t.etiquetaId, t.id)}
         </div>
@@ -6181,6 +6207,7 @@ function renderTareasLista() {
           <span class="nota-cinta"></span>
           <div class="rana-nota-label">🐸 Rana del día</div>
           <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
+          <div class="rana-timer-fila">${ranaTimerHtml(t)}</div>
           <div class="nota-pie">
             ${tagPillHtml(t.etiquetaId, t.id)}
             <div class="nota-acciones">
@@ -8512,6 +8539,7 @@ function toggleRana(id) {
 function completarRana() {
   const rana = getRanaHoy();
   if (!rana) return;
+  if (state.ranaTimer && state.ranaTimer.tareaId === rana.id) state.ranaTimer = null;
   rana.estado = 'completada';
   rana.completada = true;
   rana.updatedAt = new Date().toISOString();
@@ -8533,6 +8561,157 @@ function quitarRana() {
     renderTareasLista();
   }
 }
+
+// ── TEMPORIZADOR DE LA RANA ──
+// Cada tarea guarda cuántos minutos creés que te lleva (estimadoMin). Al empezar se guarda
+// la hora de fin en state.ranaTimer, así el tiempo sigue bien aunque se bloquee el
+// teléfono, se cierre la app o se abra en otro dispositivo.
+var ranaTimerInterval = null;
+
+function ranaTimerEstado(t) {
+  const rt = state.ranaTimer;
+  if (!rt || rt.tareaId !== t.id) return { modo: 'quieto', seg: (t.estimadoMin || 30) * 60 };
+  if (rt.finEn) {
+    const seg = Math.max(0, Math.round((rt.finEn - Date.now()) / 1000));
+    return { modo: seg > 0 ? 'corriendo' : 'fin', seg };
+  }
+  return { modo: 'pausa', seg: rt.restanteSeg || 0 };
+}
+function fmtSeg(seg) {
+  const h = Math.floor(seg / 3600), m = Math.floor((seg % 3600) / 60), s = seg % 60;
+  return (h ? h + ':' + String(m).padStart(2, '0') : String(m).padStart(2, '0')) + ':' + String(s).padStart(2, '0');
+}
+function fmtMin(min) {
+  return min >= 60 ? `${Math.floor(min / 60)} h${min % 60 ? ' ' + (min % 60) + ' min' : ''}` : `${min} min`;
+}
+function ranaTimerHtml(t) {
+  const e = ranaTimerEstado(t);
+  const id = t.id;
+  let inner;
+  if (e.modo === 'quieto') {
+    const min = t.estimadoMin || 30;
+    inner = `<button class="rana-timer-btn" onclick="ajustarEstimadoRana('${id}', -5)" title="5 minutos menos">−</button>
+      <span class="rana-timer-tiempo">⏱ ${fmtMin(min)}</span>
+      <button class="rana-timer-btn" onclick="ajustarEstimadoRana('${id}', 5)" title="5 minutos más">+</button>
+      <button class="rana-timer-btn principal" onclick="empezarTimerRana('${id}')">▶ Empezar</button>`;
+  } else if (e.modo === 'fin') {
+    inner = `<span class="rana-timer-tiempo">⏰ ¡Tiempo!</span>
+      <button class="rana-timer-btn principal" onclick="sumarTiempoRana(5)">+5 min</button>
+      <button class="rana-timer-btn" onclick="reiniciarTimerRana()" title="Volver a empezar">↺</button>`;
+  } else {
+    const corriendo = e.modo === 'corriendo';
+    inner = `<span class="rana-timer-tiempo" data-rana-timer>${fmtSeg(e.seg)}</span>
+      <button class="rana-timer-btn principal" onclick="${corriendo ? 'pausarTimerRana()' : 'seguirTimerRana()'}" title="${corriendo ? 'Pausar' : 'Seguir'}">${corriendo ? '❚❚' : '▶'}</button>
+      <button class="rana-timer-btn" onclick="sumarTiempoRana(5)" title="5 minutos más">+5</button>
+      <button class="rana-timer-btn" onclick="reiniciarTimerRana()" title="Reiniciar">↺</button>`;
+  }
+  return `<div class="rana-timer ${e.modo}" onclick="event.stopPropagation()">${inner}</div>`;
+}
+// Chip chico para la lista: muestra el tiempo que corre o el estimado.
+function ranaTimerChipHtml(t) {
+  const e = ranaTimerEstado(t);
+  if (e.modo === 'quieto') return `<span class="rana-timer-chip">⏱ ${fmtMin(t.estimadoMin || 30)}</span>`;
+  if (e.modo === 'fin') return `<span class="rana-timer-chip">⏰ ¡Tiempo!</span>`;
+  return `<span class="rana-timer-chip" data-rana-timer>${fmtSeg(e.seg)}</span>`;
+}
+function rerenderRanaTimer() {
+  saveState();
+  renderRanaDelDia();
+  if (document.getElementById('sec-tareas')?.classList.contains('active')) renderTareasLista();
+  asegurarTickRana();
+}
+function ajustarEstimadoRana(id, delta) {
+  const t = state.tareas.find(x => x.id === id);
+  if (!t) return;
+  t.estimadoMin = Math.min(480, Math.max(5, (t.estimadoMin || 30) + delta));
+  t.updatedAt = new Date().toISOString();
+  rerenderRanaTimer();
+}
+function empezarTimerRana(id) {
+  const t = state.tareas.find(x => x.id === id);
+  if (!t) return;
+  const seg = (t.estimadoMin || 30) * 60;
+  state.ranaTimer = { tareaId: id, finEn: Date.now() + seg * 1000, restanteSeg: null, avisado: false };
+  if (t.estado !== 'en_curso') { t.estado = 'en_curso'; t.completada = false; t.updatedAt = new Date().toISOString(); }
+  if (typeof playClick === 'function') playClick();
+  pedirPermisoNotifSiHaceFalta();
+  rerenderRanaTimer();
+}
+function pausarTimerRana() {
+  const rt = state.ranaTimer;
+  if (!rt || !rt.finEn) return;
+  rt.restanteSeg = Math.max(0, Math.round((rt.finEn - Date.now()) / 1000));
+  rt.finEn = null;
+  rerenderRanaTimer();
+}
+function seguirTimerRana() {
+  const rt = state.ranaTimer;
+  if (!rt || rt.finEn) return;
+  rt.finEn = Date.now() + (rt.restanteSeg || 0) * 1000;
+  rt.restanteSeg = null;
+  rerenderRanaTimer();
+}
+function sumarTiempoRana(min) {
+  const rt = state.ranaTimer;
+  if (!rt) return;
+  if (rt.finEn) rt.finEn = Math.max(rt.finEn, Date.now()) + min * 60000;
+  else rt.restanteSeg = (rt.restanteSeg || 0) + min * 60;
+  rt.avisado = false;
+  rerenderRanaTimer();
+}
+function reiniciarTimerRana() {
+  state.ranaTimer = null;
+  rerenderRanaTimer();
+}
+function pedirPermisoNotifSiHaceFalta() {
+  try {
+    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+  } catch (e) {}
+}
+function avisarFinRana() {
+  const rana = state.tareas.find(x => state.ranaTimer && x.id === state.ranaTimer.tareaId);
+  const mensaje = `⏰ Se terminó el tiempo de tu rana${rana ? ': ' + rana.texto : ''}`;
+  if (typeof playBell === 'function') playBell();
+  if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+  if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', mensaje });
+  } else if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('Steadfast', { body: mensaje, icon: './icon-192.png' });
+  }
+}
+function tickRana() {
+  const rt = state.ranaTimer;
+  const rana = rt && state.tareas.find(x => x.id === rt.tareaId && !x.eliminado);
+  if (!rt || !rt.finEn || !rana || rana.estado === 'completada') {
+    clearInterval(ranaTimerInterval); ranaTimerInterval = null;
+    if (!pomoRunning) updateFabPomoLabel();
+    return;
+  }
+  const seg = Math.max(0, Math.round((rt.finEn - Date.now()) / 1000));
+  document.querySelectorAll('[data-rana-timer]').forEach(el => { el.textContent = fmtSeg(seg); });
+  const fab = document.getElementById('fabPomoLabel');
+  if (fab && !pomoRunning) { fab.textContent = '🐸 ' + fmtSeg(seg); fab.classList.add('running'); }
+  if (seg <= 0) {
+    clearInterval(ranaTimerInterval); ranaTimerInterval = null;
+    if (!rt.avisado) { rt.avisado = true; avisarFinRana(); saveState(); }
+    if (fab && !pomoRunning) { fab.textContent = 'Pomodoro'; fab.classList.remove('running'); }
+    renderRanaDelDia();
+    if (document.getElementById('sec-tareas')?.classList.contains('active')) renderTareasLista();
+  }
+}
+function asegurarTickRana() {
+  const rt = state.ranaTimer;
+  if (rt && rt.finEn && rt.finEn > Date.now()) {
+    if (!ranaTimerInterval) ranaTimerInterval = setInterval(tickRana, 1000);
+  } else if (rt && rt.finEn && !rt.avisado) {
+    tickRana();
+  } else if (ranaTimerInterval) {
+    clearInterval(ranaTimerInterval); ranaTimerInterval = null;
+    if (!pomoRunning) updateFabPomoLabel();
+  }
+}
+// Al volver a la app (por ejemplo, después de bloquear el teléfono) se actualiza enseguida.
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { asegurarTickRana(); if (ranaTimerInterval) tickRana(); } });
 
 function renderRanaDelDia() {
   const el = document.getElementById('ranaDelDiaBlock');
@@ -8561,10 +8740,12 @@ function renderRanaDelDia() {
              ${tagPillHtml(rana.etiquetaId, rana.id)}
              ${rana.estado === 'en_curso' ? '<span class="estado-pill estado-en-curso">En curso</span>' : ''}
              <button class="rana-dia-completar" onclick="completarRana()">✅ Marcar como completada</button>
-           </div>`
+           </div>
+           <div class="rana-dia-row">${ranaTimerHtml(rana)}</div>`
       }
     </div>`;
   if (window.lucide) lucide.createIcons();
+  asegurarTickRana();
 }
 
 // ── FIREBASE AUTH & SYNC ──
