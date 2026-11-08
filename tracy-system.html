@@ -2479,7 +2479,7 @@
   .vista-toggle button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
   /* Tablero: columnas por estado con notas adhesivas del color de su etiqueta */
-  .tablero { display: grid; grid-template-columns: repeat(var(--ncols, 3), minmax(0, 1fr)); gap: 22px; align-items: start; }
+  .tablero { display: grid; grid-template-columns: repeat(var(--ncols, 3), minmax(0, 360px)); gap: 22px; align-items: start; }
   .tablero-col-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; font-weight: 600; font-size: 0.92rem; }
   .tablero-col-head > span:first-child { display: flex; align-items: center; gap: 8px; }
   .tablero-col-barra { width: 4px; height: 18px; border-radius: 2px; display: inline-block; }
@@ -2497,11 +2497,24 @@
     box-shadow: 0 10px 18px -8px rgba(50,30,15,.28), 0 1px 2px rgba(50,30,15,.14);
     transition: transform .2s ease, box-shadow .2s ease;
   }
-  .nota:nth-child(4n+1) { transform: rotate(-1.6deg); }
-  .nota:nth-child(4n+2) { transform: rotate(1.2deg); }
-  .nota:nth-child(4n+3) { transform: rotate(-0.6deg); }
-  .nota:nth-child(4n+4) { transform: rotate(1.8deg); }
-  .nota:not(.rana-nota):hover { transform: rotate(0) translateY(-3px); box-shadow: 0 16px 24px -10px rgba(50,30,15,.32), 0 1px 2px rgba(50,30,15,.14); }
+  /* Cada nota tiene su inclinación; al pasar el mouse se endereza y se levanta,
+     y las vecinas se corren para dejarle lugar (como un mazo de cartas). */
+  .nota { --rot: 0deg; --dy: 0px; --esc: 1; transform: translateY(var(--dy)) rotate(var(--rot)) scale(var(--esc));
+          transition: transform .45s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease; }
+  .nota:nth-child(4n+1) { --rot: -1.6deg; }
+  .nota:nth-child(4n+2) { --rot: 1.2deg; }
+  .nota:nth-child(4n+3) { --rot: -0.6deg; }
+  .nota:nth-child(4n+4) { --rot: 1.8deg; }
+  @media (hover: hover) {
+    .tablero-pila .nota:hover { --rot: 0deg; --dy: -6px; --esc: 1.04; z-index: 2;
+      box-shadow: 0 22px 30px -12px rgba(50,30,15,.38), 0 2px 4px rgba(50,30,15,.14); }
+    .tablero-pila .nota:hover ~ .nota { --dy: 10px; }
+    .tablero-pila .nota:has(~ .nota:hover) { --dy: -10px; }
+    .tablero-pila:has(.nota:hover) .nota:not(:hover) { --esc: .97; }
+    .tablero-pila .nota:hover + .nota { --rot: 3deg; }
+    .tablero-pila .nota:has(+ .nota:hover) { --rot: -3deg; }
+  }
+  @media (prefers-reduced-motion: reduce) { .nota { transition: none; } }
   .nota-cinta {
     position: absolute; top: -10px; width: 64px; height: 22px; pointer-events: none;
     background: rgba(255,255,255,.55); border: 1px solid rgba(0,0,0,.06);
