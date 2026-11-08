@@ -1909,8 +1909,8 @@
   @media (max-width: 640px) {
     .tarea-page-item {
       display: grid;
-      grid-template-columns: auto auto minmax(0, 1fr) auto auto;
-      grid-template-areas: "check rana text edit del" ". . meta . .";
+      grid-template-columns: auto auto minmax(0, 1fr) auto auto auto;
+      grid-template-areas: "check rana text bell edit del" ". . meta . . .";
       column-gap: 8px;
       row-gap: 6px;
       align-items: start;
@@ -1922,6 +1922,7 @@
     .tarea-page-item > .tarea-edit-input { grid-area: text; font-size: 0.9rem; }
     .tarea-page-item > .task-edit { grid-area: edit; padding-top: 3px; }
     .tarea-page-item > .task-del:not(.task-edit) { grid-area: del; }
+    .tarea-page-item > .recordatorio-btn { grid-area: bell; padding-top: 3px; }
     .tarea-page-item .tarea-meta { grid-area: meta; display: flex; flex-wrap: wrap; gap: 6px; }
     .tarea-page-item .tarea-meta:empty { display: none; }
   }
@@ -2611,6 +2612,43 @@
     background: rgba(232,69,10,.12); color: var(--gold); font-variant-numeric: tabular-nums; white-space: nowrap;
   }
   .rana-nota .rana-timer-fila { display: flex; }
+
+  /* Recordatorio de tarea (día y hora) */
+  .recordatorio-chip {
+    font-size: 0.66rem; font-weight: 600; padding: 2px 8px; border-radius: 99px; cursor: pointer; white-space: nowrap;
+    background: rgba(91,140,255,.12); color: #3D6BE0; flex-shrink: 0;
+  }
+  body.dark-mode .recordatorio-chip { color: #9DB8FF; }
+  .recordatorio-chip.vencido { background: rgba(217,64,64,.12); color: var(--danger); }
+  .nota .recordatorio-chip { background: rgba(255,255,255,.22); color: inherit; align-self: flex-start; }
+  .nota .recordatorio-chip.vencido { background: rgba(0,0,0,.18); }
+  .recordatorio-btn { font-size: 0.85rem !important; }
+  .recordatorio-pop {
+    position: absolute; z-index: 650; width: 280px; max-width: calc(100vw - 24px);
+    background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0,0,0,.18); padding: 14px; display: flex; flex-direction: column; gap: 10px;
+    font-family: 'Geist', sans-serif;
+  }
+  .recordatorio-pop h4 { font-size: 0.85rem; font-weight: 700; margin: 0; }
+  .recordatorio-pop p { font-size: 0.75rem; color: var(--muted); margin: 0; line-height: 1.4; }
+  .recordatorio-pop input {
+    width: 100%; font-family: inherit; font-size: 0.9rem; padding: 9px 10px; border-radius: 9px;
+    border: 1px solid var(--border); background: var(--input-bg); color: var(--text);
+  }
+  .recordatorio-pop-fila { display: flex; gap: 8px; flex-wrap: wrap; }
+  .recordatorio-pop button, .recordatorio-pop a {
+    flex: 1; font-family: inherit; font-size: 0.78rem; font-weight: 600; padding: 9px 10px; border-radius: 9px;
+    border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; text-align: center;
+    text-decoration: none; white-space: nowrap;
+  }
+  .recordatorio-pop .primario { background: var(--gold); border-color: var(--gold); color: #fff; }
+  @media (max-width: 640px) {
+    .recordatorio-pop {
+      position: fixed; left: 12px !important; right: 12px; top: auto !important; width: auto; max-width: none;
+      bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 1200;
+      box-shadow: 0 -6px 40px rgba(0,0,0,.25);
+    }
+  }
 
   /* ── RANA DEL DÍA ── */
   .rana-btn {
@@ -6167,9 +6205,11 @@ function renderTareasLista() {
         <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
         <div class="tarea-meta">
           ${esRana && t.estado !== 'completada' ? ranaTimerChipHtml(t) : ''}
+          ${recordatorioChipHtml(t)}
           ${estadoPill(t)}
           ${tagPillHtml(t.etiquetaId, t.id)}
         </div>
+        <button class="task-del task-edit recordatorio-btn" data-recordatorio-de="${t.id}" onclick="abrirRecordatorio(event, '${t.id}')" title="Recordatorio">🔔</button>
         <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'pagina')"><i data-lucide="pencil"></i></button>
         <button class="task-del" onclick="deleteTareaPage('${t.id}')">×</button>
       </div>`;
@@ -6188,10 +6228,12 @@ function renderTareasLista() {
     return `
       <div class="${clases}" style="${colorNota(t)}">${cinta}
         <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
+        ${recordatorioChipHtml(t)}
         <div class="nota-pie">
           ${tagPillHtml(t.etiquetaId, t.id)}
           <div class="nota-acciones">
             <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana('${t.id}')" title="Rana del día">🐸</button>
+            <button class="task-del task-edit recordatorio-btn" data-recordatorio-de="${t.id}" onclick="abrirRecordatorio(event, '${t.id}')" title="Recordatorio">🔔</button>
             <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'pagina')" title="Editar"><i data-lucide="pencil"></i></button>
             <button class="task-del" onclick="deleteTareaPage('${t.id}')" title="Eliminar">×</button>
             ${checkHtml(t)}
@@ -6207,11 +6249,13 @@ function renderTareasLista() {
           <span class="nota-cinta"></span>
           <div class="rana-nota-label">🐸 Rana del día</div>
           <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
+          ${recordatorioChipHtml(t)}
           <div class="rana-timer-fila">${ranaTimerHtml(t)}</div>
           <div class="nota-pie">
             ${tagPillHtml(t.etiquetaId, t.id)}
             <div class="nota-acciones">
               <button class="rana-btn activa" onclick="toggleRana('${t.id}')" title="Quitar como rana del día">🐸</button>
+              <button class="task-del task-edit recordatorio-btn" data-recordatorio-de="${t.id}" onclick="abrirRecordatorio(event, '${t.id}')" title="Recordatorio">🔔</button>
               <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'pagina')" title="Editar"><i data-lucide="pencil"></i></button>
               <button class="rana-hecha-btn" onclick="completarRana()">Marcar hecha</button>
             </div>
@@ -6327,6 +6371,167 @@ function editarTarea(id, origen) {
   input.focus();
   input.select();
 }
+
+// ── RECORDATORIOS DE TAREAS ──
+// t.recordatorio = 'YYYY-MM-DDTHH:MM' en hora local. El aviso confiable con la app cerrada
+// lo da el calendario (archivo .ics con alarma, o Google Calendar); con la app abierta,
+// además, avisa la propia app.
+const DIAS_CORTOS = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+function fechaRecordatorio(str) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(str || '');
+  return m ? new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : null;
+}
+function recordatorioTexto(str) {
+  const d = fechaRecordatorio(str);
+  if (!d) return '';
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const dia = new Date(d); dia.setHours(0, 0, 0, 0);
+  const dif = Math.round((dia - hoy) / 86400000);
+  const hora = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  const cuando = dif === 0 ? 'hoy' : dif === 1 ? 'mañana' : dif === -1 ? 'ayer'
+    : `${DIAS_CORTOS[d.getDay()]} ${d.getDate()} ${MESES_CORTOS[d.getMonth()]}`;
+  return `${cuando} · ${hora}`;
+}
+function recordatorioChipHtml(t) {
+  if (!t.recordatorio) return '';
+  const d = fechaRecordatorio(t.recordatorio);
+  const vencido = d && d < new Date() && t.estado !== 'completada';
+  return `<span class="recordatorio-chip${vencido ? ' vencido' : ''}" onclick="abrirRecordatorio(event, '${t.id}')" title="Recordatorio">🔔 ${recordatorioTexto(t.recordatorio)}</span>`;
+}
+function cerrarRecordatorioPop() {
+  const el = document.getElementById('recordatorioPop');
+  if (el) el.remove();
+}
+function abrirRecordatorio(e, id) {
+  e.stopPropagation();
+  cerrarRecordatorioPop();
+  const t = state.tareas.find(x => x.id === id);
+  if (!t) return;
+  let valor = t.recordatorio;
+  if (!valor) {
+    const d = new Date(Date.now() + 60 * 60000);
+    d.setMinutes(0, 0, 0);
+    valor = fechaLocal(d) + 'T' + String(d.getHours()).padStart(2, '0') + ':00';
+  }
+  const pop = document.createElement('div');
+  pop.className = 'recordatorio-pop';
+  pop.id = 'recordatorioPop';
+  pop.onclick = ev => ev.stopPropagation();
+  pop.innerHTML = `
+    <h4>🔔 Recordatorio</h4>
+    <input type="datetime-local" id="recordatorioInput" value="${valor}">
+    <div class="recordatorio-pop-fila">
+      ${t.recordatorio ? `<button onclick="guardarRecordatorioTarea('${id}', true)">Quitar</button>` : ''}
+      <button class="primario" onclick="guardarRecordatorioTarea('${id}')">Guardar</button>
+    </div>
+    ${t.recordatorio ? `
+      <p>Para que te avise aunque la app esté cerrada, agregalo a tu calendario:</p>
+      <div class="recordatorio-pop-fila">
+        <button onclick="descargarIcsTarea('${id}')">📅 Calendario del iPhone</button>
+        <a href="${googleCalendarUrl(t)}" target="_blank" rel="noopener">Google Calendar</a>
+      </div>` : ''}`;
+  document.body.appendChild(pop);
+  const r = e.currentTarget.getBoundingClientRect();
+  const ancho = pop.offsetWidth;
+  const left = Math.min(Math.max(12, r.left + window.scrollX), window.scrollX + document.documentElement.clientWidth - ancho - 12);
+  pop.style.left = left + 'px';
+  pop.style.top = (r.bottom + window.scrollY + 6) + 'px';
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#recordatorioPop')) cerrarRecordatorioPop();
+});
+function guardarRecordatorioTarea(id, quitar) {
+  const t = state.tareas.find(x => x.id === id);
+  if (!t) return;
+  const input = document.getElementById('recordatorioInput');
+  const valor = quitar ? null : (input && input.value ? input.value.slice(0, 16) : null);
+  t.recordatorio = valor;
+  t.recordatorioAvisado = null;
+  t.updatedAt = new Date().toISOString();
+  saveState();
+  renderTareasLista();
+  renderTareas();
+  renderRanaDelDia();
+  if (valor) {
+    try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission(); } catch (err) {}
+    // Se vuelve a abrir para ofrecer el calendario recién guardado.
+    const ancla = document.querySelector(`[data-recordatorio-de="${id}"]`);
+    if (ancla) abrirRecordatorio({ stopPropagation() {}, currentTarget: ancla }, id);
+  } else {
+    cerrarRecordatorioPop();
+  }
+}
+function fechaCalendario(d) {
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}T${p(d.getHours())}${p(d.getMinutes())}00`;
+}
+function googleCalendarUrl(t) {
+  const d = fechaRecordatorio(t.recordatorio);
+  if (!d) return '#';
+  const fin = new Date(d.getTime() + 15 * 60000);
+  return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+    + '&text=' + encodeURIComponent(t.texto)
+    + '&dates=' + fechaCalendario(d) + '/' + fechaCalendario(fin)
+    + '&details=' + encodeURIComponent('Tarea de Steadfast');
+}
+function descargarIcsTarea(id) {
+  const t = state.tareas.find(x => x.id === id);
+  const d = t && fechaRecordatorio(t.recordatorio);
+  if (!d) return;
+  const fin = new Date(d.getTime() + 15 * 60000);
+  const esc = str => String(str).replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  const ahora = new Date();
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Steadfast//Tareas//ES', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${t.id}-${fechaCalendario(d)}@steadfast`,
+    `DTSTAMP:${fechaCalendario(ahora)}`,
+    `DTSTART:${fechaCalendario(d)}`,
+    `DTEND:${fechaCalendario(fin)}`,
+    `SUMMARY:${esc(t.texto)}`,
+    'DESCRIPTION:Tarea de Steadfast',
+    'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${esc(t.texto)}`, 'TRIGGER:-PT0M', 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'recordatorio.ics';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+// Con la app abierta, avisa cuando llega la hora de un recordatorio.
+function revisarRecordatorios() {
+  const ahora = new Date();
+  let cambio = false;
+  (state.tareas || []).forEach(t => {
+    if (t.eliminado || !t.recordatorio || t.estado === 'completada' || t.recordatorioAvisado === t.recordatorio) return;
+    const d = fechaRecordatorio(t.recordatorio);
+    if (!d || d > ahora) return;
+    t.recordatorioAvisado = t.recordatorio;
+    cambio = true;
+    // Solo suena si la hora llegó hace poco (no al abrir la app días después).
+    if (ahora - d < 10 * 60000) {
+      const mensaje = '🔔 ' + t.texto;
+      if (typeof playBell === 'function') playBell();
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'SHOW_NOTIFICATION', mensaje });
+      } else if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('Steadfast', { body: mensaje, icon: './icon-192.png' });
+      }
+    }
+  });
+  if (cambio) {
+    saveState();
+    if (document.getElementById('sec-tareas')?.classList.contains('active')) renderTareasLista();
+  }
+}
+setInterval(revisarRecordatorios, 30000);
+setTimeout(revisarRecordatorios, 5000);
 
 // ── EDITAR ETIQUETA (dropdown inline) ──
 function mostrarDropdownEtiqueta(e, id) {
