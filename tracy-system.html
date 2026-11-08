@@ -2467,6 +2467,82 @@
     .pomo-panel.open { transform: translateY(0); opacity: 1; }
   }
 
+  /* ── TAREAS: VISTA DE TARJETAS ── */
+  .tareas-page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .vista-toggle { display: inline-flex; background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 3px; flex-shrink: 0; }
+  .vista-toggle button {
+    font-family: 'Geist', sans-serif; font-size: 0.78rem; font-weight: 600; border: 0; background: transparent;
+    color: var(--muted); padding: 6px 12px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .vista-toggle button svg { width: 14px; height: 14px; }
+  .vista-toggle button.active { background: var(--gold); color: #fff; }
+  .vista-toggle button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  .tarjetas-grid { columns: 4 190px; column-gap: 12px; }
+  .tarjeta {
+    --et: #9A9A9A;
+    break-inside: avoid; position: relative; margin-bottom: 12px; border-radius: 14px;
+    padding: 13px 13px 10px; display: flex; flex-direction: column; gap: 10px;
+    background: color-mix(in srgb, var(--et) 15%, var(--card));
+    border: 1px solid color-mix(in srgb, var(--et) 22%, transparent);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: transform .15s, box-shadow .15s;
+  }
+  body.dark-mode .tarjeta { background: color-mix(in srgb, var(--et) 22%, var(--card)); }
+  .tarjeta:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+  .tarjeta.en-curso::before {
+    content: ''; position: absolute; top: 0; left: 12px; right: 12px; height: 3px;
+    border-radius: 0 0 3px 3px; background: #5B8CFF;
+  }
+  .tarjeta .task-text { font-size: 0.88rem; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; color: var(--text); }
+  .tarjeta .tarea-edit-input { font-size: 0.88rem; font-weight: 600; }
+  .tarjeta-pie { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .tarjeta-pie .task-tag { background: var(--card) !important; }
+  .tarjeta-acciones { display: flex; align-items: center; gap: 2px; }
+  .tarjeta-acciones .task-del, .tarjeta-acciones .rana-btn { opacity: 0; transition: opacity .15s; }
+  .tarjeta:hover .tarjeta-acciones .task-del, .tarjeta:hover .tarjeta-acciones .rana-btn,
+  .tarjeta:focus-within .tarjeta-acciones .task-del, .tarjeta:focus-within .tarjeta-acciones .rana-btn { opacity: .55; }
+  .tarjeta-acciones .rana-btn { font-size: 15px; }
+  .tarjeta-acciones .task-check { margin-left: 4px; }
+  @media (hover: none) {
+    .tarjeta-acciones .task-del, .tarjeta-acciones .rana-btn { opacity: .45; }
+  }
+  .tarjeta.done { opacity: .55; }
+  .tarjeta.done .task-text { text-decoration: line-through; }
+  @media (max-width: 640px) {
+    .tarjetas-grid { columns: 2; column-gap: 8px; }
+    .tarjeta { margin-bottom: 8px; padding: 11px 10px 8px; }
+    .tarjeta .task-text { font-size: 0.82rem; }
+    .tarjeta-pie { flex-wrap: wrap; }
+  }
+
+  /* Rana del día colgada de un clavito */
+  .rana-colgada-zona { display: flex; justify-content: center; padding: 6px 0 4px; margin-bottom: 18px; }
+  .rana-colgada { position: relative; width: min(320px, 88%); padding-top: 24px; }
+  .rana-clavo {
+    position: absolute; top: 0; left: 50%; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; z-index: 2;
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.7) 0 20%, #8E847C 45%);
+    box-shadow: 0 2px 3px rgba(0,0,0,.18);
+  }
+  .rana-hilo { position: absolute; top: 7px; left: 50%; width: 130px; height: 28px; margin-left: -65px; z-index: 1; overflow: visible; }
+  .rana-hilo path { fill: none; stroke: #8E847C; stroke-width: 1.5; }
+  body.dark-mode .rana-hilo path { stroke: #C9D2DE; }
+  .rana-pendulo { transform-origin: 50% -20px; animation: ranaBalanceo 3.2s ease-in-out infinite; }
+  .rana-colgada:hover .rana-pendulo { animation-duration: 1.1s; }
+  @keyframes ranaBalanceo { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+  .rana-colgada .tarjeta { margin: 0; border: 2px solid var(--gold); box-shadow: 0 14px 28px rgba(0,0,0,.12); padding: 14px 15px 12px; }
+  .rana-colgada .tarjeta:hover { transform: none; }
+  .rana-colgada .task-text { font-size: 1rem; font-weight: 700; }
+  .rana-etiqueta-top {
+    font-family: 'Geist Mono', monospace; font-size: 0.66rem; font-weight: 600; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 6px;
+  }
+  .rana-hecha-btn {
+    font-family: 'Geist', sans-serif; font-size: 0.78rem; font-weight: 700; border: 0; background: var(--gold);
+    color: #fff; border-radius: 9px; padding: 7px 11px; cursor: pointer; white-space: nowrap;
+  }
+  @media (prefers-reduced-motion: reduce) { .rana-pendulo { animation: none; transform: rotate(-2deg); } }
+
   /* ── RANA DEL DÍA ── */
   .rana-btn {
     background: none;
@@ -3776,8 +3852,18 @@
 
     <!-- Título -->
     <div class="tareas-page-header">
-      <h2>Mis Tareas</h2>
-      <p id="tareas-page-subtitle" class="tareas-page-sub"></p>
+      <div>
+        <h2>Mis Tareas</h2>
+        <p id="tareas-page-subtitle" class="tareas-page-sub"></p>
+      </div>
+      <div class="vista-toggle" role="group" aria-label="Vista de tareas">
+        <button type="button" id="vistaBtnLista" onclick="setVistaTareas('lista')" aria-pressed="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Lista
+        </button>
+        <button type="button" id="vistaBtnTarjetas" onclick="setVistaTareas('tarjetas')" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Tarjetas
+        </button>
+      </div>
     </div>
 
     <!-- Filtros -->
@@ -5871,6 +5957,14 @@ function buildPortadaPanel() {
 let filtroEtiqueta = 'todas';
 let filtroEstado   = 'todas';
 let pagCompletadasCollapsed = true;
+// Vista de la sección Tareas: 'lista' o 'tarjetas'. Se recuerda en este dispositivo.
+const VISTA_TAREAS_KEY = 'steadfast_vista_tareas';
+let vistaTareas = (() => { try { return localStorage.getItem(VISTA_TAREAS_KEY) === 'tarjetas' ? 'tarjetas' : 'lista'; } catch (e) { return 'lista'; } })();
+function setVistaTareas(v) {
+  vistaTareas = v === 'tarjetas' ? 'tarjetas' : 'lista';
+  try { localStorage.setItem(VISTA_TAREAS_KEY, vistaTareas); } catch (e) {}
+  renderTareasLista();
+}
 let selectedTagPage = state.etiquetas[0] ? state.etiquetas[0].id : null;
 
 function renderFiltrosEtiqueta() {
@@ -5995,8 +6089,82 @@ function renderTareasLista() {
       </div>`;
   }
 
+  // ── Vista de tarjetas: fondo con el color de la etiqueta, agrupadas por estado ──
+  function tarjetaHtml(t) {
+    const et = getEtiqueta(t.etiquetaId);
+    const esRana = state.ranaDelDia && state.ranaDelDia.tareaId === t.id && state.ranaDelDia.fecha === todayKey;
+    const clases = 'tarjeta' + (t.estado === 'en_curso' ? ' en-curso' : '') + (t.estado === 'completada' ? ' done' : '');
+    return `
+      <div class="${clases}" style="--et:${et ? et.color : '#9A9A9A'}">
+        <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
+        <div class="tarjeta-pie">
+          ${tagPillHtml(t.etiquetaId, t.id)}
+          <div class="tarjeta-acciones">
+            <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana('${t.id}')" title="Rana del día">🐸</button>
+            <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'pagina')" title="Editar"><i data-lucide="pencil"></i></button>
+            <button class="task-del" onclick="deleteTareaPage('${t.id}')" title="Eliminar">×</button>
+            ${checkHtml(t)}
+          </div>
+        </div>
+      </div>`;
+  }
+  function ranaColgadaHtml(t) {
+    const et = getEtiqueta(t.etiquetaId);
+    return `
+      <div class="rana-colgada-zona">
+        <div class="rana-colgada">
+          <span class="rana-clavo"></span>
+          <svg class="rana-hilo" viewBox="0 0 130 28" preserveAspectRatio="none" aria-hidden="true"><path d="M65 0 L8 28 M65 0 L122 28"/></svg>
+          <div class="rana-pendulo">
+            <div class="tarjeta${t.estado === 'en_curso' ? ' en-curso' : ''}" style="--et:${et ? et.color : '#9A9A9A'}">
+              <div class="rana-etiqueta-top">🐸 Rana del día</div>
+              <span class="task-text" id="tarea-texto-${t.id}-pagina">${escHtml(t.texto)}</span>
+              <div class="tarjeta-pie">
+                ${tagPillHtml(t.etiquetaId, t.id)}
+                <div class="tarjeta-acciones">
+                  <button class="rana-btn activa" onclick="toggleRana('${t.id}')" title="Quitar como rana del día">🐸</button>
+                  <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'pagina')" title="Editar"><i data-lucide="pencil"></i></button>
+                  <button class="rana-hecha-btn" onclick="completarRana()">Marcar hecha</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  const enTarjetas = vistaTareas === 'tarjetas';
+  const btnL = document.getElementById('vistaBtnLista');
+  const btnT = document.getElementById('vistaBtnTarjetas');
+  if (btnL && btnT) {
+    btnL.classList.toggle('active', !enTarjetas); btnL.setAttribute('aria-pressed', String(!enTarjetas));
+    btnT.classList.toggle('active', enTarjetas);  btnT.setAttribute('aria-pressed', String(enTarjetas));
+  }
+
   let html = '';
-  if (!filtered.length) {
+  if (filtered.length && enTarjetas) {
+    const ranaId = state.ranaDelDia && state.ranaDelDia.fecha === todayKey ? state.ranaDelDia.tareaId : null;
+    const rana = [...enCurso, ...sinEmpezar].find(t => t.id === ranaId);
+    const grid = arr => `<div class="tarjetas-grid">${arr.map(tarjetaHtml).join('')}</div>`;
+    const enCursoT = enCurso.filter(t => t !== rana);
+    const sinEmpezarT = sinEmpezar.filter(t => t !== rana);
+    if (rana) html += ranaColgadaHtml(rana);
+    if (enCursoT.length) {
+      html += `<div class="tareas-group-label"><span class="tareas-group-dot" style="background:#5B8CFF"></span>En curso</div>`;
+      html += grid(enCursoT);
+    }
+    if (sinEmpezarT.length) {
+      html += `<div class="tareas-group-label"><span class="tareas-group-dot" style="background:var(--border)"></span>Sin empezar</div>`;
+      html += grid(sinEmpezarT);
+    }
+    if (completadas.length) {
+      html += `<div class="page-completadas-toggle" onclick="togglePageCompletadas()">
+        <span>✅ Completadas (${completadas.length})</span>
+        <span>${pagCompletadasCollapsed ? '▸' : '▾'}</span>
+      </div>`;
+      if (!pagCompletadasCollapsed) html += grid(completadas);
+    }
+  } else if (!filtered.length) {
     html = total
       ? `<div class="empty" style="padding:32px 0"><div class="empty-icon">🔍</div><h3>Sin resultados</h3><p>No hay tareas con esos filtros.</p></div>`
       : `<div class="empty" style="padding:32px 0"><div class="empty-icon">📋</div><h3>Sin tareas</h3><p>Agregá tu primera tarea arriba.</p></div>`;
