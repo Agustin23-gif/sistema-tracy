@@ -665,7 +665,7 @@
   },
   {
    "id": "docs_contexto_estado_actual_splash",
-   "label": "Pantalla de entrada con lema Santiago 1:4",
+   "label": "Pantalla de entrada estilo Luma (mancha naranja que respira) con lema Santiago 1:4",
    "file_type": "concept",
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",
    "source_location": null,
@@ -781,6 +781,39 @@
    "source_location": null,
    "source_url": null,
    "captured_at": "2026-11-08",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_onboarding",
+   "label": "Bienvenida de primera vez: primeros hábitos y tareas",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-09",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_3a657aa",
+   "label": "Commit 3a657aa: entrada estilo Luma",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-09",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_4862565",
+   "label": "Commit 4862565: bienvenida nueva de primera vez",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-09",
    "author": null,
    "contributor": "Claude"
   }
@@ -2922,6 +2955,66 @@
    "relation": "conceptually_related_to",
    "confidence": "INFERRED",
    "confidence_score": 0.75,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_steadfast",
+   "target": "docs_contexto_estado_actual_onboarding",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_3a657aa",
+   "target": "docs_contexto_estado_actual_splash",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_4862565",
+   "target": "docs_contexto_estado_actual_onboarding",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_onboarding",
+   "target": "docs_contexto_estado_actual_splash",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_onboarding",
+   "target": "docs_contexto_estado_actual_regla_naranja",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_onboarding",
+   "target": "docs_contexto_estado_actual_regla_rana_manual",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",
    "source_location": null,
    "weight": 1.0

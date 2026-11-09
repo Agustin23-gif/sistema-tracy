@@ -1,6 +1,6 @@
-# Estado actual y flujo de trabajo (08/11/2026)
+# Estado actual y flujo de trabajo (09/11/2026)
 
-Punto de partida para retomar. Lo más nuevo está en `main` y `gh-pages` (commit `712dc3e`, 08/11/2026).
+Punto de partida para retomar. Lo más nuevo está en `main` y `gh-pages` (commit `4862565`, 09/11/2026).
 
 ## La app se llama Steadfast
 
@@ -8,14 +8,15 @@ Desde el 08/11 la app se llama **Steadfast** (antes "Sistema Tracy"). El nombre 
 
 - Logo: una columna blanca sobre el naranja `#E8450A` (Apocalipsis 3:12). La fuente es `icon.svg`, y `node generate-icon.js` genera los PNG con Playwright. Agustín prefiere siempre el naranja y logos simples y minimalistas.
 - Lema: Santiago 1:4 completo (NTV): "Así que dejen que crezca, pues una vez que su constancia se haya desarrollado plenamente, serán perfectos y completos, y no les faltará nada."
-- Pantalla de entrada (`#splash`, al principio del body): la columna se arma y después aparecen el nombre y el lema. Se cierra a los 6 s o al tocarla, y respeta "reducir movimiento".
+- Pantalla de entrada (`#splash`, al principio del body), estilo Luma desde el 09/11: fondo blanco (casi negro si `state.modoOscuro`, leído directo de `localStorage` en el script del splash) y una mancha difusa de naranjas con grano que respira y gira. La columna se arma encima y después aparecen el nombre y el lema. Se cierra a los 5 s o al tocarla: la mancha se expande y todo se desvanece. Respeta "reducir movimiento".
+- Bienvenida de primera vez (`#onboardingOverlay`, sale si `state.onboardingCompletado` es falso), desde el 09/11: sigue de la entrada con la misma mancha, en 4 pantallas. (1) Frase, Comenzar y "Ahora no". (2) Hábitos: pastillas sugeridas, cada una con su categoría, o uno propio; mínimo uno. (3) Hasta 3 tareas de hoy, opcional; la rana no se elige ahí. (4) "Tu columna está en pie" con el resumen. Todo se guarda junto en `completarOnboarding()`. Se sacaron los pasos de metas y finanzas y el zorro.
 - Se mantuvieron el archivo `tracy-system.html`, los ids de Firebase y las claves de storage `tracy_*`, para no perder datos.
 
 ## Flujo de trabajo
 
 - Se trabaja en la carpeta local de la Mac (`~/Desktop/proyecto habit tracker`, rama local `gh-pages`).
 - Al terminar, se sube a las dos ramas: `gh-pages` (la que publica GitHub Pages) y `main`. Para cambios normales no se abren PRs.
-- Subir directo desde la nube a `gh-pages` y `main` necesita el OK explícito de Agustín.
+- Subir directo desde la nube a `gh-pages` y `main` necesita el OK explícito de Agustín. Después se actualiza la carpeta de la Mac con una sesión de Remote Control (`git pull origin gh-pages`); no darle comandos de Terminal.
 - Si la Mac no está conectada, se le pasan los cambios con un `git bundle` y después hace `git fetch` del bundle y `merge --ff-only`.
 - **La carpeta de finanzas (`carpeta de pulso financiero prototipo/`) nunca se sube al repo**, porque el repo es público. Antes de cada commit hay que revisar que no esté incluida.
 
@@ -56,6 +57,8 @@ Desde el 08/11 la app se llama **Steadfast** (antes "Sistema Tracy"). El nombre 
    - Se muestra como etiqueta, en rojo si ya pasó.
    - Para que avise con la app cerrada, se agrega al Calendario del iPhone (`descargarIcsTarea`, un .ics con alarma, que ya probó y funciona) o a Google Calendar (`googleCalendarUrl`). Agustín eligió el calendario en vez de push.
    - Con la app abierta, `revisarRecordatorios()` hace sonar la alarma y manda la notificación.
+9. `3a657aa` (09/11), entrada estilo Luma: mancha naranja difusa que respira detrás de la columna, fondo blanco u oscuro según el tema. Prototipo: https://claude.ai/artifact/W7dm7SEbK7f4iQ5KQpFQca
+10. `4862565` (09/11), bienvenida nueva de primera vez (`obIr`, `obAgregarHabito`, `obAgregarTarea`, `completarOnboarding`), con la misma mancha. Boceto: https://claude.ai/artifact/AGqS5XbFNhsQN5SAggNtw6
 
 ## Pendiente
 
