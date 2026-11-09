@@ -3524,6 +3524,100 @@
     .pf-tec-ok.show path, .pf-tec-monto.sacudir { animation: none; }
   }
 
+  /* ── FINANZAS: resumen nuevo (monedas, tarjeta, pagos fijos y movimientos) ── */
+  #pf-app { --pfx-pos: #2A9D3A; --pfx-neg: var(--gold); --pfx-amb: #C98A06; --pfx-suave: var(--input-bg); }
+  body.dark-mode #pf-app { --pfx-pos: #6BD88A; --pfx-amb: #F0B53A; }
+  .pfx-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 16px; display: grid; gap: 12px; margin-bottom: 12px; }
+  .pfx-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 0; }
+  .pfx-h span { text-transform: none; letter-spacing: 0; color: var(--text); font-size: 12.5px; font-weight: 600; }
+  .pfx-pos { color: var(--pfx-pos); } .pfx-neg { color: var(--pfx-neg); }
+  .pfx-pilas { display: grid; grid-template-columns: 1fr 1fr; align-items: end; justify-items: center; gap: 8px; min-height: 196px; padding-top: 6px; }
+  .pfx-pcol { display: grid; justify-items: center; }
+  .pfx-pcol svg { display: block; overflow: visible; }
+  .pfx-et { font-size: 11px; font-weight: 700; background: var(--text); color: var(--card); padding: 2px 9px; border-radius: 99px; white-space: nowrap; margin-bottom: 6px; font-family: 'Geist', sans-serif; }
+  .pfx-vacia { width: 84px; height: 30px; border-radius: 50%; border: 2px dashed var(--border); }
+  .pfx-cg { animation: pfxCaer .5s cubic-bezier(.3,1.4,.5,1) both; }
+  .pfx-nueva { animation: pfxNueva .9s cubic-bezier(.3,1.5,.5,1) both; }
+  @keyframes pfxCaer { from { transform: translateY(-36px); opacity: 0; } }
+  @keyframes pfxNueva { 0% { transform: translateY(-160px); opacity: 0; } 15% { opacity: 1; } 100% { transform: none; } }
+  .pfx-base { display: grid; grid-template-columns: 1fr 1fr; text-align: center; gap: 8px; }
+  .pfx-base small { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; font-weight: 600; }
+  .pfx-base b { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .pfx-bal { text-align: center; display: grid; gap: 4px; border-top: 1px solid var(--border); padding-top: 14px; }
+  .pfx-bal small { font-size: 12.5px; color: var(--muted); }
+  .pfx-bal b { font-size: 34px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .pfx-aviso { display: flex; gap: 8px; align-items: center; background: var(--pf-clay-dim); color: var(--gold); border-radius: 14px; padding: 10px 12px; font-size: 13px; font-weight: 500; margin-bottom: 12px; }
+  .pfx-aviso i { width: 8px; height: 8px; border-radius: 9px; background: var(--gold); flex: none; }
+  .pfx-fila { display: grid; grid-template-columns: 34px minmax(0,1fr) auto; gap: 10px; align-items: center; font-size: 14px; width: 100%; text-align: left; background: none; border: 0; padding: 0; color: inherit; font-family: inherit; }
+  button.pfx-fila { cursor: pointer; border-radius: 12px; }
+  button.pfx-fila:active { background: var(--pfx-suave); }
+  .pfx-ico { width: 34px; height: 34px; border-radius: 12px; background: var(--pfx-suave); display: grid; place-items: center; font-size: 16px; }
+  .pfx-t { min-width: 0; }
+  .pfx-t div:first-child { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pfx-t div:last-child { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pfx-m { font-weight: 600; font-size: 14px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .pfx-dia { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-top: 4px; }
+  .pfx-check { width: 30px; height: 30px; border-radius: 99px; border: 2px solid var(--border); background: transparent; cursor: pointer; display: grid; place-items: center; color: transparent; font-size: 14px; padding: 0; margin: 2px; }
+  .pfx-check.ok { background: var(--pfx-pos); border-color: var(--pfx-pos); color: #fff; }
+  .pfx-chip { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 99px; }
+  .pfx-chip.venc { background: var(--pf-clay-dim); color: var(--gold); }
+  .pfx-chip.pend { background: rgba(217,154,14,.15); color: var(--pfx-amb); }
+  .pfx-chip.pag { background: rgba(61,190,41,.14); color: var(--pfx-pos); }
+  .pfx-mas { border: 0; background: transparent; color: var(--muted); font-size: 18px; cursor: pointer; padding: 4px 6px; border-radius: 8px; }
+  .pfx-prog { height: 8px; border-radius: 9px; background: var(--pfx-suave); overflow: hidden; }
+  .pfx-prog i { display: block; height: 100%; background: var(--pfx-pos); border-radius: 9px; transition: width .4s ease; }
+  .pfx-acciones { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 0 4px 44px; font-size: 12.5px; color: var(--muted); }
+  .pfx-acciones p { width: 100%; margin: 0; }
+  .pfx-btn { border: 0; background: var(--text); color: var(--card); font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 600; padding: 10px 14px; border-radius: 99px; cursor: pointer; }
+  .pfx-btn.claro { background: var(--pfx-suave); color: var(--text); }
+  .pfx-btn.peligro { background: transparent; color: var(--gold); border: 1px solid var(--pf-clay-dim); }
+  .pfx-btn.chico { padding: 6px 11px; font-size: 12px; }
+  .pfx-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pfx-form { display: grid; gap: 10px; }
+  .pfx-form .pf-form-grid { margin-top: 0 !important; }
+  /* tarjeta de crédito dibujada */
+  .pfx-tc { position: relative; aspect-ratio: 1.586; max-width: 420px; width: 100%; margin: 0 auto; border-radius: 18px; padding: 18px; color: #F3EEEA; overflow: hidden;
+    background: radial-gradient(120% 90% at 85% 0%, #3A302B 0%, transparent 55%), linear-gradient(135deg, #1E1814 0%, #0E0B09 100%);
+    box-shadow: 0 14px 26px rgba(20,12,6,.28), inset 0 1px 0 rgba(255,255,255,.08); display: flex; flex-direction: column; justify-content: space-between; }
+  .pfx-tc::before { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.07) 45%, transparent 60%); pointer-events: none; }
+  .pfx-tc::after { content: ""; position: absolute; right: -50px; bottom: -80px; width: 200px; height: 200px; border-radius: 50%; border: 26px solid rgba(232,69,10,.13); pointer-events: none; }
+  .pfx-tc > * { position: relative; z-index: 1; }
+  .pfx-tc-top { display: flex; justify-content: space-between; align-items: center; }
+  .pfx-tc-marca { display: flex; gap: 7px; align-items: center; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
+  .pfx-tc-col { width: 16px; height: 16px; border-radius: 4px; background: #E8450A; display: grid; place-items: center; }
+  .pfx-tc-col::after { content: ""; width: 3px; height: 9px; background: #fff; border-radius: 1px; }
+  .pfx-chipc { width: 40px; height: 30px; border-radius: 6px; background: linear-gradient(135deg, #F3D98A, #C9A043 55%, #E8C76A); position: relative; box-shadow: inset 0 0 0 1px rgba(0,0,0,.15); }
+  .pfx-chipc::before { content: ""; position: absolute; inset: 7px 0; border-top: 1px solid rgba(0,0,0,.25); border-bottom: 1px solid rgba(0,0,0,.25); }
+  .pfx-chipc::after { content: ""; position: absolute; inset: 0 14px; border-left: 1px solid rgba(0,0,0,.25); border-right: 1px solid rgba(0,0,0,.25); }
+  .pfx-tc-monto small { display: block; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; opacity: .6; }
+  .pfx-tc-monto b { font-family: 'Geist Mono', monospace; font-size: 24px; letter-spacing: .02em; color: #F5C04A; }
+  .pfx-tc-monto b.aldia { color: #7FDA4E; }
+  .pfx-tc-pie { display: flex; justify-content: space-between; font-size: 11.5px; opacity: .7; font-family: 'Geist Mono', monospace; }
+  /* categorías */
+  .pfx-cat { display: grid; gap: 5px; }
+  .pfx-cat-top { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+  .pfx-cat-top span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pfx-cat-top span:last-child { color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .pfx-barra { height: 7px; border-radius: 9px; background: var(--pfx-suave); overflow: hidden; }
+  .pfx-barra i { display: block; height: 100%; border-radius: 9px; background: var(--gold); }
+  .pfx-vacio { color: var(--muted); font-size: 13.5px; text-align: center; padding: 6px 0; }
+  /* aviso con deshacer */
+  .pfx-toast { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom, 0px)); z-index: 960; transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+    display: flex; gap: 14px; align-items: center; background: #17120F; color: #F3EEEA; padding: 10px 10px 10px 16px; border-radius: 99px; font-size: 13.5px; box-shadow: 0 10px 30px rgba(0,0,0,.25); transition: opacity .2s, transform .2s; white-space: nowrap; }
+  .pfx-toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+  .pfx-toast button { border: 0; background: #F3EEEA; color: #17120F; font: inherit; font-weight: 700; font-size: 12.5px; padding: 6px 12px; border-radius: 99px; cursor: pointer; }
+  .pfx-toast button[hidden] { display: none; }
+  /* teclado: fecha, nota y modo edición */
+  .pf-tec-extra { display: flex; justify-content: center; gap: 8px; margin-top: 2px; min-height: 34px; }
+  .pf-tec-pill { position: relative; border: 0; background: rgba(0,0,0,.1); color: inherit; font: inherit; font-size: 13px; font-weight: 600; padding: 7px 13px; border-radius: 99px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+  .pf-tec-pill input[type="date"] { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; border: 0; }
+  .pf-tec-nota { flex: 1; max-width: 300px; border: 0; background: rgba(255,255,255,.55); color: inherit; font: inherit; font-size: 16px; padding: 6px 14px; border-radius: 99px; outline: none; }
+  .pf-tec-nota::placeholder { color: rgba(12,31,5,.55); }
+  .pf-tec-pill[hidden], .pf-tec-nota[hidden], .pf-tec-borrar[hidden], .pf-tec-resumen[hidden] { display: none; }
+  .pf-tec-pill { white-space: nowrap; flex: none; }
+  .pf-tec-borrar { border: 0; background: transparent; color: #7A1E00; font: inherit; font-size: 13px; font-weight: 700; padding: 12px; cursor: pointer; flex: none; }
+  @media (prefers-reduced-motion: reduce) { .pfx-cg, .pfx-nueva { animation: none; } }
+
   /* ── PROGRESO: ÁREAS, XP, FICHAS Y RELOJ ── */
   /* Espacio final para que la barra inferior y el botón flotante no tapen el último elemento. */
   #progresoContenido, #premiosContenido, #relojContenido { padding-bottom: 210px; }
@@ -4004,6 +4098,10 @@
     <div class="ajustes-row">
       <span class="ajustes-row-label"><i data-lucide="calculator"></i> Abrir Finanzas con el teclado</span>
       <div class="dark-toggle" id="tecladoFinanzasToggle" onclick="pf_tecToggleActivo()" role="button" aria-label="Abrir Finanzas con el teclado"><div class="dark-toggle-thumb"></div></div>
+    </div>
+    <div class="ajustes-row">
+      <span class="ajustes-row-label"><i data-lucide="credit-card"></i> Uso tarjeta de crédito</span>
+      <div class="dark-toggle" id="tarjetaFinanzasToggle" onclick="pf_toggleTarjeta()" role="button" aria-label="Uso tarjeta de crédito"><div class="dark-toggle-thumb"></div></div>
     </div>
 
     <h3 class="inicio-section-title" style="margin-top:28px">Recordatorio diario</h3>
@@ -4518,11 +4616,16 @@
   <div class="pf-tec-in">
     <div class="pf-tec-top">
       <button class="pf-tec-x" type="button" onclick="pf_cerrarTeclado(false)" aria-label="Cerrar">✕</button>
-      <span class="pf-tec-titulo">Finanzas</span>
+      <span class="pf-tec-titulo" id="pfTecTitulo">Finanzas</span>
       <button class="pf-tec-metodo" id="pfTecMetodo" type="button" onclick="pf_tecCambiarMetodo()" aria-label="Método de pago">Efectivo</button>
     </div>
     <div class="pf-tec-monto" id="pfTecMonto" aria-live="polite">₲ 0</div>
     <div class="pf-tec-hoy" id="pfTecHoy"></div>
+    <div class="pf-tec-extra">
+      <label class="pf-tec-pill" id="pfTecFechaPill"><span id="pfTecFechaTxt">Hoy</span> ▾<input type="date" id="pfTecFecha" aria-label="Fecha del movimiento"></label>
+      <button class="pf-tec-pill" id="pfTecNotaBtn" type="button" onclick="pf_tecAbrirNota()">+ Nota</button>
+      <input type="text" class="pf-tec-nota" id="pfTecNota" placeholder="Nota (opcional)" maxlength="80" hidden>
+    </div>
     <div class="pf-tec-seg" role="group" aria-label="Tipo de movimiento">
       <button type="button" id="pfTecGasto" onclick="pf_tecSetTipo('gasto')">Gasto</button>
       <button type="button" id="pfTecIngreso" onclick="pf_tecSetTipo('ingreso')">Ingreso</button>
@@ -4530,7 +4633,8 @@
     <div class="pf-tec-cats" id="pfTecCats" role="group" aria-label="Categoría"></div>
     <div class="pf-tec-pad" id="pfTecPad"></div>
     <button class="pf-tec-cta" id="pfTecCta" type="button" onclick="pf_tecGuardar()">Anotar gasto</button>
-    <button class="pf-tec-resumen" type="button" onclick="pf_cerrarTeclado(true)">Ver resumen del mes ↓</button>
+    <button class="pf-tec-resumen" id="pfTecResumen" type="button" onclick="pf_cerrarTeclado(true)">Ver resumen del mes ↓</button>
+    <button class="pf-tec-borrar" id="pfTecBorrar" type="button" onclick="pf_tecBorrarEdicion()" hidden>Borrar movimiento</button>
   </div>
   <div class="pf-tec-ok" id="pfTecOk" aria-live="polite">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
@@ -4819,7 +4923,7 @@ setInterval(actualizarHoySiCambio, 60000);
 function aplicarModoOscuro() {
   document.body.classList.toggle('dark-mode', !!state.modoOscuro);
   // Sincroniza el toggle del header y su copia en Ajustes (ambos usan la clase .dark-toggle)
-  document.querySelectorAll('.dark-toggle:not(#tecladoFinanzasToggle)').forEach(t => t.classList.toggle('on', !!state.modoOscuro));
+  document.querySelectorAll('.dark-toggle:not(#tecladoFinanzasToggle):not(#tarjetaFinanzasToggle)').forEach(t => t.classList.toggle('on', !!state.modoOscuro));
 }
 function toggleDarkMode() {
   state.modoOscuro = !state.modoOscuro;
@@ -4850,7 +4954,7 @@ function renderSeccion(tab) {
   if (tab === 'vision')     renderVision();
   if (tab === 'calendario') renderCalendario();
   if (tab === 'tareas')     renderPaginaTareas();
-  if (tab === 'finanzas')   pf_render();
+  if (tab === 'finanzas')   { pf_animEntrada = true; pf_render(); }
   if (tab === 'progreso')   renderProgreso();
   if (tab === 'premios')    renderPremios();
   if (tab === 'reloj')      renderReloj();
@@ -7149,44 +7253,142 @@ function pf_renderHeader() {
   `;
 }
 
+// ── Resumen del mes (monedas, tarjeta dibujada, pagos fijos y movimientos) ──
+const PF_ICONOS = {
+  'Vivienda y servicios': '🏠', 'Suscripciones y pagos fijos': '🔁', 'Comida': '🍽️', 'Transporte': '🚌',
+  'Herramientas y software': '🛠️', 'Insumos PC House': '🖥️', 'Ocio y personal': '🎟️', 'Ahorro / Inversión': '📈',
+  'Otro gasto': '•••', 'Sueldo fijo (PC House)': '💼', 'Comisiones (PC House)': '🤝', 'Proyectos freelance': '💻', 'Otro ingreso': '＋'
+};
+const PF_KEY_TARJETA = 'steadfast_usa_tarjeta';
+let pf_animEntrada = false;   // las monedas caen de a una al entrar a Finanzas
+let pf_ultimaMoneda = null;   // { tipo, monto, t } del último movimiento anotado: cae una moneda nueva
+let pf_nuevaPend = null;
+let pf_verCompras = false;
+let pf_confirmarPago = false;
+let pf_fijoAbierto = null;
+let pf_formFijo = false;
+
+function pf_icono(cat) { return PF_ICONOS[cat] || '•'; }
+function pf_corto(n) {
+  n = Math.abs(n);
+  if (n >= 1e6) return (Math.round(n / 1e5) / 10).toLocaleString('es-PY') + ' M';
+  if (n >= 1000) return Math.round(n / 1000).toLocaleString('es-PY') + ' mil';
+  return Math.round(n).toLocaleString('es-PY');
+}
+
+// Tarjeta de crédito: se muestra si la persona la usa. Sin elección en Ajustes, aparece sola
+// cuando hay algún gasto o pago fijo con tarjeta.
+function pf_usaTarjeta() {
+  const v = pf_tecLeer(PF_KEY_TARJETA);
+  if (v === '1') return true;
+  if (v === '0') return false;
+  return pf_data.transactions.some(t => !t.eliminado && t.method === 'Tarjeta de crédito')
+    || activos(pf_data.fixedPayments).some(f => f.method === 'Tarjeta de crédito');
+}
+function pf_toggleTarjeta() {
+  pf_tecEscribir(PF_KEY_TARJETA, pf_usaTarjeta() ? '0' : '1');
+  pf_pintarAjusteTarjeta();
+  if (document.getElementById('sec-finanzas').classList.contains('active')) pf_render();
+}
+function pf_pintarAjusteTarjeta() {
+  const t = document.getElementById('tarjetaFinanzasToggle');
+  if (t) t.classList.toggle('on', pf_usaTarjeta());
+}
+
+// Pila de monedas en SVG: canto rayado, cara con relieve y el ₲ grabado en la de arriba.
+let pf_uidPila = 0;
+function pf_pilaSVG(n, tipo, animar, nueva) {
+  const u = 'pfp' + (pf_uidPila++), rx = 40, ry = 15, t = 8, W = 100, cx = 50;
+  const H = n * t + ry * 2 + 14, base = H - ry - 8;
+  const C = tipo === 'in'
+    ? { f: ['#D9FBC4', '#7FDA4E', '#3F9C1C'], s: ['#245F0E', '#83DE52', '#3D9A1C', '#1E520B'], g: '#2C7A12' }
+    : { f: ['#FFDCC2', '#F28449', '#B4440F'], s: ['#7C2B07', '#F7A06A', '#C9541C', '#6A2405'], g: '#8E3509' };
+  let out = `<defs>
+    <radialGradient id="${u}f" cx="40%" cy="35%" r="75%"><stop offset="0" stop-color="${C.f[0]}"/><stop offset=".55" stop-color="${C.f[1]}"/><stop offset="1" stop-color="${C.f[2]}"/></radialGradient>
+    <linearGradient id="${u}s" x1="0" x2="1"><stop offset="0" stop-color="${C.s[0]}"/><stop offset=".28" stop-color="${C.s[1]}"/><stop offset=".62" stop-color="${C.s[2]}"/><stop offset="1" stop-color="${C.s[3]}"/></linearGradient>
+    <pattern id="${u}r" width="3" height="10" patternUnits="userSpaceOnUse"><rect width="1.2" height="10" fill="rgba(0,0,0,.28)"/></pattern>
+    <filter id="${u}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter></defs>
+    <ellipse cx="${cx}" cy="${base + 6}" rx="${rx + 6}" ry="${ry - 2}" fill="rgba(40,20,10,.22)" filter="url(#${u}b)"/>`;
+  for (let i = 0; i < n; i++) {
+    const dx = ((i * 37) % 5) - 2, x = cx + dx, cy = base - t - i * t, top = i === n - 1;
+    const lado = `M${x - rx},${cy} L${x - rx},${cy + t} A${rx},${ry} 0 0 0 ${x + rx},${cy + t} L${x + rx},${cy} Z`;
+    const cls = top && nueva ? 'pfx-nueva' : (animar ? 'pfx-cg' : '');
+    out += `<g class="${cls}" style="${animar && !(top && nueva) ? 'animation-delay:' + (i * 45) + 'ms' : ''}">
+      <path d="${lado}" fill="url(#${u}s)"/><path d="${lado}" fill="url(#${u}r)"/>
+      <ellipse cx="${x}" cy="${cy}" rx="${rx}" ry="${ry}" fill="url(#${u}f)"/>
+      <ellipse cx="${x}" cy="${cy}" rx="${rx - 1}" ry="${ry - .6}" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1"/>
+      <ellipse cx="${x}" cy="${cy + .6}" rx="${rx * .76}" ry="${ry * .76}" fill="none" stroke="${C.g}" stroke-opacity=".55" stroke-width="1.4"/>
+      <ellipse cx="${x}" cy="${cy - .4}" rx="${rx * .76}" ry="${ry * .76}" fill="none" stroke="rgba(255,255,255,.5)" stroke-width=".8"/>
+      ${top ? `<g transform="translate(${x} ${cy}) scale(1 .42)"><text y="10" text-anchor="middle" font-family="Geist, sans-serif" font-weight="800" font-size="27" fill="rgba(255,255,255,.55)">₲</text><text y="9" text-anchor="middle" font-family="Geist, sans-serif" font-weight="800" font-size="27" fill="${C.g}" fill-opacity=".75">₲</text></g>` : ''}
+    </g>`;
+  }
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true">${out}</svg>`;
+}
+
+function pf_etiquetaDia(dateStr) {
+  const hoy = pf_todayStr();
+  const ay = new Date(); ay.setDate(ay.getDate() - 1);
+  const ayer = ay.getFullYear() + '-' + String(ay.getMonth() + 1).padStart(2, '0') + '-' + String(ay.getDate()).padStart(2, '0');
+  if (dateStr === hoy) return 'Hoy';
+  if (dateStr === ayer) return 'Ayer';
+  return pf_formatDate(dateStr);
+}
+
 function pf_renderMonth() {
-  const txs = pf_monthTx(pf_cursor).sort((a, b) => b.date.localeCompare(a.date));
-  const { ingresos, gastos, balance, tasa } = pf_monthStats(txs);
-  const pulse = pf_pulsePath(pf_cursor);
-  const balCls = balance < 0 ? 'neg' : 'pos';
+  const txs = pf_monthTx(pf_cursor)
+    .filter(t => !(t.settledByArrears && !t.amount))
+    .sort((a, b) => b.date.localeCompare(a.date) || String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
+  const { ingresos, gastos, balance } = pf_monthStats(txs);
   const label = PF_MESES[pf_cursor.getMonth()] + ' ' + pf_cursor.getFullYear();
+  const ahora = new Date();
+  const esActual = pf_cursor.getFullYear() === ahora.getFullYear() && pf_cursor.getMonth() === ahora.getMonth();
+  const diasMes = new Date(pf_cursor.getFullYear(), pf_cursor.getMonth() + 1, 0).getDate();
 
-  const warning = balance < 0 ? `
-    <div class="pf-banner">⚠️ Este mes estás gastando ${pf_fmtGs(Math.abs(balance))} más de lo que ingresás. Revisá la categoría que más pesa abajo.</div>
-  ` : '';
+  // Monedas: la pila más alta tiene 12; la otra, en proporción.
+  const max = Math.max(ingresos, gastos, 1);
+  const nIn = ingresos ? Math.max(1, Math.round(ingresos / max * 12)) : 0;
+  const nOut = gastos ? Math.max(1, Math.round(gastos / max * 12)) : 0;
+  const animar = pf_animEntrada; pf_animEntrada = false;
+  let nueva = null;
+  if (pf_ultimaMoneda && esActual && !pf_tecEstaAbierto() && Date.now() - pf_ultimaMoneda.t < 120000) { nueva = pf_ultimaMoneda; pf_ultimaMoneda = null; }
+  pf_nuevaPend = nueva;
+  const pila = (n, tipo) => n ? pf_pilaSVG(n, tipo, animar && !nueva, nueva && nueva.tipo === (tipo === 'in' ? 'ingreso' : 'gasto')) : '<div class="pfx-vacia"></div>';
+
+  let linea;
+  if (!ingresos && !gastos) linea = esActual ? 'Todavía no anotaste nada este mes' : 'Sin movimientos ese mes';
+  else if (esActual) {
+    const quedan = diasMes - ahora.getDate() + 1;
+    linea = balance > 0 ? `Te quedan ${pf_fmtGs(balance / quedan)} por día hasta fin de mes`
+      : balance < 0 ? `Estás en rojo: te faltan ${pf_fmtGs(-balance)} para volver a cero` : 'Estás justo en cero';
+  } else linea = balance >= 0 ? `Cerraste el mes con ${pf_fmtGs(balance)} a favor` : `Cerraste el mes ${pf_fmtGs(-balance)} en rojo`;
+
   const totalArrears = pf_totalOverdueAllFixed(pf_cursor);
-  const arrearsWarning = totalArrears > 0 ? `
-    <div class="pf-banner">📅 Tenés ${pf_fmtGs(totalArrears)} en pagos fijos atrasados de meses anteriores. Revisá el panel de Pagos Fijos abajo.</div>
-  ` : '';
+  const aviso = totalArrears > 0 ? `<div class="pfx-aviso"><i></i>Tenés ${pf_fmtGs(totalArrears)} en pagos fijos atrasados</div>` : '';
 
+  // En qué se fue
   const catTotals = {};
   txs.filter(t => t.type === 'gasto').forEach(t => { catTotals[t.category] = (catTotals[t.category] || 0) + t.amount; });
-  const catEntries = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
-  const maxCat = catEntries.length ? catEntries[0][1] : 1;
-  const catHtml = catEntries.length ? catEntries.map(([cat, val]) => `
-    <div class="pf-cat-row">
-      <div class="cr-top"><span>${escHtml(cat)}</span><span>${pf_fmtGs(val)}</span></div>
-      <div class="pf-bar-bg"><div class="pf-bar-fill" style="width:${(val / maxCat * 100).toFixed(0)}%"></div></div>
-    </div>
-  `).join('') : `<div class="pf-empty">Sin gastos registrados este mes todavía.</div>`;
+  const cats = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
+  const catHtml = cats.length ? cats.map(([c, v]) => `
+    <div class="pfx-cat">
+      <div class="pfx-cat-top"><span>${pf_icono(c)} ${escHtml(c)}</span><span>${Math.round(v / gastos * 100)}% · ${pf_fmtGs(v)}</span></div>
+      <div class="pfx-barra"><i style="width:${(v / cats[0][1] * 100).toFixed(0)}%"></i></div>
+    </div>`).join('') : '<div class="pfx-vacio">Sin gastos este mes.</div>';
 
-  const txHtml = txs.length ? txs.map(t => `
-    <div class="pf-tx">
-      <div class="pf-tx-left">
-        <span class="pf-tx-cat">${escHtml(t.category)}${t.note ? ' · ' + escHtml(t.note) : ''}</span>
-        <span class="pf-tx-meta">${pf_formatDate(t.date)}${t.method === 'Tarjeta de crédito' ? ' · <span class="pf-badge ' + (t.paid ? 'paid' : 'pending') + '">' + (t.paid ? 'Tarjeta pagada' : 'Tarjeta pendiente') + '</span>' : ''}</span>
-      </div>
-      <div class="pf-tx-right">
-        <span class="pf-tx-amt ${t.type === 'ingreso' ? 'jade' : 'clay'}">${t.type === 'ingreso' ? '+' : '-'}${pf_fmtGs(t.amount)}</span>
-        <button class="pf-tx-del" data-action="delete" data-id="${t.id}">✕</button>
-      </div>
-    </div>
-  `).join('') : `<div class="pf-empty">Todavía no cargaste movimientos este mes. Empezá con el formulario de arriba.</div>`;
+  // Movimientos agrupados por día; se tocan para corregirlos.
+  let movHtml = '', diaActual = '';
+  txs.forEach(t => {
+    if (t.date !== diaActual) { movHtml += `<div class="pfx-dia">${pf_etiquetaDia(t.date)}</div>`; diaActual = t.date; }
+    const titulo = t.note ? escHtml(t.note) : escHtml(t.category);
+    const sub = (t.note ? escHtml(t.category) : (t.type === 'ingreso' ? 'Ingreso' : 'Gasto'))
+      + (t.method === 'Tarjeta de crédito' ? (t.paid ? ' · tarjeta pagada' : ' · con tarjeta') : '');
+    movHtml += `<button type="button" class="pfx-fila" data-action="editTx" data-id="${t.id}" aria-label="Corregir ${titulo}">
+      <span class="pfx-ico">${pf_icono(t.category)}</span>
+      <span class="pfx-t"><div>${titulo}</div><div>${sub}</div></span>
+      <span class="pfx-m ${t.type === 'ingreso' ? 'pfx-pos' : ''}">${t.type === 'ingreso' ? '+' : '−'}${pf_fmtGs(t.amount)}</span>
+    </button>`;
+  });
+  if (!movHtml) movHtml = '<div class="pfx-vacio">Todavía no hay movimientos. Tocá ₲ Anotar para empezar.</div>';
 
   return `
     <div class="cal-nav-row">
@@ -7194,181 +7396,146 @@ function pf_renderMonth() {
       <div class="cal-month-label">${label}</div>
       <button class="cal-nav-btn" data-action="nextMonth">›</button>
     </div>
-    ${warning}
-    ${arrearsWarning}
-    <div class="pf-hero">
-      <div class="pf-hero-top">
-        <div>
-          <div class="pf-hero-label">Balance del mes</div>
-          <div class="pf-hero-balance ${balCls}">${balance < 0 ? '-' : ''}${pf_fmtGs(Math.abs(balance))}</div>
-          <div class="pf-pulse-tag">flujo acumulado día a día</div>
-        </div>
-        <div class="pf-hero-stats">
-          <div class="pf-hstat"><div class="k">Ingresos</div><div class="v jade">${pf_fmtGs(ingresos)}</div></div>
-          <div class="pf-hstat"><div class="k">Gastos</div><div class="v clay">${pf_fmtGs(gastos)}</div></div>
-          <div class="pf-hstat"><div class="k">Tasa de ahorro</div><div class="v ${tasa >= 0 ? 'gold' : 'clay'}">${tasa.toFixed(0)}%</div></div>
-          <div class="pf-hstat"><div class="k">Deuda tarjeta</div><div class="v ${pf_pendingCardDebt() > 0 ? 'gold' : ''}">${pf_fmtGs(pf_pendingCardDebt())}</div></div>
-        </div>
+    <div class="pfx-card">
+      <div class="pfx-pilas">
+        <div class="pfx-pcol"><span class="pfx-et">${pf_corto(ingresos)}</span>${pila(nIn, 'in')}</div>
+        <div class="pfx-pcol"><span class="pfx-et">${pf_corto(gastos)}</span>${pila(nOut, 'out')}</div>
       </div>
-      <svg id="pfPulseSvg" viewBox="0 0 ${pulse.W} ${pulse.H}" preserveAspectRatio="none">
-        <line x1="0" y1="${pulse.zeroY}" x2="${pulse.W}" y2="${pulse.zeroY}" stroke="rgba(var(--muted-rgb),0.3)" stroke-dasharray="3,4" />
-        <path d="${pulse.path}" fill="none" stroke="${pulse.last < 0 ? 'var(--pf-clay)' : 'var(--pf-jade)'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-
-    <div class="pf-panel">
-      <h2>Agregar movimiento</h2>
-      <div class="pf-type-switch">
-        <button class="pf-type-btn on-ingreso ${pf_formType === 'ingreso' ? 'active' : ''}" data-action="formType" data-value="ingreso">↑ Ingreso</button>
-        <button class="pf-type-btn on-gasto ${pf_formType === 'gasto' ? 'active' : ''}" data-action="formType" data-value="gasto">↓ Gasto</button>
+      <div class="pfx-base">
+        <div><small>Entró</small><b class="pfx-pos" data-cuenta="ingreso" data-valor="${ingresos}">${pf_fmtGs(ingresos)}</b></div>
+        <div><small>Salió</small><b class="pfx-neg" data-cuenta="gasto" data-valor="${gastos}">${pf_fmtGs(gastos)}</b></div>
       </div>
-      <div class="pf-form-grid">
-        <div>
-          <label>Monto (₲)</label>
-          <input type="number" id="pfAmount" placeholder="150000" min="0" step="1000">
-        </div>
-        <div>
-          <label>Fecha</label>
-          <input type="date" id="pfDate" value="${pf_todayStr()}">
-        </div>
-        ${pf_formType === 'gasto' ? `
-        <div class="full">
-          <label>Medio de pago</label>
-          <select id="pfMethod">
-            ${PF_PAYMENT_METHODS.map(m => `<option value="${m}">${m}</option>`).join('')}
-          </select>
-          <div class="pf-hint" id="pfTarjetaHint">Se suma a tu gasto del mes ya mismo, y queda como deuda pendiente hasta que marqués que pagaste la tarjeta.</div>
-        </div>` : ''}
-        <div class="full">
-          <label>Categoría</label>
-          <select id="pfCategory">
-            ${(pf_formType === 'ingreso' ? PF_INGRESO_CATS : PF_GASTO_CATS).map(c => `<option value="${c}">${c}</option>`).join('')}
-          </select>
-          <div class="pf-hint" id="pfAhorroHint">Destiná esto antes de gastar en lo demás — pagate primero a vos.</div>
-        </div>
-        <div class="full">
-          <label>Nota (opcional)</label>
-          <input type="text" id="pfNote" placeholder="Ej: cliente diseño logo, alquiler local...">
-        </div>
-      </div>
-      <button class="pf-add-btn" data-action="add">Agregar ${pf_formType === 'ingreso' ? 'ingreso' : 'gasto'}</button>
-    </div>
-
-    <div class="pf-panel">
-      <h2>Pagos fijos del mes</h2>
-      ${pf_renderFixedPanel()}
-    </div>
-
-    <div class="pf-panel">
-      <h2>Tarjeta de crédito</h2>
-      ${pf_renderCardPanel()}
-    </div>
-
-    <div class="pf-cols">
-      <div class="pf-panel">
-        <h2>Gastos por categoría</h2>
-        ${catHtml}
-      </div>
-      <div class="pf-panel">
-        <h2>Movimientos del mes</h2>
-        <div>${txHtml}</div>
+      <div class="pfx-bal">
+        <small>Balance del mes</small>
+        <b class="${balance < 0 ? 'pfx-neg' : 'pfx-pos'}">${balance < 0 ? '−' : '+'}${pf_fmtGs(Math.abs(balance))}</b>
+        <small>${linea}</small>
       </div>
     </div>
+    ${aviso}
+    ${pf_usaTarjeta() ? `<div class="pfx-card"><h3 class="pfx-h">Tarjeta de crédito</h3>${pf_renderCardPanel()}</div>` : ''}
+    <div class="pfx-card">${pf_renderFixedPanel()}</div>
+    <div class="pfx-card"><h3 class="pfx-h">En qué se fue <span>${pf_fmtGs(gastos)}</span></h3>${catHtml}</div>
+    <div class="pfx-card"><h3 class="pfx-h">Movimientos <span>${txs.length}</span></h3>${movHtml}</div>
   `;
 }
 
+// Pagos fijos: un círculo para marcar pagado; lo demás (atrasados, borrar) dentro del ⋯.
 function pf_renderFixedPanel() {
   const list = activos(pf_data.fixedPayments).sort((a, b) => a.dueDay - b.dueDay);
-  const totalPending = list.reduce((s, fp) => {
+  const estados = list.map(fp => {
     const st = pf_fixedStatus(fp, pf_cursor);
-    return st.status !== 'paid' ? s + fp.amount : s;
-  }, 0);
-
-  const items = list.length ? list.map(fp => {
-    const st = pf_fixedStatus(fp, pf_cursor);
-    const overdueMonths = pf_fixedOverdueMonths(fp, pf_cursor);
-    const overdueSum = overdueMonths.reduce((s, om) => s + om.amount, 0);
-    const hasArrears = overdueMonths.length > 0;
-    const badgeText = st.status === 'paid'
-      ? 'Pagado'
-      : (hasArrears
-          ? `Pendiente + ${overdueMonths.length} mes${overdueMonths.length > 1 ? 'es' : ''} atrasado${overdueMonths.length > 1 ? 's' : ''}`
-          : (st.status === 'overdue' ? 'Vencido' : 'Pendiente'));
-    const badgeCls = st.status === 'paid' ? 'paid' : (hasArrears || st.status === 'overdue' ? 'overdue' : 'pending');
-    const arrearsInfo = hasArrears && st.status !== 'paid'
-      ? `<div class="pf-arrears-info">Atrasado: ${overdueMonths.map(o => o.label).join(', ')} · <span class="pf-highlight-gold">Total a pagar: ${pf_fmtGs(fp.amount + overdueSum)}</span> <span class="pf-ink-faint">(este mes ${pf_fmtGs(fp.amount)} + atrasado ${pf_fmtGs(overdueSum)})</span></div>`
-      : '';
+    const atr = pf_fixedOverdueMonths(fp, pf_cursor);
+    return { fp, st, atr, sumAtr: atr.reduce((s, o) => s + o.amount, 0) };
+  });
+  const pagados = estados.filter(e => e.st.status === 'paid').length;
+  const porPagar = estados.filter(e => e.st.status !== 'paid').reduce((s, e) => s + e.fp.amount + e.sumAtr, 0);
+  const filas = estados.map(({ fp, st, atr, sumAtr }) => {
+    const pagado = st.status === 'paid';
+    const chip = pagado ? '<span class="pfx-chip pag">Pagado</span>'
+      : atr.length ? `<span class="pfx-chip venc">+${atr.length} ${atr.length > 1 ? 'meses atrasados' : 'mes atrasado'}</span>`
+      : st.status === 'overdue' ? '<span class="pfx-chip venc">Vencido</span>'
+      : `<span class="pfx-chip pend">Vence el ${fp.dueDay}</span>`;
+    const accion = pagado ? 'unmarkFixed' : (atr.length ? 'toggleFijo' : 'markFixed');
+    const abierto = pf_fijoAbierto === fp.id;
     return `
-      <div class="pf-card-item">
-        <div class="pf-tx-left">
-          <span class="pf-tx-cat">${escHtml(fp.name)} <span class="pf-badge ${badgeCls}">${badgeText}</span></span>
-          <span class="pf-tx-meta">Vence el día ${fp.dueDay} · ${pf_fmtGs(fp.amount)}${fp.method === 'Tarjeta de crédito' ? ' · con tarjeta' : ''}</span>
-          ${arrearsInfo}
-        </div>
-        <div class="pf-tx-right">
-          ${st.status === 'paid'
-            ? `<button class="pf-pay-btn" data-action="unmarkFixed" data-id="${fp.id}" style="border-color:var(--muted); color:var(--muted);">Desmarcar</button>`
-            : (hasArrears
-                ? `<button class="pf-pay-btn" data-action="markFixedAll" data-id="${fp.id}" title="Registra un solo gasto por ${pf_fmtGs(fp.amount + overdueSum)} en el mes actual">Pagar todo</button>
-                   <button class="pf-pay-btn" data-action="markFixed" data-id="${fp.id}" style="border-color:var(--muted); color:var(--muted);" title="Solo la cuota de este mes, el atrasado sigue pendiente">Solo este mes</button>`
-                : `<button class="pf-pay-btn" data-action="markFixed" data-id="${fp.id}">Marcar pagado</button>`
-              )
-          }
-          <button class="pf-tx-del" data-action="deleteFixed" data-id="${fp.id}">✕</button>
-        </div>
+      <div class="pfx-fila" style="grid-template-columns:34px minmax(0,1fr) auto auto">
+        <button type="button" class="pfx-check ${pagado ? 'ok' : ''}" data-action="${accion}" data-id="${fp.id}" aria-label="${pagado ? 'Desmarcar' : 'Marcar pagado'}: ${escHtml(fp.name)}">✓</button>
+        <span class="pfx-t"><div>${escHtml(fp.name)}</div><div>${chip}${fp.method === 'Tarjeta de crédito' ? ' · con tarjeta' : ''}</div></span>
+        <span class="pfx-m">${pf_fmtGs(fp.amount)}</span>
+        <button type="button" class="pfx-mas" data-action="toggleFijo" data-id="${fp.id}" aria-label="Más opciones de ${escHtml(fp.name)}">⋯</button>
       </div>
-    `;
-  }).join('') : `<div class="pf-empty">Todavía no cargaste tus pagos fijos (suscripciones, servicios, alquiler...).</div>`;
-
+      ${abierto ? `<div class="pfx-acciones">
+        ${!pagado && atr.length ? `<p>Atrasado: ${atr.map(o => o.label).join(', ')}. Total con este mes: ${pf_fmtGs(fp.amount + sumAtr)}.</p>
+          <button type="button" class="pfx-btn chico" data-action="markFixedAll" data-id="${fp.id}">Pagar todo (${pf_fmtGs(fp.amount + sumAtr)})</button>
+          <button type="button" class="pfx-btn chico claro" data-action="markFixed" data-id="${fp.id}">Solo este mes</button>` : ''}
+        <button type="button" class="pfx-btn chico peligro" data-action="deleteFixed" data-id="${fp.id}">Borrar pago fijo</button>
+      </div>` : ''}`;
+  }).join('');
+  const form = pf_formFijo ? `
+    <div class="pfx-form">
+      <div class="pf-form-grid">
+        <div class="full"><label>Nombre</label><input type="text" id="pfFpName" placeholder="Spotify, iCloud, alquiler..."></div>
+        <div><label>Monto (₲)</label><input type="number" id="pfFpAmount" placeholder="35000" min="0" step="1000" inputmode="numeric"></div>
+        <div><label>Día de vencimiento</label><input type="number" id="pfFpDueDay" placeholder="15" min="1" max="31" inputmode="numeric"></div>
+        <div${pf_usaTarjeta() ? '' : ' style="display:none"'}><label>Medio de pago</label><select id="pfFpMethod">${PF_PAYMENT_METHODS.map(m => `<option value="${m}">${m}</option>`).join('')}</select></div>
+        <div><label>Categoría</label><select id="pfFpCategory">${PF_GASTO_CATS.map(c => `<option value="${c}" ${c === 'Suscripciones y pagos fijos' ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+      </div>
+      <div class="pfx-dos"><button type="button" class="pfx-btn claro" data-action="toggleFormFijo">Cancelar</button><button type="button" class="pfx-btn" data-action="addFixed">Guardar pago fijo</button></div>
+    </div>` : `<button type="button" class="pfx-btn claro" data-action="toggleFormFijo">+ Pago fijo</button>`;
   return `
-    ${list.length ? `<div class="pf-debt-total">${pf_fmtGs(totalPending)} pendiente este mes</div>` : ''}
-    ${items}
-    <div class="pf-form-grid" style="margin-top:16px;">
-      <div class="full">
-        <label>Nombre</label>
-        <input type="text" id="pfFpName" placeholder="Spotify, iCloud, alquiler local...">
-      </div>
-      <div>
-        <label>Monto (₲)</label>
-        <input type="number" id="pfFpAmount" placeholder="35000" min="0" step="1000">
-      </div>
-      <div>
-        <label>Día de vencimiento</label>
-        <input type="number" id="pfFpDueDay" placeholder="15" min="1" max="31">
-      </div>
-      <div>
-        <label>Medio de pago</label>
-        <select id="pfFpMethod">${PF_PAYMENT_METHODS.map(m => `<option value="${m}">${m}</option>`).join('')}</select>
-      </div>
-      <div>
-        <label>Categoría</label>
-        <select id="pfFpCategory">${PF_GASTO_CATS.map(c => `<option value="${c}" ${c === 'Suscripciones y pagos fijos' ? 'selected' : ''}>${c}</option>`).join('')}</select>
-      </div>
-    </div>
-    <button class="pf-add-btn" data-action="addFixed">Agregar pago fijo</button>
-  `;
+    <h3 class="pfx-h">Pagos fijos <span>${list.length ? `${pagados} de ${list.length} pagados` : ''}</span></h3>
+    ${list.length ? `<div class="pfx-prog"><i style="width:${pagados / list.length * 100}%"></i></div>
+      ${porPagar ? `<div style="font-size:12.5px;color:var(--muted)">${pf_fmtGs(porPagar)} por pagar</div>` : ''}` : '<div class="pfx-vacio">Sumá tus suscripciones, servicios o alquiler para no olvidarte de pagarlos.</div>'}
+    ${filas}
+    ${form}`;
 }
 
+// Tarjeta de crédito dibujada, con el total pendiente; la lista de compras se abre aparte.
 function pf_renderCardPanel() {
   const pending = pf_pendingCardTx();
   const debt = pf_pendingCardDebt();
-  if (!pending.length) {
-    return `<div class="pf-empty">No tenés compras con tarjeta pendientes de pago. 🎉</div>`;
-  }
-  const items = pending.map(t => `
-    <div class="pf-card-item">
-      <div class="pf-tx-left">
-        <span class="pf-tx-cat">${escHtml(t.category)}${t.note ? ' · ' + escHtml(t.note) : ''}</span>
-        <span class="pf-tx-meta">${pf_formatDate(t.date)} · ${pf_fmtGs(t.amount)}</span>
-      </div>
-      <button class="pf-pay-btn" data-action="payCard" data-id="${t.id}">Marcar pagada</button>
-    </div>
-  `).join('');
+  const lista = pf_verCompras && pending.length ? `<div style="display:grid;gap:8px">${pending.map(t => `
+    <div class="pfx-fila" style="grid-template-columns:34px minmax(0,1fr) auto auto">
+      <span class="pfx-ico">${pf_icono(t.category)}</span>
+      <span class="pfx-t"><div>${escHtml(t.note || t.category)}</div><div>${pf_formatDate(t.date)}</div></span>
+      <span class="pfx-m">${pf_fmtGs(t.amount)}</span>
+      <button type="button" class="pfx-btn chico claro" data-action="payCard" data-id="${t.id}">Pagada</button>
+    </div>`).join('')}</div>` : '';
   return `
-    <div class="pf-debt-total">${pf_fmtGs(debt)} pendiente</div>
-    ${items}
-    <button class="pf-pay-all-btn" data-action="payAllCards">Pagué toda la tarjeta (${pf_fmtGs(debt)})</button>
-  `;
+    <div class="pfx-tc">
+      <div class="pfx-tc-top"><span class="pfx-tc-marca"><span class="pfx-tc-col"></span>Steadfast</span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".7" aria-hidden="true"><path d="M8.5 8a6 6 0 0 1 0 8M12 5.5a10 10 0 0 1 0 13M15.5 3a14 14 0 0 1 0 18"/></svg></div>
+      <span class="pfx-chipc"></span>
+      <div class="pfx-tc-monto"><small>${debt ? 'Por pagar' : 'Al día'}</small><b class="${debt ? '' : 'aldia'}">${pf_fmtGs(debt)}</b></div>
+      <div class="pfx-tc-pie"><span>${pending.length ? pending.length + (pending.length === 1 ? ' compra' : ' compras') : 'Sin compras pendientes'}</span><span>${pending.length ? 'desde ' + pf_formatDate(pending[0].date) : ''}</span></div>
+    </div>
+    ${pending.length ? `<div class="pfx-dos">
+      <button type="button" class="pfx-btn claro" data-action="verCompras">${pf_verCompras ? 'Ocultar compras' : 'Ver compras'}</button>
+      <button type="button" class="pfx-btn" data-action="payAllCards">${pf_confirmarPago ? '¿Seguro? Tocá otra vez' : 'Ya la pagué'}</button>
+    </div>` : ''}
+    ${lista}`;
+}
+
+// Al anotar: la moneda nueva cae y el monto de su columna sube contando.
+function pf_postRender() {
+  const n = pf_nuevaPend; pf_nuevaPend = null;
+  if (!n || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const el = document.querySelector(`#pf-app [data-cuenta="${n.tipo}"]`);
+  if (!el) return;
+  const fin = +el.dataset.valor, ini = Math.max(0, fin - n.monto), t0 = performance.now();
+  const paso = now => {
+    const k = Math.min(1, (now - t0) / 900), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = pf_fmtGs(ini + (fin - ini) * e);
+    if (k < 1) requestAnimationFrame(paso);
+  };
+  requestAnimationFrame(paso);
+}
+
+// Aviso abajo con "Deshacer".
+let pf_toastTimer = null;
+function pf_toast(msg, deshacer) {
+  let el = document.getElementById('pfxToast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'pfxToast'; el.className = 'pfx-toast'; el.setAttribute('role', 'status');
+    el.innerHTML = '<span></span><button type="button">Deshacer</button>';
+    document.body.appendChild(el);
+  }
+  el.querySelector('span').textContent = msg;
+  const b = el.querySelector('button');
+  b.hidden = !deshacer;
+  b.onclick = () => { el.classList.remove('show'); clearTimeout(pf_toastTimer); if (deshacer) deshacer(); };
+  el.classList.add('show');
+  clearTimeout(pf_toastTimer);
+  pf_toastTimer = setTimeout(() => el.classList.remove('show'), 6000);
+}
+function pf_restaurar(item) {
+  if (!item) return;
+  item.eliminado = false;
+  delete item.eliminadoEn;
+  item.updatedAt = new Date().toISOString();
+  pf_persist();
+  pf_render();
 }
 
 function pf_renderYear() {
@@ -7451,6 +7618,8 @@ function pf_render() {
   if (!container) return;
   container.innerHTML = pf_renderHeader() + (pf_view === 'month' ? pf_renderMonth() : pf_renderYear());
   pf_bindEvents();
+  pf_postRender();
+  pf_pintarAjusteTarjeta();
 }
 
 function pf_bindEvents() {
@@ -7488,8 +7657,15 @@ function pf_onAction(e) {
   else if (action === 'nextYear') { pf_cursor = new Date(pf_cursor.getFullYear() + 1, pf_cursor.getMonth(), 1); pf_render(); }
   else if (action === 'add') pf_addTransaction();
   else if (action === 'delete') pf_deleteTransaction(btn.dataset.id);
+  else if (action === 'editTx') pf_editarMovimiento(btn.dataset.id);
+  else if (action === 'toggleFijo') { pf_fijoAbierto = pf_fijoAbierto === btn.dataset.id ? null : btn.dataset.id; pf_render(); }
+  else if (action === 'toggleFormFijo') { pf_formFijo = !pf_formFijo; pf_render(); if (pf_formFijo) { const n = document.getElementById('pfFpName'); if (n) n.focus(); } }
+  else if (action === 'verCompras') { pf_verCompras = !pf_verCompras; pf_render(); }
   else if (action === 'payCard') pf_payCard(btn.dataset.id);
-  else if (action === 'payAllCards') pf_payAllCards();
+  else if (action === 'payAllCards') {
+    if (!pf_confirmarPago) { pf_confirmarPago = true; pf_render(); setTimeout(() => { if (pf_confirmarPago) { pf_confirmarPago = false; pf_render(); } }, 4000); }
+    else { pf_confirmarPago = false; pf_payAllCards(); }
+  }
   else if (action === 'addFixed') pf_addFixedPayment();
   else if (action === 'markFixed') pf_markFixedPaid(btn.dataset.id);
   else if (action === 'markFixedAll') pf_markFixedPaidAll(btn.dataset.id);
@@ -7510,6 +7686,7 @@ function pf_addFixedPayment() {
     return;
   }
   pf_data.fixedPayments.push({ id: pf_uid(), name, amount, dueDay, method, category, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+  pf_formFijo = false;
   pf_persist();
   pf_render();
 }
@@ -7577,8 +7754,10 @@ function pf_unmarkFixedPaid(id) {
 function pf_deleteFixedPayment(id) {
   const fp = pf_data.fixedPayments.find(f => f.id === id);
   if (fp) marcarEliminado(fp);
+  pf_fijoAbierto = null;
   pf_persist();
   pf_render();
+  if (fp) pf_toast('Pago fijo borrado', () => pf_restaurar(fp));
 }
 
 function pf_payCard(id) {
@@ -7589,14 +7768,21 @@ function pf_payCard(id) {
 }
 
 function pf_payAllCards() {
+  const pagadas = [];
   pf_data.transactions.forEach(t => {
     if (!t.eliminado && t.type === 'gasto' && t.method === 'Tarjeta de crédito') {
+      if (!t.paid) pagadas.push(t);
       t.paid = true;
       t.updatedAt = new Date().toISOString();
     }
   });
+  pf_verCompras = false;
   pf_persist();
   pf_render();
+  if (pagadas.length) pf_toast('Tarjeta marcada como pagada', () => {
+    pagadas.forEach(t => { t.paid = false; t.updatedAt = new Date().toISOString(); });
+    pf_persist(); pf_render();
+  });
 }
 
 function pf_addTransaction() {
@@ -7626,6 +7812,7 @@ function pf_deleteTransaction(id) {
   if (t) marcarEliminado(t);
   pf_persist();
   pf_render();
+  if (t) pf_toast('Movimiento borrado', () => pf_restaurar(t));
 }
 
 function pf_todayStr() {
@@ -7775,7 +7962,8 @@ const PF_TEC_KEY_ACTIVO = 'steadfast_teclado_finanzas';
 const PF_TEC_KEY_METODO = 'steadfast_metodo_finanzas';
 const PF_TEC_KEY_CAT    = 'steadfast_cat_finanzas';
 const PF_TEC_VERDE = '#5FD32F';
-let pf_tec = { digitos: '', tipo: 'gasto', cat: { gasto: PF_GASTO_CATS[0], ingreso: PF_INGRESO_CATS[0] }, metodo: 'efectivo', themePrevio: null, ultimoId: null, timerDeshacer: null };
+let pf_tec = { digitos: '', tipo: 'gasto', cat: { gasto: PF_GASTO_CATS[0], ingreso: PF_INGRESO_CATS[0] }, metodo: 'efectivo', themePrevio: null, ultimoId: null, timerDeshacer: null, fecha: null, nota: '', editId: null };
+function pf_tecMetodos() { return PF_QUICK_METODOS.filter(m => m.id !== 'credito' || pf_usaTarjeta()); }
 
 function pf_tecLeer(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function pf_tecEscribir(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
@@ -7795,8 +7983,10 @@ function pf_abrirTeclado() {
   const el = document.getElementById('pfTec');
   if (!el || pf_tecEstaAbierto()) return;
   pf_tec.digitos = '';
+  pf_tec.fecha = null; pf_tec.nota = ''; pf_tec.editId = null;
   const m = pf_tecLeer(PF_TEC_KEY_METODO);
   if (m && PF_QUICK_METODOS.some(x => x.id === m)) pf_tec.metodo = m;
+  if (!pf_tecMetodos().some(x => x.id === pf_tec.metodo)) pf_tec.metodo = 'efectivo';
   try {
     const c = JSON.parse(pf_tecLeer(PF_TEC_KEY_CAT) || '{}');
     if (PF_GASTO_CATS.includes(c.gasto)) pf_tec.cat.gasto = c.gasto;
@@ -7826,7 +8016,11 @@ function pf_cerrarTeclado(irAResumen) {
   if (meta && pf_tec.themePrevio) meta.setAttribute('content', pf_tec.themePrevio);
   clearTimeout(pf_tec.timerDeshacer);
   pf_tec.ultimoId = null;
+  pf_tec.editId = null;
+  const nota = document.getElementById('pfTecNota'); if (nota) nota.blur();
   if (irAResumen && !document.getElementById('sec-finanzas').classList.contains('active')) switchTabProgrammatic('finanzas');
+  // Si se anotó algo, la moneda nueva cae cuando el teclado ya bajó.
+  else if (pf_ultimaMoneda && document.getElementById('sec-finanzas').classList.contains('active')) setTimeout(pf_render, 380);
 }
 
 function pf_tecMonto() { return parseInt(pf_tec.digitos || '0', 10); }
@@ -7840,8 +8034,9 @@ function pf_tecTecla(k) {
 function pf_tecSetTipo(tipo) { pf_tec.tipo = tipo; pf_tecPintar(); }
 function pf_tecSetCat(cat) { pf_tec.cat[pf_tec.tipo] = cat; pf_tecPintarCats(); }
 function pf_tecCambiarMetodo() {
-  const i = PF_QUICK_METODOS.findIndex(x => x.id === pf_tec.metodo);
-  pf_tec.metodo = PF_QUICK_METODOS[(i + 1) % PF_QUICK_METODOS.length].id;
+  const lista = pf_tecMetodos();
+  const i = lista.findIndex(x => x.id === pf_tec.metodo);
+  pf_tec.metodo = lista[(i + 1) % lista.length].id;
   pf_tecPintarMetodo();
 }
 
@@ -7876,6 +8071,7 @@ function pf_tecPintarHoy() {
   const hoy = pf_todayStr();
   const txs = pf_data.transactions.filter(t => !t.eliminado && t.date === hoy);
   const el = document.getElementById('pfTecHoy');
+  if (pf_tec.editId) { el.innerHTML = '<span>Cambiá lo que necesites y guardá</span>'; return; }
   if (pf_tec.ultimoId) {
     const t = pf_data.transactions.find(x => x.id === pf_tec.ultimoId);
     if (t && !t.eliminado) {
@@ -7888,12 +8084,55 @@ function pf_tecPintarHoy() {
   el.innerHTML = `<span>Hoy: ${neto < 0 ? '−' : '+'}${pf_fmtGs(Math.abs(neto))} · ${txs.length} ${txs.length === 1 ? 'movimiento' : 'movimientos'}</span>`;
 }
 
+function pf_tecAbrirNota() {
+  const inp = document.getElementById('pfTecNota');
+  document.getElementById('pfTecNotaBtn').hidden = true;
+  inp.hidden = false;
+  inp.value = pf_tec.nota;
+  inp.focus();
+}
+function pf_tecPintarExtra() {
+  const f = pf_tec.fecha || pf_todayStr();
+  document.getElementById('pfTecFecha').value = f;
+  document.getElementById('pfTecFechaTxt').textContent = pf_etiquetaDia(f);
+  const inp = document.getElementById('pfTecNota'), btn = document.getElementById('pfTecNotaBtn');
+  const conNota = !!pf_tec.nota;
+  inp.hidden = !conNota; btn.hidden = conNota;
+  if (conNota) inp.value = pf_tec.nota;
+  const edit = !!pf_tec.editId;
+  document.getElementById('pfTecTitulo').textContent = edit ? 'Corregir movimiento' : 'Finanzas';
+  document.getElementById('pfTecResumen').hidden = edit;
+  document.getElementById('pfTecBorrar').hidden = !edit;
+}
+
+// Tocar un movimiento del resumen lo abre en el teclado para corregirlo.
+function pf_editarMovimiento(id) {
+  const t = pf_data.transactions.find(x => x.id === id);
+  if (!t) return;
+  pf_abrirTeclado();
+  pf_tec.editId = id;
+  pf_tec.digitos = String(Math.round(t.amount));
+  pf_tec.tipo = t.type;
+  pf_tec.cat[t.type] = t.category;
+  pf_tec.fecha = t.date;
+  pf_tec.nota = t.note || '';
+  if (t.type === 'gasto') pf_tec.metodo = t.metodoPago || (t.method === 'Tarjeta de crédito' ? 'credito' : 'efectivo');
+  pf_tec.ultimoId = null;
+  pf_tecPintar();
+}
+function pf_tecBorrarEdicion() {
+  const id = pf_tec.editId;
+  pf_cerrarTeclado(true);
+  if (id) pf_deleteTransaction(id);
+}
+
 function pf_tecPintar() {
   document.getElementById('pfTecGasto').classList.toggle('on', pf_tec.tipo === 'gasto');
   document.getElementById('pfTecIngreso').classList.toggle('on', pf_tec.tipo === 'ingreso');
   document.getElementById('pfTecGasto').setAttribute('aria-pressed', pf_tec.tipo === 'gasto');
   document.getElementById('pfTecIngreso').setAttribute('aria-pressed', pf_tec.tipo === 'ingreso');
-  document.getElementById('pfTecCta').textContent = pf_tec.tipo === 'gasto' ? 'Anotar gasto' : 'Anotar ingreso';
+  document.getElementById('pfTecCta').textContent = pf_tec.editId ? 'Guardar cambios' : (pf_tec.tipo === 'gasto' ? 'Anotar gasto' : 'Anotar ingreso');
+  pf_tecPintarExtra();
   pf_tecPintarMonto();
   pf_tecPintarMetodo();
   pf_tecPintarCats();
@@ -7912,13 +8151,31 @@ function pf_tecGuardar() {
   const category = pf_tec.cat[tipo];
   const esGasto = tipo === 'gasto';
   const esCredito = esGasto && pf_tec.metodo === 'credito';
+  const fecha = pf_tec.fecha || pf_todayStr();
+  const nota = (document.getElementById('pfTecNota').hidden ? pf_tec.nota : document.getElementById('pfTecNota').value).trim();
+  if (pf_tec.editId) {
+    const t = pf_data.transactions.find(x => x.id === pf_tec.editId);
+    if (t) {
+      const eraCredito = t.method === 'Tarjeta de crédito';
+      t.type = tipo; t.amount = amount; t.category = category; t.date = fecha; t.note = nota;
+      t.method = esGasto ? (esCredito ? 'Tarjeta de crédito' : 'Efectivo / Débito') : null;
+      t.paid = esCredito ? (eraCredito ? t.paid : false) : true;
+      if (esGasto) t.metodoPago = pf_tec.metodo; else delete t.metodoPago;
+      t.updatedAt = new Date().toISOString();
+      pf_persist();
+    }
+    pf_cerrarTeclado(true);
+    pf_render();
+    pf_toast('Cambios guardados');
+    return;
+  }
   const tx = {
     id: pf_uid(),
     type: tipo,
     amount,
     category,
-    note: '',
-    date: pf_todayStr(),
+    note: nota,
+    date: fecha,
     fixed: false,
     // Mismo formato que pf_quickGuardar: method/paid hacen que un gasto a crédito sume a la "Deuda tarjeta".
     method: esGasto ? (esCredito ? 'Tarjeta de crédito' : 'Efectivo / Débito') : null,
@@ -7942,6 +8199,11 @@ function pf_tecGuardar() {
 
   pf_tec.digitos = '';
   pf_tec.ultimoId = tx.id;
+  pf_tec.nota = ''; pf_tec.fecha = null;
+  document.getElementById('pfTecNota').value = '';
+  document.getElementById('pfTecNota').blur();
+  pf_tecPintarExtra();
+  if (pf_sameMonth(fecha, new Date())) pf_ultimaMoneda = { tipo, monto: amount, t: Date.now() };
   pf_tecPintarMonto();
   pf_tecPintarHoy();
   clearTimeout(pf_tec.timerDeshacer);
@@ -7976,17 +8238,25 @@ function pf_tecDeshacer() {
   // En la Mac: números, Borrar, Enter para anotar y Esc para ir al resumen.
   document.addEventListener('keydown', e => {
     if (!pf_tecEstaAbierto() || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target && e.target.id === 'pfTecNota') { if (e.key === 'Enter') { e.preventDefault(); pf_tecGuardar(); } return; }
+    if (e.target && e.target.matches && e.target.matches('input, select, textarea')) return;
     if (/^[0-9]$/.test(e.key)) { pf_tecTecla(e.key); e.preventDefault(); }
     else if (e.key === 'Backspace') { pf_tecTecla('borrar'); e.preventDefault(); }
     else if (e.key === 'Enter') { pf_tecGuardar(); e.preventDefault(); }
     else if (e.key === 'Escape') { pf_cerrarTeclado(true); e.preventDefault(); }
   });
+  document.getElementById('pfTecFecha').addEventListener('change', e => {
+    pf_tec.fecha = e.target.value || null; pf_tecPintarExtra();
+  });
+  document.getElementById('pfTecNota').addEventListener('input', e => { pf_tec.nota = e.target.value; });
+  document.getElementById('pfTecNota').addEventListener('blur', e => { if (!e.target.value.trim()) { pf_tec.nota = ''; pf_tecPintarExtra(); } });
   pf_tecPintarAjuste();
 })();
 
 pf_loadData();
 asegurarIdsYTimestamps(pf_data.transactions, 'tx');
 asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
+pf_pintarAjusteTarjeta();
 
 // ── WEATHER ──
 let weatherState = null;
