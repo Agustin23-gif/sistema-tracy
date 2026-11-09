@@ -3282,7 +3282,7 @@
     .pf-form-grid { grid-template-columns: 1fr; }
     .pf-card-item { flex-direction: column; align-items: flex-start; }
     .pf-card-item .pf-tx-right { width: 100%; }
-    .pf-pay-btn, .pf-tx-del { width: 100%; text-align: center; }
+    .pf-pay-btn, .pf-card-item .pf-tx-del { width: 100%; text-align: center; }
   }
 
   /* ── FINANZAS: botón header ── */
@@ -3427,6 +3427,94 @@
     .pf-quick-sheet { max-height: 85vh; overflow-y: auto; padding-left: 18px; padding-right: 18px; }
     .pf-quick-amount-input { font-size: 42px; }
     .pf-quick-amount-input, .pf-quick-note-input { font-size: max(16px, 1em); }
+  }
+
+  /* ── FINANZAS: teclado verde para anotar rápido (pantalla completa) ── */
+  .pf-tec {
+    position: fixed; inset: 0; z-index: 1000;
+    background: #5FD32F; color: #0C1F05;
+    display: flex; justify-content: center;
+    transform: translateY(100%); visibility: hidden;
+    transition: transform .38s cubic-bezier(.2,.8,.2,1), visibility 0s linear .38s;
+    font-family: 'Geist', sans-serif; font-variant-numeric: tabular-nums;
+  }
+  .pf-tec, .pf-tec * { box-sizing: border-box; }
+  .pf-tec.open { transform: none; visibility: visible; transition: transform .38s cubic-bezier(.2,.8,.2,1), visibility 0s; }
+  .pf-tec-in {
+    width: 100%; max-width: 440px; height: 100%; min-width: 0;
+    display: flex; flex-direction: column;
+    padding: calc(12px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  }
+  .pf-tec-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .pf-tec-x {
+    width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(0,0,0,.1); color: inherit;
+    font-size: 16px; cursor: pointer; display: grid; place-items: center;
+  }
+  .pf-tec-titulo { font-weight: 700; font-size: 16px; flex: 1; }
+  .pf-tec-metodo {
+    border: 0; background: rgba(0,0,0,.1); color: inherit; font: inherit; font-size: 13px; font-weight: 600;
+    padding: 8px 13px; border-radius: 99px; cursor: pointer;
+  }
+  .pf-tec-monto {
+    text-align: center; font-size: clamp(44px, 14vw, 60px); font-weight: 800; letter-spacing: -0.04em;
+    line-height: 1; padding: 4vh 4px 8px; white-space: nowrap; overflow: hidden;
+  }
+  .pf-tec-monto.largo { font-size: clamp(36px, 11vw, 48px); }
+  .pf-tec-monto.enorme { font-size: clamp(30px, 9vw, 40px); }
+  .pf-tec-monto.sacudir { animation: pfTecSacudir .35s; }
+  @keyframes pfTecSacudir { 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+  .pf-tec-hoy { text-align: center; font-size: 13px; min-height: 30px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .pf-tec-hoy span { opacity: .72; }
+  .pf-tec-deshacer { border: 0; background: #0B0B0B; color: #fff; font: inherit; font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 99px; cursor: pointer; }
+  .pf-tec-seg { display: grid; grid-template-columns: 1fr 1fr; background: rgba(0,0,0,.09); border-radius: 99px; padding: 3px; margin-top: 8px; }
+  .pf-tec-seg button { border: 0; background: transparent; color: inherit; font: inherit; font-weight: 600; font-size: 14px; padding: 9px; border-radius: 99px; cursor: pointer; }
+  .pf-tec-seg button.on { background: #0B0B0B; color: #fff; }
+  .pf-tec-cats {
+    display: flex; gap: 7px; overflow-x: auto; padding: 12px 2px 4px; margin: 0 -16px; padding-left: 16px; padding-right: 16px;
+    scrollbar-width: none; scroll-snap-type: x proximity; scroll-padding-inline: 16px; flex: none;
+  }
+  .pf-tec-cats::-webkit-scrollbar { display: none; }
+  .pf-tec-cats button {
+    flex: none; border: 1.5px solid rgba(0,0,0,.2); background: transparent; color: inherit; font: inherit;
+    font-size: 13px; font-weight: 500; padding: 7px 12px; border-radius: 99px; cursor: pointer; white-space: nowrap; scroll-snap-align: start;
+  }
+  .pf-tec-cats button.on { background: #0B0B0B; border-color: #0B0B0B; color: #fff; }
+  .pf-tec-pad { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: auto; padding-top: 6px; }
+  .pf-tec-pad button {
+    border: 0; background: transparent; color: inherit; font: inherit; font-size: 26px; font-weight: 500;
+    height: clamp(48px, 7.4vh, 64px); border-radius: 18px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+    display: grid; place-items: center;
+  }
+  .pf-tec-pad button:active { background: rgba(0,0,0,.08); }
+  .pf-tec-pad .k000 { font-size: 20px; }
+  .pf-tec-pad svg { width: 26px; height: 26px; }
+  .pf-tec-cta {
+    margin-top: 10px; height: 54px; border: 0; border-radius: 99px; background: #0B0B0B; color: #fff;
+    font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; flex: none;
+  }
+  .pf-tec-cta:active { transform: scale(.98); }
+  .pf-tec-resumen { border: 0; background: transparent; color: inherit; font: inherit; font-size: 13px; font-weight: 600; opacity: .78; padding: 12px; cursor: pointer; flex: none; }
+  .pf-tec button:focus-visible { outline: 2px solid #0B0B0B; outline-offset: 2px; }
+  .pf-tec-ok {
+    position: absolute; inset: 0; background: #5FD32F; display: grid; place-items: center; align-content: center; gap: 10px;
+    font-weight: 700; font-size: 20px; opacity: 0; pointer-events: none; transition: opacity .2s; text-align: center; padding: 24px;
+  }
+  .pf-tec-ok.show { opacity: 1; }
+  .pf-tec-ok svg { width: 72px; height: 72px; }
+  .pf-tec-ok path { stroke-dasharray: 40; stroke-dashoffset: 40; }
+  .pf-tec-ok.show path { animation: pfTecTilde .5s ease forwards; }
+  @keyframes pfTecTilde { to { stroke-dashoffset: 0; } }
+  .pf-tec-ok small { font-weight: 500; font-size: 14px; opacity: .75; }
+  .pf-anotar-btn {
+    display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer;
+    background: #5FD32F; color: #0C1F05; font-family: 'Geist', sans-serif; font-weight: 700; font-size: 14px;
+    padding: 10px 16px; border-radius: 99px; white-space: nowrap;
+  }
+  .pf-anotar-btn:active { transform: scale(.97); }
+  @media (prefers-reduced-motion: reduce) {
+    .pf-tec, .pf-tec.open { transition: none; }
+    .pf-tec-ok path { stroke-dashoffset: 0; }
+    .pf-tec-ok.show path, .pf-tec-monto.sacudir { animation: none; }
   }
 
   /* ── PROGRESO: ÁREAS, XP, FICHAS Y RELOJ ── */
@@ -3717,7 +3805,7 @@
       <i data-lucide="moon" class="theme-ico-moon"></i>
       <i data-lucide="sun" class="theme-ico-sun"></i>
     </button>
-    <button class="header-finanzas-btn" onclick="pf_abrirPanelRapido()" title="Registrar movimiento" aria-label="Registrar movimiento">
+    <button class="header-finanzas-btn" onclick="pf_abrirTeclado()" title="Registrar movimiento" aria-label="Registrar movimiento">
       <i data-lucide="plus-circle"></i>
     </button>
     <div id="authZone" style="position:relative">
@@ -3905,6 +3993,12 @@
       </div>
     </div>
 
+    <h3 class="inicio-section-title" style="margin-top:28px">Finanzas</h3>
+    <div class="ajustes-row">
+      <span class="ajustes-row-label"><i data-lucide="calculator"></i> Abrir Finanzas con el teclado</span>
+      <div class="dark-toggle" id="tecladoFinanzasToggle" onclick="pf_tecToggleActivo()" role="button" aria-label="Abrir Finanzas con el teclado"><div class="dark-toggle-thumb"></div></div>
+    </div>
+
     <h3 class="inicio-section-title" style="margin-top:28px">Recordatorio diario</h3>
     <!-- Recordatorio diario -->
     <div id="inicioNotifCard"></div>
@@ -4085,6 +4179,7 @@
         <h2>Finanzas</h2>
         <p>Pulso Financiero — control de tu flujo de caja</p>
       </div>
+      <button class="pf-anotar-btn" type="button" onclick="pf_abrirTeclado()" aria-label="Anotar movimiento">₲ Anotar</button>
     </div>
     <div id="pf-app"></div>
   </section>
@@ -4411,6 +4506,32 @@
   <div class="pf-quick-credito-hint" id="pfQuickCreditoHint" style="display:none">💳 Este gasto se sumará a tu deuda de tarjeta</div>
 </div>
 
+<!-- ══ FINANZAS: TECLADO VERDE PARA ANOTAR RÁPIDO ══ -->
+<div class="pf-tec" id="pfTec" role="dialog" aria-modal="true" aria-label="Anotar movimiento" aria-hidden="true">
+  <div class="pf-tec-in">
+    <div class="pf-tec-top">
+      <button class="pf-tec-x" type="button" onclick="pf_cerrarTeclado(false)" aria-label="Cerrar">✕</button>
+      <span class="pf-tec-titulo">Finanzas</span>
+      <button class="pf-tec-metodo" id="pfTecMetodo" type="button" onclick="pf_tecCambiarMetodo()" aria-label="Método de pago">Efectivo</button>
+    </div>
+    <div class="pf-tec-monto" id="pfTecMonto" aria-live="polite">₲ 0</div>
+    <div class="pf-tec-hoy" id="pfTecHoy"></div>
+    <div class="pf-tec-seg" role="group" aria-label="Tipo de movimiento">
+      <button type="button" id="pfTecGasto" onclick="pf_tecSetTipo('gasto')">Gasto</button>
+      <button type="button" id="pfTecIngreso" onclick="pf_tecSetTipo('ingreso')">Ingreso</button>
+    </div>
+    <div class="pf-tec-cats" id="pfTecCats" role="group" aria-label="Categoría"></div>
+    <div class="pf-tec-pad" id="pfTecPad"></div>
+    <button class="pf-tec-cta" id="pfTecCta" type="button" onclick="pf_tecGuardar()">Anotar gasto</button>
+    <button class="pf-tec-resumen" type="button" onclick="pf_cerrarTeclado(true)">Ver resumen del mes ↓</button>
+  </div>
+  <div class="pf-tec-ok" id="pfTecOk" aria-live="polite">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+    <span id="pfTecOkTxt">Gasto anotado</span>
+    <small id="pfTecOkSub"></small>
+  </div>
+</div>
+
 <script>
 // ── STATE ──
 const STORAGE_KEY = 'tracy_system_v1';
@@ -4691,7 +4812,7 @@ setInterval(actualizarHoySiCambio, 60000);
 function aplicarModoOscuro() {
   document.body.classList.toggle('dark-mode', !!state.modoOscuro);
   // Sincroniza el toggle del header y su copia en Ajustes (ambos usan la clase .dark-toggle)
-  document.querySelectorAll('.dark-toggle').forEach(t => t.classList.toggle('on', !!state.modoOscuro));
+  document.querySelectorAll('.dark-toggle:not(#tecladoFinanzasToggle)').forEach(t => t.classList.toggle('on', !!state.modoOscuro));
 }
 function toggleDarkMode() {
   state.modoOscuro = !state.modoOscuro;
@@ -4734,6 +4855,8 @@ function switchTab(tab) {
   document.getElementById('sec-' + tab).classList.add('active');
   marcarTabActivo(tab);
   renderSeccion(tab);
+  // Al tocar Finanzas en la barra se abre el teclado verde (se apaga en Ajustes).
+  if (tab === 'finanzas' && typeof pf_tecActivo === 'function' && pf_tecActivo()) pf_abrirTeclado();
 }
 
 // ── PANEL "MÁS" ──
@@ -5913,7 +6036,7 @@ function cerrarFabMenu() {
 // solo la ejecutan y cierran el menú expandido.
 function fabMiniTarea()    { toggleTaskPanel(); cerrarFabMenu(); }
 function fabMiniPomo()     { togglePomoPanel(); cerrarFabMenu(); }
-function fabMiniFinanzas() { pf_abrirPanelRapido(); cerrarFabMenu(); }
+function fabMiniFinanzas() { pf_abrirTeclado(); cerrarFabMenu(); }
 
 document.addEventListener('click', function(e) {
   if (fabMenuOpen && !e.target.closest('#fabMainWrap, #navPlus')) cerrarFabMenu();
@@ -7635,6 +7758,222 @@ function pf_quickGuardar() {
     pf_cerrarPanelRapido();
   }, 1500);
 }
+
+// ── FINANZAS: teclado verde para anotar rápido ──
+// Pantalla completa que se abre al entrar a Finanzas (si está activado en Ajustes),
+// desde el "Anotar movimiento" del + y desde el botón "₲ Anotar" del resumen.
+// Guarda el mismo objeto que pf_quickGuardar, así el resumen, la tarjeta y la sync no cambian.
+// Preferencias por dispositivo en localStorage (no tocan las claves tracy_*).
+const PF_TEC_KEY_ACTIVO = 'steadfast_teclado_finanzas';
+const PF_TEC_KEY_METODO = 'steadfast_metodo_finanzas';
+const PF_TEC_KEY_CAT    = 'steadfast_cat_finanzas';
+const PF_TEC_VERDE = '#5FD32F';
+let pf_tec = { digitos: '', tipo: 'gasto', cat: { gasto: PF_GASTO_CATS[0], ingreso: PF_INGRESO_CATS[0] }, metodo: 'efectivo', themePrevio: null, ultimoId: null, timerDeshacer: null };
+
+function pf_tecLeer(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function pf_tecEscribir(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function pf_tecActivo() { return pf_tecLeer(PF_TEC_KEY_ACTIVO) !== '0'; }
+function pf_tecEstaAbierto() { return document.getElementById('pfTec').classList.contains('open'); }
+
+function pf_tecToggleActivo() {
+  pf_tecEscribir(PF_TEC_KEY_ACTIVO, pf_tecActivo() ? '0' : '1');
+  pf_tecPintarAjuste();
+}
+function pf_tecPintarAjuste() {
+  const t = document.getElementById('tecladoFinanzasToggle');
+  if (t) t.classList.toggle('on', pf_tecActivo());
+}
+
+function pf_abrirTeclado() {
+  const el = document.getElementById('pfTec');
+  if (!el || pf_tecEstaAbierto()) return;
+  pf_tec.digitos = '';
+  const m = pf_tecLeer(PF_TEC_KEY_METODO);
+  if (m && PF_QUICK_METODOS.some(x => x.id === m)) pf_tec.metodo = m;
+  try {
+    const c = JSON.parse(pf_tecLeer(PF_TEC_KEY_CAT) || '{}');
+    if (PF_GASTO_CATS.includes(c.gasto)) pf_tec.cat.gasto = c.gasto;
+    if (PF_INGRESO_CATS.includes(c.ingreso)) pf_tec.cat.ingreso = c.ingreso;
+  } catch (e) {}
+  pf_tec.tipo = 'gasto';
+  pf_tecPintar();
+  el.classList.add('open');
+  el.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) { pf_tec.themePrevio = meta.getAttribute('content'); meta.setAttribute('content', PF_TEC_VERDE); }
+  const sel = document.querySelector('#pfTecCats .on');
+  if (sel) sel.scrollIntoView({ block: 'nearest', inline: 'center' });
+}
+
+// irAResumen: true lleva a la pantalla de Finanzas; false deja la pestaña donde estaba.
+function pf_cerrarTeclado(irAResumen) {
+  const el = document.getElementById('pfTec');
+  if (!el || !pf_tecEstaAbierto()) return;
+  el.classList.remove('open');
+  el.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta && pf_tec.themePrevio) meta.setAttribute('content', pf_tec.themePrevio);
+  clearTimeout(pf_tec.timerDeshacer);
+  pf_tec.ultimoId = null;
+  if (irAResumen && !document.getElementById('sec-finanzas').classList.contains('active')) switchTabProgrammatic('finanzas');
+}
+
+function pf_tecMonto() { return parseInt(pf_tec.digitos || '0', 10); }
+
+function pf_tecTecla(k) {
+  if (k === 'borrar') pf_tec.digitos = pf_tec.digitos.slice(0, -1);
+  else if (pf_tec.digitos.length < 11) pf_tec.digitos = (pf_tec.digitos + k).replace(/^0+/, '');
+  pf_tecPintarMonto();
+}
+
+function pf_tecSetTipo(tipo) { pf_tec.tipo = tipo; pf_tecPintar(); }
+function pf_tecSetCat(cat) { pf_tec.cat[pf_tec.tipo] = cat; pf_tecPintarCats(); }
+function pf_tecCambiarMetodo() {
+  const i = PF_QUICK_METODOS.findIndex(x => x.id === pf_tec.metodo);
+  pf_tec.metodo = PF_QUICK_METODOS[(i + 1) % PF_QUICK_METODOS.length].id;
+  pf_tecPintarMetodo();
+}
+
+function pf_tecNombreMetodo(id) {
+  return ({ efectivo: 'Efectivo', debito: 'Débito', credito: 'Crédito' })[id] || 'Efectivo';
+}
+
+function pf_tecPintarMonto() {
+  const el = document.getElementById('pfTecMonto');
+  el.textContent = pf_fmtGs(pf_tecMonto());
+  el.classList.toggle('largo', pf_tecMonto() >= 1000000 && pf_tecMonto() < 1000000000);
+  el.classList.toggle('enorme', pf_tecMonto() >= 1000000000);
+}
+
+function pf_tecPintarMetodo() {
+  const b = document.getElementById('pfTecMetodo');
+  b.textContent = pf_tecNombreMetodo(pf_tec.metodo);
+  // En un ingreso no hay método de pago (la app los guarda sin method).
+  b.style.visibility = pf_tec.tipo === 'gasto' ? 'visible' : 'hidden';
+}
+
+function pf_tecPintarCats() {
+  const cats = pf_tec.tipo === 'gasto' ? PF_GASTO_CATS : PF_INGRESO_CATS;
+  const actual = pf_tec.cat[pf_tec.tipo];
+  const cont = document.getElementById('pfTecCats');
+  cont.innerHTML = cats.map(c =>
+    `<button type="button" class="${c === actual ? 'on' : ''}" aria-pressed="${c === actual}" data-cat="${escHtml(c)}">${escHtml(c)}</button>`
+  ).join('');
+}
+
+function pf_tecPintarHoy() {
+  const hoy = pf_todayStr();
+  const txs = pf_data.transactions.filter(t => !t.eliminado && t.date === hoy);
+  const el = document.getElementById('pfTecHoy');
+  if (pf_tec.ultimoId) {
+    const t = pf_data.transactions.find(x => x.id === pf_tec.ultimoId);
+    if (t && !t.eliminado) {
+      el.innerHTML = `<span>Anotado: ${pf_fmtGs(t.amount)} · ${escHtml(t.category)}</span><button type="button" class="pf-tec-deshacer" onclick="pf_tecDeshacer()">Deshacer</button>`;
+      return;
+    }
+  }
+  if (!txs.length) { el.innerHTML = '<span>Hoy todavía no anotaste nada</span>'; return; }
+  const neto = txs.reduce((s, t) => s + (t.type === 'gasto' ? -t.amount : t.amount), 0);
+  el.innerHTML = `<span>Hoy: ${neto < 0 ? '−' : '+'}${pf_fmtGs(Math.abs(neto))} · ${txs.length} ${txs.length === 1 ? 'movimiento' : 'movimientos'}</span>`;
+}
+
+function pf_tecPintar() {
+  document.getElementById('pfTecGasto').classList.toggle('on', pf_tec.tipo === 'gasto');
+  document.getElementById('pfTecIngreso').classList.toggle('on', pf_tec.tipo === 'ingreso');
+  document.getElementById('pfTecGasto').setAttribute('aria-pressed', pf_tec.tipo === 'gasto');
+  document.getElementById('pfTecIngreso').setAttribute('aria-pressed', pf_tec.tipo === 'ingreso');
+  document.getElementById('pfTecCta').textContent = pf_tec.tipo === 'gasto' ? 'Anotar gasto' : 'Anotar ingreso';
+  pf_tecPintarMonto();
+  pf_tecPintarMetodo();
+  pf_tecPintarCats();
+  pf_tecPintarHoy();
+}
+
+function pf_tecGuardar() {
+  const amount = pf_tecMonto();
+  if (!amount) {
+    const el = document.getElementById('pfTecMonto');
+    el.classList.remove('sacudir'); void el.offsetWidth; el.classList.add('sacudir');
+    if (navigator.vibrate) navigator.vibrate(40);
+    return;
+  }
+  const tipo = pf_tec.tipo;
+  const category = pf_tec.cat[tipo];
+  const esGasto = tipo === 'gasto';
+  const esCredito = esGasto && pf_tec.metodo === 'credito';
+  const tx = {
+    id: pf_uid(),
+    type: tipo,
+    amount,
+    category,
+    note: '',
+    date: pf_todayStr(),
+    fixed: false,
+    // Mismo formato que pf_quickGuardar: method/paid hacen que un gasto a crédito sume a la "Deuda tarjeta".
+    method: esGasto ? (esCredito ? 'Tarjeta de crédito' : 'Efectivo / Débito') : null,
+    paid: !esCredito,
+    updatedAt: new Date().toISOString()
+  };
+  if (esGasto) tx.metodoPago = pf_tec.metodo;
+  pf_data.transactions.push(tx);
+  pf_persist();
+  if (document.getElementById('sec-finanzas').classList.contains('active')) pf_render();
+
+  if (esGasto) pf_tecEscribir(PF_TEC_KEY_METODO, pf_tec.metodo);
+  pf_tecEscribir(PF_TEC_KEY_CAT, JSON.stringify(pf_tec.cat));
+
+  document.getElementById('pfTecOkTxt').textContent = esGasto ? 'Gasto anotado' : 'Ingreso anotado';
+  document.getElementById('pfTecOkSub').textContent = pf_fmtGs(amount) + ' · ' + category + (esGasto ? ' · ' + pf_tecNombreMetodo(pf_tec.metodo) : '');
+  const ok = document.getElementById('pfTecOk');
+  ok.classList.add('show');
+  if (navigator.vibrate) navigator.vibrate(25);
+  setTimeout(() => ok.classList.remove('show'), 1100);
+
+  pf_tec.digitos = '';
+  pf_tec.ultimoId = tx.id;
+  pf_tecPintarMonto();
+  pf_tecPintarHoy();
+  clearTimeout(pf_tec.timerDeshacer);
+  pf_tec.timerDeshacer = setTimeout(() => { pf_tec.ultimoId = null; pf_tecPintarHoy(); }, 7000);
+}
+
+function pf_tecDeshacer() {
+  const t = pf_data.transactions.find(x => x.id === pf_tec.ultimoId);
+  if (t && !t.eliminado) {
+    marcarEliminado(t);
+    pf_persist();
+    if (document.getElementById('sec-finanzas').classList.contains('active')) pf_render();
+    pf_tec.digitos = String(t.amount);
+    pf_tec.tipo = t.type;
+    pf_tec.cat[t.type] = t.category;
+  }
+  clearTimeout(pf_tec.timerDeshacer);
+  pf_tec.ultimoId = null;
+  pf_tecPintar();
+}
+
+(function pf_tecArmar() {
+  const pad = document.getElementById('pfTecPad');
+  const borrar = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 5H9l-6 7 6 7h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/><path d="m16 9-5 6M11 9l5 6"/></svg>';
+  pad.innerHTML = ['1','2','3','4','5','6','7','8','9','000','0','borrar'].map(k =>
+    `<button type="button" data-k="${k}" class="${k === '000' ? 'k000' : ''}" aria-label="${k === 'borrar' ? 'Borrar' : k}">${k === 'borrar' ? borrar : k}</button>`
+  ).join('');
+  pad.addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) pf_tecTecla(b.dataset.k); });
+  document.getElementById('pfTecCats').addEventListener('click', e => {
+    const b = e.target.closest('[data-cat]'); if (b) pf_tecSetCat(b.dataset.cat);
+  });
+  // En la Mac: números, Borrar, Enter para anotar y Esc para ir al resumen.
+  document.addEventListener('keydown', e => {
+    if (!pf_tecEstaAbierto() || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (/^[0-9]$/.test(e.key)) { pf_tecTecla(e.key); e.preventDefault(); }
+    else if (e.key === 'Backspace') { pf_tecTecla('borrar'); e.preventDefault(); }
+    else if (e.key === 'Enter') { pf_tecGuardar(); e.preventDefault(); }
+    else if (e.key === 'Escape') { pf_cerrarTeclado(true); e.preventDefault(); }
+  });
+  pf_tecPintarAjuste();
+})();
 
 pf_loadData();
 asegurarIdsYTimestamps(pf_data.transactions, 'tx');
