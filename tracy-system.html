@@ -3444,6 +3444,8 @@
      extiende el verde por encima del borde mientras el teclado está abierto. */
   .pf-tec::before { content: ""; position: absolute; left: 0; right: 0; top: -200px; height: 200px; background: #5FD32F; }
   html.pf-tec-abierto, html.pf-tec-abierto body { background: #5FD32F !important; }
+  /* En la app instalada, iOS toma el color de la franja de arriba del encabezado pegado arriba. */
+  html.pf-tec-abierto header { background: #5FD32F !important; border-bottom-color: #5FD32F !important; transition: none; }
   .pf-tec.open { transform: none; visibility: visible; transition: transform .38s cubic-bezier(.2,.8,.2,1), visibility 0s; }
   .pf-tec-in {
     width: 100%; max-width: 440px; height: 100%; min-width: 0;
