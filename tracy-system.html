@@ -7267,6 +7267,7 @@ let pf_verCompras = false;
 let pf_confirmarPago = false;
 let pf_fijoAbierto = null;
 let pf_formFijo = false;
+let pf_editFijo = null;     // id del pago fijo que se está editando
 
 function pf_icono(cat) { return PF_ICONOS[cat] || '•'; }
 function pf_corto(n) {
@@ -7448,19 +7449,24 @@ function pf_renderFixedPanel() {
         ${!pagado && atr.length ? `<p>Atrasado: ${atr.map(o => o.label).join(', ')}. Total con este mes: ${pf_fmtGs(fp.amount + sumAtr)}.</p>
           <button type="button" class="pfx-btn chico" data-action="markFixedAll" data-id="${fp.id}">Pagar todo (${pf_fmtGs(fp.amount + sumAtr)})</button>
           <button type="button" class="pfx-btn chico claro" data-action="markFixed" data-id="${fp.id}">Solo este mes</button>` : ''}
+        <button type="button" class="pfx-btn chico claro" data-action="editFixed" data-id="${fp.id}">Editar</button>
         <button type="button" class="pfx-btn chico peligro" data-action="deleteFixed" data-id="${fp.id}">Borrar pago fijo</button>
       </div>` : ''}`;
   }).join('');
-  const form = pf_formFijo ? `
+  const ed = pf_editFijo ? list.find(f => f.id === pf_editFijo) : null;
+  const val = ed || { name: '', amount: '', dueDay: '', method: PF_PAYMENT_METHODS[0], category: 'Suscripciones y pagos fijos' };
+  const form = (pf_formFijo || ed) ? `
     <div class="pfx-form">
+      ${ed ? `<h3 class="pfx-h" style="margin-top:4px">Editar pago fijo</h3>` : ''}
       <div class="pf-form-grid">
-        <div class="full"><label>Nombre</label><input type="text" id="pfFpName" placeholder="Spotify, iCloud, alquiler..."></div>
-        <div><label>Monto (₲)</label><input type="number" id="pfFpAmount" placeholder="35000" min="0" step="1000" inputmode="numeric"></div>
-        <div><label>Día de vencimiento</label><input type="number" id="pfFpDueDay" placeholder="15" min="1" max="31" inputmode="numeric"></div>
-        <div${pf_usaTarjeta() ? '' : ' style="display:none"'}><label>Medio de pago</label><select id="pfFpMethod">${PF_PAYMENT_METHODS.map(m => `<option value="${m}">${m}</option>`).join('')}</select></div>
-        <div><label>Categoría</label><select id="pfFpCategory">${PF_GASTO_CATS.map(c => `<option value="${c}" ${c === 'Suscripciones y pagos fijos' ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+        <div class="full"><label>Nombre</label><input type="text" id="pfFpName" placeholder="Spotify, iCloud, alquiler..." value="${escHtml(String(val.name))}"></div>
+        <div><label>Monto (₲)</label><input type="number" id="pfFpAmount" placeholder="35000" min="0" step="1000" inputmode="numeric" value="${val.amount}"></div>
+        <div><label>Día de vencimiento</label><input type="number" id="pfFpDueDay" placeholder="15" min="1" max="31" inputmode="numeric" value="${val.dueDay}"></div>
+        <div${pf_usaTarjeta() ? '' : ' style="display:none"'}><label>Medio de pago</label><select id="pfFpMethod">${PF_PAYMENT_METHODS.map(m => `<option value="${m}" ${m === val.method ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
+        <div><label>Categoría</label><select id="pfFpCategory">${PF_GASTO_CATS.map(c => `<option value="${c}" ${c === val.category ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
       </div>
-      <div class="pfx-dos"><button type="button" class="pfx-btn claro" data-action="toggleFormFijo">Cancelar</button><button type="button" class="pfx-btn" data-action="addFixed">Guardar pago fijo</button></div>
+      ${ed ? '<div style="font-size:12px;color:var(--muted)">Los pagos que ya marcaste quedan con el monto de ese momento.</div>' : ''}
+      <div class="pfx-dos"><button type="button" class="pfx-btn claro" data-action="toggleFormFijo">Cancelar</button><button type="button" class="pfx-btn" data-action="addFixed">${ed ? 'Guardar cambios' : 'Guardar pago fijo'}</button></div>
     </div>` : `<button type="button" class="pfx-btn claro" data-action="toggleFormFijo">+ Pago fijo</button>`;
   return `
     <h3 class="pfx-h">Pagos fijos <span>${list.length ? `${pagados} de ${list.length} pagados` : ''}</span></h3>
@@ -7659,7 +7665,8 @@ function pf_onAction(e) {
   else if (action === 'delete') pf_deleteTransaction(btn.dataset.id);
   else if (action === 'editTx') pf_editarMovimiento(btn.dataset.id);
   else if (action === 'toggleFijo') { pf_fijoAbierto = pf_fijoAbierto === btn.dataset.id ? null : btn.dataset.id; pf_render(); }
-  else if (action === 'toggleFormFijo') { pf_formFijo = !pf_formFijo; pf_render(); if (pf_formFijo) { const n = document.getElementById('pfFpName'); if (n) n.focus(); } }
+  else if (action === 'editFixed') { pf_editFijo = btn.dataset.id; pf_formFijo = false; pf_fijoAbierto = null; pf_render(); const n = document.getElementById('pfFpName'); if (n) { n.scrollIntoView({ block: 'center' }); } }
+  else if (action === 'toggleFormFijo') { if (pf_editFijo) { pf_editFijo = null; pf_render(); return; } pf_formFijo = !pf_formFijo; pf_render(); if (pf_formFijo) { const n = document.getElementById('pfFpName'); if (n) n.focus(); } }
   else if (action === 'verCompras') { pf_verCompras = !pf_verCompras; pf_render(); }
   else if (action === 'payCard') pf_payCard(btn.dataset.id);
   else if (action === 'payAllCards') {
@@ -7683,6 +7690,15 @@ function pf_addFixedPayment() {
   if (!name || !amount || amount <= 0 || !dueDay || dueDay < 1 || dueDay > 31) {
     nameEl.style.borderColor = 'var(--pf-clay)';
     setTimeout(() => nameEl.style.borderColor = '', 1200);
+    return;
+  }
+  const ed = pf_editFijo && pf_data.fixedPayments.find(f => f.id === pf_editFijo);
+  if (ed) {
+    Object.assign(ed, { name, amount, dueDay, method, category, updatedAt: new Date().toISOString() });
+    pf_editFijo = null;
+    pf_persist();
+    pf_render();
+    pf_toast('Pago fijo actualizado');
     return;
   }
   pf_data.fixedPayments.push({ id: pf_uid(), name, amount, dueDay, method, category, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
