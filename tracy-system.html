@@ -3439,6 +3439,11 @@
     font-family: 'Geist', sans-serif; font-variant-numeric: tabular-nums;
   }
   .pf-tec, .pf-tec * { box-sizing: border-box; }
+  /* Verde también detrás de la Dynamic Island y la barra de estado: Safari pinta esa franja
+     con el fondo de la página y lo que está pegado arriba, así que se tiñen html/body y se
+     extiende el verde por encima del borde mientras el teclado está abierto. */
+  .pf-tec::before { content: ""; position: absolute; left: 0; right: 0; top: -200px; height: 200px; background: #5FD32F; }
+  html.pf-tec-abierto, html.pf-tec-abierto body { background: #5FD32F !important; }
   .pf-tec.open { transform: none; visibility: visible; transition: transform .38s cubic-bezier(.2,.8,.2,1), visibility 0s; }
   .pf-tec-in {
     width: 100%; max-width: 440px; height: 100%; min-width: 0;
@@ -7800,6 +7805,7 @@ function pf_abrirTeclado() {
   el.classList.add('open');
   el.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
+  document.documentElement.classList.add('pf-tec-abierto');
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) { pf_tec.themePrevio = meta.getAttribute('content'); meta.setAttribute('content', PF_TEC_VERDE); }
   const sel = document.querySelector('#pfTecCats .on');
@@ -7813,6 +7819,7 @@ function pf_cerrarTeclado(irAResumen) {
   el.classList.remove('open');
   el.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  document.documentElement.classList.remove('pf-tec-abierto');
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta && pf_tec.themePrevio) meta.setAttribute('content', pf_tec.themePrevio);
   clearTimeout(pf_tec.timerDeshacer);
