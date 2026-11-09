@@ -3509,6 +3509,67 @@
   .reloj-form .form-group { margin-bottom: 8px; }
   .reloj-form .reloj-titulo-campo { grid-column: 1 / -1; }
 
+  /* ══ BARRA INFERIOR (opción C): cápsula oscura de íconos; la sección activa se estira y muestra su nombre ══ */
+  nav { background: transparent; border-top: 0; pointer-events: none; overflow: visible;
+    padding: 0 12px calc(14px + env(safe-area-inset-bottom)); }
+  nav .tab-pills { pointer-events: auto; gap: 4px; padding: 6px; border-radius: 999px; background: #1C1612;
+    box-shadow: 0 12px 30px -10px rgba(0,0,0,.5); align-items: center; }
+  body.dark-mode nav .tab-pills { background: #2A221E; box-shadow: 0 12px 30px -10px rgba(0,0,0,.8), inset 0 0 0 1px rgba(255,255,255,.06); }
+  nav .tab-btn { display: flex; align-items: center; gap: 0; height: 44px; min-height: 44px; padding: 0 12px; border-radius: 999px;
+    color: rgba(255,255,255,.62); font-size: 13px; font-weight: 600; text-transform: none; letter-spacing: 0;
+    transition: background .3s, color .3s, gap .3s, padding .3s; }
+  nav .tab-btn:hover:not(.active) { background: rgba(255,255,255,.08); color: #FFFFFF; }
+  nav .tab-btn.active { background: #E8450A; color: #FFFFFF; gap: 7px; padding: 0 15px; }
+  nav .nav-ico { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+  nav .tab-btn .nav-ico { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; vertical-align: 0; }
+  nav .tab-btn .nav-txt { max-width: 0; overflow: hidden; white-space: nowrap; transition: max-width .35s cubic-bezier(.2,.8,.2,1); }
+  nav .tab-btn.active .nav-txt { max-width: 90px; }
+  nav .tab-btn:focus-visible, nav .nav-plus:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+  nav .tab-badge { top: 8px; right: 8px; }
+  nav .nav-plus { width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,.12); color: #FFFFFF; cursor: pointer;
+    display: grid; place-items: center; margin-left: 2px; transition: background .2s, transform .15s; }
+  nav .nav-plus:hover { background: rgba(255,255,255,.2); }
+  nav .nav-plus:active { transform: scale(.94); }
+  nav .nav-plus .nav-ico { width: 22px; height: 22px; stroke-width: 2.2; transition: transform .25s ease; }
+  nav .nav-plus.open { background: #E8450A; }
+  nav .nav-plus.open .nav-ico { transform: rotate(45deg); }
+  /* El + vive en la barra: el botón flotante se oculta y sus accesos rápidos salen arriba de la barra */
+  .fab-main { display: none; }
+  .fab-main-wrap, .fab-main-wrap.open { right: max(16px, calc(50% - 200px)); bottom: calc(80px + env(safe-area-inset-bottom)); }
+  @media (max-width: 640px) {
+    nav { padding: 0 10px calc(10px + env(safe-area-inset-bottom)); }
+    nav .tab-pills { gap: 2px; }
+    nav .tab-btn { padding: 0 11px; font-size: 13px; }
+    nav .tab-btn.active { padding: 0 14px; }
+    .fab-main-wrap, .fab-main-wrap.open { right: 16px; bottom: calc(76px + env(safe-area-inset-bottom)); }
+    main { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+  }
+  @media (prefers-reduced-motion: reduce) { nav .tab-btn, nav .tab-btn .nav-txt { transition: none; } }
+
+  /* ══ FILTROS DE TAREAS (opción 1): estado en segmento con cantidades + etiquetas en una fila ══ */
+  .tareas-filters { gap: 10px; margin-bottom: 18px; }
+  .filtro-seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; padding: 3px; border-radius: 12px; background: rgba(0,0,0,.055); }
+  body.dark-mode .filtro-seg { background: rgba(255,255,255,.06); }
+  .filtro-seg .filter-estado { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 7px 2px; border: 0; border-radius: 9px; background: none;
+    font-family: 'Geist', sans-serif; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; line-height: 1.15; text-transform: none; letter-spacing: 0;
+    transition: background .2s, color .2s; }
+  .filtro-seg .filter-estado small { font-family: 'Geist Mono', monospace; font-size: 10.5px; font-weight: 400; font-variant-numeric: tabular-nums; }
+  .filtro-seg .filter-estado.active { background: var(--card); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .filtro-seg .filter-estado.active small { color: #E8450A; }
+  .filtro-seg .filter-estado:focus-visible, .filtro-tags .filter-pill:focus-visible { outline: 2px solid #E8450A; outline-offset: 2px; }
+  .filtro-tags { display: flex; gap: 6px; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    margin: 0 -20px; padding: 0 20px 2px; }
+  .filtro-tags::-webkit-scrollbar { display: none; }
+  .filtro-tags .filter-pill { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; padding: 6px 12px;
+    font-size: 12.5px; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--text); background: var(--card); border: 1px solid var(--border); }
+  .filtro-tags .filter-pill:hover:not(.active) { background: var(--card); border-color: var(--muted); }
+  .filtro-tags .filter-pill .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .filtro-tags .filter-pill.active { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .filtro-tags .filter-pill.active.con-color { color: #FFFFFF; }
+  .filtro-tags .filter-pill.active .dot { background: currentColor !important; opacity: .9; }
+  .filtro-tags .filtro-gestionar { color: var(--muted); }
+  @media (max-width: 640px) { .filtro-tags { margin: 0 -14px; padding: 0 14px 2px; } }
+
   /* ══ PANTALLA DE ENTRADA (Steadfast): la columna sobre una mancha naranja difusa que respira ══ */
   .splash { position: fixed; inset: 0; z-index: 100000; background: #FFFFFF; color: #1C1612;
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px;
@@ -3664,13 +3725,23 @@
   <button onclick="document.getElementById('vaciadoToast').classList.remove('show')">Entendido</button>
 </div>
 
-<nav>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="nav-inicio" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="nav-hoy" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="nav-tareas" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 11h6M9 15h4"/></symbol>
+  <symbol id="nav-finanzas" viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h12v4"/><rect x="4" y="7" width="16" height="13" rx="2"/><circle cx="16" cy="13.5" r="1.2"/></symbol>
+  <symbol id="nav-mas" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></symbol>
+  <symbol id="nav-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+</svg>
+<!-- ══ BARRA INFERIOR: solo íconos; la sección activa se estira con su nombre. El + abre las acciones rápidas ══ -->
+<nav aria-label="Secciones">
   <div class="tab-pills">
-    <button class="tab-btn active" onclick="switchTab('inicio')"><i data-lucide="home"></i> Inicio</button>
-    <button class="tab-btn" onclick="switchTab('hoy')"><i data-lucide="sun"></i> Hoy</button>
-    <button class="tab-btn" onclick="switchTab('tareas')"><i data-lucide="clipboard-list"></i> Tareas</button>
-    <button class="tab-btn" onclick="switchTab('finanzas')"><i data-lucide="wallet"></i> Finanzas</button>
-    <button class="tab-btn" id="tabBtnMas" onclick="toggleMasPanel()" style="position:relative"><i data-lucide="more-horizontal"></i> Más<span class="tab-badge" id="badge-vision" style="display:none"></span></button>
+    <button class="tab-btn active" onclick="switchTab('inicio')" aria-label="Inicio" title="Inicio"><svg class="nav-ico" aria-hidden="true"><use href="#nav-inicio"/></svg><span class="nav-txt">Inicio</span></button>
+    <button class="tab-btn" onclick="switchTab('hoy')" aria-label="Hoy" title="Hoy"><svg class="nav-ico" aria-hidden="true"><use href="#nav-hoy"/></svg><span class="nav-txt">Hoy</span></button>
+    <button class="tab-btn" onclick="switchTab('tareas')" aria-label="Tareas" title="Tareas"><svg class="nav-ico" aria-hidden="true"><use href="#nav-tareas"/></svg><span class="nav-txt">Tareas</span></button>
+    <button class="tab-btn" onclick="switchTab('finanzas')" aria-label="Finanzas" title="Finanzas"><svg class="nav-ico" aria-hidden="true"><use href="#nav-finanzas"/></svg><span class="nav-txt">Finanzas</span></button>
+    <button class="tab-btn" id="tabBtnMas" onclick="toggleMasPanel()" aria-label="Más" title="Más" style="position:relative"><svg class="nav-ico" aria-hidden="true"><use href="#nav-mas"/></svg><span class="nav-txt">Más</span><span class="tab-badge" id="badge-vision" style="display:none"></span></button>
+    <button class="nav-plus" id="navPlus" type="button" onclick="toggleFabMenu()" aria-label="Acciones rápidas" title="Acciones rápidas"><svg class="nav-ico" aria-hidden="true"><use href="#nav-plus"/></svg></button>
   </div>
 </nav>
 
@@ -3954,15 +4025,13 @@
 
     <!-- Filtros -->
     <div class="tareas-filters">
-      <div class="filter-group" id="filtroEtiquetaGroup"></div>
-      <div class="filter-group">
-        <span class="filter-group-label">Estado</span>
-        <button class="filter-pill filter-estado active" onclick="setFiltroEstado('todas',this)">Todos</button>
-        <button class="filter-pill filter-estado" onclick="setFiltroEstado('sin_empezar',this)">Sin empezar</button>
-        <button class="filter-pill filter-estado" onclick="setFiltroEstado('en_curso',this)">En curso</button>
-        <button class="filter-pill filter-estado" onclick="setFiltroEstado('completada',this)">Completadas</button>
+      <div class="filtro-seg" role="group" aria-label="Filtrar por estado">
+        <button class="filter-estado active" onclick="setFiltroEstado('todas',this)">Todas<small id="cuentaFiltro-todas">0</small></button>
+        <button class="filter-estado" onclick="setFiltroEstado('sin_empezar',this)">Sin empezar<small id="cuentaFiltro-sin_empezar">0</small></button>
+        <button class="filter-estado" onclick="setFiltroEstado('en_curso',this)">En curso<small id="cuentaFiltro-en_curso">0</small></button>
+        <button class="filter-estado" onclick="setFiltroEstado('completada',this)">Hechas<small id="cuentaFiltro-completada">0</small></button>
       </div>
-      <button class="etiqueta-manage-btn" onclick="openEtiquetasModal()">⚙️ Gestionar etiquetas</button>
+      <div class="filtro-tags" id="filtroEtiquetaGroup" role="group" aria-label="Filtrar por etiqueta"></div>
     </div>
 
     <!-- Agregar tarea -->
@@ -5797,10 +5866,12 @@ function toggleFabMenu() { fabMenuOpen ? cerrarFabMenu() : abrirFabMenu(); }
 function abrirFabMenu() {
   fabMenuOpen = true;
   document.getElementById('fabMainWrap').classList.add('open');
+  document.getElementById('navPlus')?.classList.add('open');
 }
 function cerrarFabMenu() {
   fabMenuOpen = false;
   document.getElementById('fabMainWrap')?.classList.remove('open');
+  document.getElementById('navPlus')?.classList.remove('open');
 }
 // Disparadores visuales de los mini-botones — no reescriben la lógica original,
 // solo la ejecutan y cierran el menú expandido.
@@ -5809,7 +5880,7 @@ function fabMiniPomo()     { togglePomoPanel(); cerrarFabMenu(); }
 function fabMiniFinanzas() { pf_abrirPanelRapido(); cerrarFabMenu(); }
 
 document.addEventListener('click', function(e) {
-  if (fabMenuOpen && !e.target.closest('#fabMainWrap')) cerrarFabMenu();
+  if (fabMenuOpen && !e.target.closest('#fabMainWrap, #navPlus')) cerrarFabMenu();
 });
 
 // ── TASK PANEL ──
@@ -6066,16 +6137,18 @@ function renderFiltrosEtiqueta() {
   const el = document.getElementById('filtroEtiquetaGroup');
   if (!el) return;
   const todasBtn = `<button class="filter-pill filter-etiqueta${filtroEtiqueta === 'todas' ? ' active' : ''}" onclick="setFiltroEtiqueta('todas',this)">Todas</button>`;
-  const pills = state.etiquetas.map(e =>
-    `<button class="filter-pill filter-etiqueta${filtroEtiqueta === e.id ? ' active' : ''}" onclick="setFiltroEtiqueta(${e.id},this)">${escHtml(e.nombre)}</button>`
-  ).join('');
-  el.innerHTML = `<span class="filter-group-label">Etiqueta</span>${todasBtn}${pills}`;
+  const pills = state.etiquetas.map(e => {
+    const on = filtroEtiqueta === e.id;
+    const estilo = on ? ` style="background:${e.color};border-color:${e.color}"` : '';
+    return `<button class="filter-pill filter-etiqueta${on ? ' active con-color' : ''}"${estilo} onclick="setFiltroEtiqueta(${e.id},this)"><span class="dot" style="background:${e.color}"></span>${escHtml(e.nombre)}</button>`;
+  }).join('');
+  const gestionar = `<button class="filter-pill filtro-gestionar" onclick="openEtiquetasModal()" title="Gestionar etiquetas">⚙️ Etiquetas</button>`;
+  el.innerHTML = `${todasBtn}${pills}${gestionar}`;
 }
 
 function setFiltroEtiqueta(val, el) {
   filtroEtiqueta = val;
-  document.querySelectorAll('.filter-etiqueta').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
+  renderFiltrosEtiqueta();
   renderTareasLista();
 }
 
@@ -6146,6 +6219,10 @@ function renderTareasLista() {
   const sub = document.getElementById('tareas-page-subtitle');
   if (sub) sub.textContent =
     `${sinEmpAll.length} sin empezar · ${enCursoAll.length} en curso · ${compAll.length} completadas`;
+  [['todas', total], ['sin_empezar', sinEmpAll.length], ['en_curso', enCursoAll.length], ['completada', compAll.length]].forEach(([k, n]) => {
+    const c = document.getElementById('cuentaFiltro-' + k);
+    if (c) c.textContent = n;
+  });
 
   const filtered = tareasActivasLista.filter(t => {
     const mE = filtroEtiqueta === 'todas' || t.etiquetaId === filtroEtiqueta;
