@@ -3473,7 +3473,8 @@
   .pf-tec-hoy { text-align: center; font-size: 13px; min-height: 30px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
   .pf-tec-hoy span { opacity: .72; }
   .pf-tec-deshacer { border: 0; background: #0B0B0B; color: #fff; font: inherit; font-size: 12px; font-weight: 600; padding: 5px 11px; border-radius: 99px; cursor: pointer; }
-  .pf-tec-seg { display: grid; grid-template-columns: 1fr 1fr; background: rgba(0,0,0,.09); border-radius: 99px; padding: 3px; margin-top: 8px; }
+  .pf-tec-seg { display: grid; grid-template-columns: 1fr 1fr 1fr; background: rgba(0,0,0,.09); border-radius: 99px; padding: 3px; margin-top: 8px; }
+  .pf-tec-seg button[hidden] { display: none; }
   .pf-tec-seg button { border: 0; background: transparent; color: inherit; font: inherit; font-weight: 600; font-size: 14px; padding: 9px; border-radius: 99px; cursor: pointer; }
   .pf-tec-seg button.on { background: #0B0B0B; color: #fff; }
   .pf-tec-cats {
@@ -3616,7 +3617,102 @@
   .pf-tec-pill[hidden], .pf-tec-nota[hidden], .pf-tec-borrar[hidden], .pf-tec-resumen[hidden] { display: none; }
   .pf-tec-pill { white-space: nowrap; flex: none; }
   .pf-tec-borrar { border: 0; background: transparent; color: #7A1E00; font: inherit; font-size: 13px; font-weight: 700; padding: 12px; cursor: pointer; flex: none; }
-  @media (prefers-reduced-motion: reduce) { .pfx-cg, .pfx-nueva { animation: none; } }
+  /* ── Te queda para gastar ── */
+  #sec-finanzas { position: relative; }
+  .pfx-q { gap: 14px; }
+  .pfx-q-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .pfx-q-tit { display: flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--muted); }
+  .pfx-ayuda { width: 26px; height: 26px; border-radius: 99px; border: 1px solid var(--border); background: transparent; color: var(--muted); font: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer; padding: 0; display: grid; place-items: center; }
+  .pfx-estado { font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 99px; white-space: nowrap; }
+  .pfx-estado.bien { background: rgba(61,190,41,.14); color: var(--pfx-pos); }
+  .pfx-estado.rapido, .pfx-estado.pasaste { background: var(--pf-clay-dim); color: var(--gold); }
+  .pfx-q-num { display: grid; gap: 6px; }
+  .pfx-q-num b { font-size: 40px; font-weight: 800; letter-spacing: -0.035em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .pfx-q-num b.neg { color: var(--gold); }
+  .pfx-q-num span { font-size: 14.5px; }
+  .pfx-q-num span strong { color: var(--gold); }
+  .pfx-ritmo { display: grid; gap: 8px; }
+  .pfx-ritmo-barra { position: relative; height: 12px; border-radius: 9px; background: var(--pfx-suave); }
+  .pfx-ritmo-barra i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 9px; background: var(--gold); transition: width .5s ease; }
+  .pfx-ritmo-barra em { position: absolute; top: -5px; bottom: -5px; width: 3px; margin-left: -1.5px; border-radius: 2px; background: var(--text); }
+  .pfx-ritmo-pie { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); }
+  .pfx-ritmo-pie b { color: var(--text); }
+  .pfx-ahorro { display: flex; justify-content: space-between; align-items: center; gap: 10px; border-top: 1px dashed var(--border); padding-top: 12px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .pfx-ahorro div { display: flex; gap: 6px; }
+  .pfx-ahorro button { min-width: 50px; height: 34px; border-radius: 99px; border: 1px solid var(--border); background: transparent; color: var(--text); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .pfx-ahorro button.on { background: var(--text); border-color: var(--text); color: var(--card); }
+  .pfx-calc summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--muted); list-style: none; }
+  .pfx-calc summary::-webkit-details-marker { display: none; }
+  .pfx-calc summary::after { content: " ▾"; }
+  .pfx-calc[open] summary::after { content: " ▴"; }
+  .pfx-calc-filas { display: grid; gap: 8px; margin-top: 10px; font-size: 13.5px; }
+  .pfx-calc-filas div { display: flex; justify-content: space-between; gap: 8px; }
+  .pfx-calc-filas span:last-child { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+  .pfx-calc-filas .total { border-top: 1px solid var(--border); padding-top: 8px; font-weight: 800; }
+  .pfx-cobrar-fila { display: grid; grid-template-columns: 40px minmax(0,1fr) auto; gap: 12px; align-items: center; width: 100%; text-align: left; background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 12px 16px; margin-bottom: 12px; color: inherit; font-family: inherit; cursor: pointer; }
+  .pfx-cobrar-ico { width: 40px; height: 40px; border-radius: 13px; background: rgba(95,211,47,.18); color: var(--pfx-pos); display: grid; place-items: center; }
+  .pfx-cobrar-fila .pfx-t div:first-child { font-size: 15px; }
+  /* ── Por cobrar ── */
+  .pfx-cob-top { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .pfx-cob-top h2 { flex: 1; margin: 0; font-size: 20px; font-weight: 800; }
+  .pfx-redondo { width: 40px; height: 40px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--text); font: inherit; font-size: 15px; font-weight: 800; cursor: pointer; display: grid; place-items: center; flex: none; }
+  .pfx-total-cob { background: #5FD32F; color: #0C1F05; border-radius: 24px; padding: 18px 20px; display: grid; gap: 6px; margin-bottom: 12px; }
+  .pfx-total-cob small { font-size: 13px; font-weight: 700; }
+  .pfx-total-cob b { font-size: 38px; font-weight: 800; letter-spacing: -0.035em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .pfx-total-cob span { font-size: 13px; font-weight: 600; }
+  .pfx-cobro { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 14px 16px; display: grid; gap: 10px; margin-bottom: 10px; }
+  .pfx-cobro-info { display: grid; grid-template-columns: 38px minmax(0,1fr) auto; gap: 12px; align-items: center; width: 100%; text-align: left; background: none; border: 0; padding: 0; color: inherit; font-family: inherit; cursor: pointer; }
+  .pfx-ini { width: 38px; height: 38px; border-radius: 99px; background: var(--pfx-suave); display: grid; place-items: center; font-weight: 800; font-size: 15px; text-transform: uppercase; }
+  .pfx-cobro-pie { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pfx-cobro-pie > div { display: flex; gap: 6px; margin-left: auto; }
+  .pfx-cobro-chip { font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 99px; background: var(--pfx-suave); color: var(--muted); }
+  .pfx-cobro-chip.venc { background: var(--pf-clay-dim); color: var(--gold); }
+  .pfx-cobro-chip.hoy { background: rgba(217,154,14,.15); color: var(--pfx-amb); }
+  .pfx-cobrado { display: grid; grid-template-columns: 20px minmax(0,1fr) auto; gap: 10px; align-items: center; padding: 10px 14px; border-radius: 16px; background: rgba(95,211,47,.14); font-size: 14px; margin-bottom: 8px; }
+  .pfx-cobrado b { font-variant-numeric: tabular-nums; color: var(--pfx-pos); white-space: nowrap; }
+  .pfx-cobrado span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  /* ── Guías de uso (burbuja de 3 pasos) ── */
+  .pfx-guia { position: absolute; left: 0; right: 0; z-index: 40; background: #17120F; color: #F3EEEA; border-radius: 20px; padding: 14px 16px 12px; display: grid; gap: 8px;
+    box-shadow: 0 14px 34px rgba(0,0,0,.28); opacity: 0; transform: translateY(6px); pointer-events: none; transition: opacity .25s, transform .25s, top .3s ease; }
+  .pfx-guia.show { opacity: 1; transform: none; pointer-events: auto; }
+  .pfx-guia-flecha { position: absolute; top: -6px; width: 14px; height: 14px; background: #17120F; transform: rotate(45deg); border-radius: 3px; transition: left .3s ease; }
+  .pfx-guia small { font-size: 11px; font-weight: 700; letter-spacing: .06em; color: #FFB08A; }
+  .pfx-guia p { margin: 0; font-size: 14.5px; line-height: 1.42; }
+  .pfx-guia-pie { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .pfx-guia-puntos { display: flex; gap: 5px; }
+  .pfx-guia-puntos i { width: 6px; height: 6px; border-radius: 3px; background: #5A524D; transition: width .25s; }
+  .pfx-guia-puntos i.on { width: 18px; background: #E8450A; }
+  .pfx-guia-pie div { display: flex; gap: 4px; }
+  .pfx-guia button { border: 0; font: inherit; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 99px; cursor: pointer; background: transparent; color: #BDB5AF; }
+  .pfx-guia button.sig { background: #E8450A; color: #fff; }
+  .pfx-guia-tiempo { height: 2px; border-radius: 2px; background: rgba(255,255,255,.12); overflow: hidden; }
+  .pfx-guia-tiempo i { display: block; height: 100%; width: 100%; background: rgba(255,255,255,.45); transform-origin: left; }
+  .pfx-guia-tiempo i.corre { animation: pfxGuiaTiempo 6s linear forwards; }
+  @keyframes pfxGuiaTiempo { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  /* teclado: modo "Por cobrar" */
+  .pf-tec-cobro { display: grid; gap: 8px; padding-top: 10px; }
+  .pf-tec-cobro[hidden], .pf-tec-cats[hidden], .pf-tec-hoy[hidden] { display: none; }
+  .pf-tec-cobro-aviso { display: flex; gap: 8px; align-items: flex-start; background: #0B0B0B; color: #fff; border-radius: 14px; padding: 8px 12px; font-size: 12.5px; line-height: 1.35; }
+  .pf-tec-cobro-aviso svg { flex: none; width: 16px; height: 16px; margin-top: 1px; color: #A8EC85; }
+  .pf-tec-cliente { border: 0; background: rgba(255,255,255,.55); color: inherit; font: inherit; font-size: 16px; font-weight: 600; padding: 10px 14px; border-radius: 14px; outline: none; width: 100%; }
+  .pf-tec-cliente::placeholder { color: rgba(12,31,5,.55); font-weight: 500; }
+  .pf-tec-cliente.falta { box-shadow: 0 0 0 2px #7A1E00; }
+  .pf-tec-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .pf-tec-chips::-webkit-scrollbar { display: none; }
+  .pf-tec-chips:empty { display: none; }
+  .pf-tec-chips button, .pf-tec-chips label { flex: none; position: relative; border: 1.5px solid rgba(0,0,0,.2); background: transparent; color: inherit; font: inherit; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 99px; cursor: pointer; white-space: nowrap; }
+  .pf-tec-chips .on { background: #0B0B0B; border-color: #0B0B0B; color: #fff; }
+  .pf-tec-chips input[type="date"] { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; border: 0; }
+  /* En "Por cobrar" hay más campos: todo un poco más compacto para que entre sin scroll */
+  .pf-tec.cobro .pf-tec-monto { padding-top: 1.5vh; padding-bottom: 4px; }
+  .pf-tec.cobro .pf-tec-hoy { min-height: 22px; font-size: 12px; }
+  .pf-tec.cobro .pf-tec-seg { margin-top: 4px; }
+  .pf-tec.cobro .pf-tec-pad button { height: clamp(40px, 6vh, 58px); font-size: 24px; }
+  .pf-tec.cobro .pf-tec-cta { margin-top: 6px; height: 50px; }
+  .pf-tec.cobro .pf-tec-resumen { display: none; }
+  @media (max-height: 700px) { .pf-tec.cobro .pf-tec-cobro-aviso span { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; } .pf-tec.cobro .pf-tec-hoy { display: none; } }
+  .pf-tec-cuando-tit { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+  @media (prefers-reduced-motion: reduce) { .pfx-cg, .pfx-nueva, .pfx-guia-tiempo i.corre { animation: none; } .pfx-guia { transition: none; } }
 
   /* ── PROGRESO: ÁREAS, XP, FICHAS Y RELOJ ── */
   /* Espacio final para que la barra inferior y el botón flotante no tapen el último elemento. */
@@ -3724,6 +3820,9 @@
   nav .nav-plus.open .nav-ico { transform: rotate(45deg); }
   /* El + vive en la barra: el botón flotante se oculta y sus accesos rápidos salen arriba de la barra */
   .fab-main { display: none; }
+  /* El contenedor invisible no debe tapar los botones de abajo a la derecha cuando el menú está cerrado */
+  .fab-main-wrap { pointer-events: none; }
+  .fab-main-wrap.open .fab-mini-group { pointer-events: auto; }
   .fab-main-wrap, .fab-main-wrap.open { right: max(16px, calc(50% - 200px)); bottom: calc(80px + env(safe-area-inset-bottom)); }
   @media (max-width: 640px) {
     nav { padding: 0 10px calc(10px + env(safe-area-inset-bottom)); }
@@ -4629,8 +4728,16 @@
     <div class="pf-tec-seg" role="group" aria-label="Tipo de movimiento">
       <button type="button" id="pfTecGasto" onclick="pf_tecSetTipo('gasto')">Gasto</button>
       <button type="button" id="pfTecIngreso" onclick="pf_tecSetTipo('ingreso')">Ingreso</button>
+      <button type="button" id="pfTecCobrar" onclick="pf_tecSetTipo('cobrar')">Por cobrar</button>
     </div>
     <div class="pf-tec-cats" id="pfTecCats" role="group" aria-label="Categoría"></div>
+    <div class="pf-tec-cobro" id="pfTecCobro" hidden>
+      <div class="pf-tec-cobro-aviso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>Anotá un trabajo que todavía no te pagaron. No cuenta como ingreso hasta que toques «Me pagaron».</span></div>
+      <input type="text" class="pf-tec-cliente" id="pfTecCliente" placeholder="¿Quién te debe?" maxlength="60" aria-label="Cliente" autocomplete="off">
+      <div class="pf-tec-chips" id="pfTecClientes" role="group" aria-label="Clientes anteriores"></div>
+      <div class="pf-tec-cuando-tit">¿Cuándo te pagan?</div>
+      <div class="pf-tec-chips" id="pfTecCuando" role="group" aria-label="Cuándo te pagan"></div>
+    </div>
     <div class="pf-tec-pad" id="pfTecPad"></div>
     <button class="pf-tec-cta" id="pfTecCta" type="button" onclick="pf_tecGuardar()">Anotar gasto</button>
     <button class="pf-tec-resumen" id="pfTecResumen" type="button" onclick="pf_cerrarTeclado(true)">Ver resumen del mes ↓</button>
@@ -7058,7 +7165,7 @@ function importarBackup(e) {
       const parsed = JSON.parse(ev.target.result);
       if (parsed.app === 'Pulso Financiero' && Array.isArray(parsed.transactions)) {
         // Export suelto del prototipo standalone de Pulso Financiero
-        pf_data = { transactions: parsed.transactions || [], fixedPayments: parsed.fixedPayments || [] };
+        pf_data = { transactions: parsed.transactions || [], fixedPayments: parsed.fixedPayments || [], porCobrar: parsed.porCobrar || [] };
         asegurarIdsYTimestamps(pf_data.transactions, 'tx');
         asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
         pf_persist();
@@ -7068,7 +7175,7 @@ function importarBackup(e) {
       } else {
         if (!parsed.metas || !parsed.habitos || !parsed.habitoChecks) throw new Error('invalid');
         if (parsed.pulsoFinanciero) {
-          pf_data = { transactions: parsed.pulsoFinanciero.transactions || [], fixedPayments: parsed.pulsoFinanciero.fixedPayments || [] };
+          pf_data = { transactions: parsed.pulsoFinanciero.transactions || [], fixedPayments: parsed.pulsoFinanciero.fixedPayments || [], porCobrar: parsed.pulsoFinanciero.porCobrar || [] };
           asegurarIdsYTimestamps(pf_data.transactions, 'tx');
           asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
           pf_persist();
@@ -7116,7 +7223,7 @@ const PF_PAYMENT_METHODS = ['Efectivo / Débito','Tarjeta de crédito'];
 const PF_MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const PF_MESES_ABR = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 
-let pf_data = { transactions: [], fixedPayments: [] };
+let pf_data = { transactions: [], fixedPayments: [], porCobrar: [] };
 let pf_view = 'month';       // 'month' | 'year'
 let pf_cursor = new Date();
 let pf_formType = 'gasto';
@@ -7129,10 +7236,10 @@ function pf_loadData() {
     const raw = localStorage.getItem(PF_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      pf_data = { transactions: parsed.transactions || [], fixedPayments: parsed.fixedPayments || [] };
+      pf_data = { transactions: parsed.transactions || [], fixedPayments: parsed.fixedPayments || [], porCobrar: parsed.porCobrar || [] };
     }
   } catch (e) {
-    pf_data = { transactions: [], fixedPayments: [] };
+    pf_data = { transactions: [], fixedPayments: [], porCobrar: [] };
   }
 }
 
@@ -7358,8 +7465,7 @@ function pf_renderMonth() {
   let linea;
   if (!ingresos && !gastos) linea = esActual ? 'Todavía no anotaste nada este mes' : 'Sin movimientos ese mes';
   else if (esActual) {
-    const quedan = diasMes - ahora.getDate() + 1;
-    linea = balance > 0 ? `Te quedan ${pf_fmtGs(balance / quedan)} por día hasta fin de mes`
+    linea = balance > 0 ? 'Este mes entró más de lo que salió'
       : balance < 0 ? `Estás en rojo: te faltan ${pf_fmtGs(-balance)} para volver a cero` : 'Estás justo en cero';
   } else linea = balance >= 0 ? `Cerraste el mes con ${pf_fmtGs(balance)} a favor` : `Cerraste el mes ${pf_fmtGs(-balance)} en rojo`;
 
@@ -7397,6 +7503,7 @@ function pf_renderMonth() {
       <div class="cal-month-label">${label}</div>
       <button class="cal-nav-btn" data-action="nextMonth">›</button>
     </div>
+    ${esActual ? pf_renderQueda(ingresos, gastos, txs) + pf_renderCobrarFila() : ''}
     <div class="pfx-card">
       <div class="pfx-pilas">
         <div class="pfx-pcol"><span class="pfx-et">${pf_corto(ingresos)}</span>${pila(nIn, 'in')}</div>
@@ -7418,6 +7525,259 @@ function pf_renderMonth() {
     <div class="pfx-card"><h3 class="pfx-h">En qué se fue <span>${pf_fmtGs(gastos)}</span></h3>${catHtml}</div>
     <div class="pfx-card"><h3 class="pfx-h">Movimientos <span>${txs.length}</span></h3>${movHtml}</div>
   `;
+}
+
+// ── Te queda para gastar: lo que se puede gastar sin tocar pagos fijos ni ahorro ──
+const PF_KEY_AHORRO = 'steadfast_ahorro_pct';
+function pf_ahorroPct() {
+  const v = parseInt(pf_tecLeer(PF_KEY_AHORRO), 10);
+  return [0, 10, 20].includes(v) ? v : 10;
+}
+function pf_calcQueda(ingresos, gastos, txs) {
+  const hoy = new Date();
+  const diasMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+  const fijos = activos(pf_data.fixedPayments).filter(fp => pf_fixedStatus(fp, hoy).status !== 'paid');
+  const fijosPend = fijos.reduce((s, fp) => s + fp.amount + pf_fixedOverdueMonths(fp, hoy).reduce((a, o) => a + o.amount, 0), 0);
+  const pct = pf_ahorroPct();
+  const ahorroYa = txs.filter(t => t.type === 'gasto' && t.category === 'Ahorro / Inversión').reduce((s, t) => s + t.amount, 0);
+  const ahorro = Math.max(0, Math.round(ingresos * pct / 100) - ahorroYa);
+  const queda = ingresos - gastos - fijosPend - ahorro;
+  const diasRest = diasMes - hoy.getDate() + 1;
+  const porDia = queda > 0 ? Math.floor(queda / diasRest / 1000) * 1000 : 0;
+  const base = gastos + Math.max(queda, 0);
+  const gastoPct = base ? Math.min(100, Math.round(gastos / base * 100)) : 0;
+  const mesPct = Math.round(hoy.getDate() / diasMes * 100);
+  const estado = queda < 0 ? 'pasaste' : (gastoPct > mesPct + 10 ? 'rapido' : 'bien');
+  return { fijosPend, nFijos: fijos.length, pct, ahorro, queda, porDia, gastoPct, mesPct, estado, diasMes };
+}
+function pf_renderQueda(ingresos, gastos, txs) {
+  const ayuda = '<button type="button" class="pfx-ayuda" data-action="guia" data-value="queda" aria-label="Cómo funciona Te queda para gastar">?</button>';
+  if (!ingresos) return `
+    <div class="pfx-card pfx-q" id="pfxQueda">
+      <div class="pfx-q-top"><span class="pfx-q-tit">Te queda para gastar ${ayuda}</span></div>
+      <div class="pfx-q-num"><span>Cuando anotes lo que te entra este mes, acá vas a ver cuánto podés gastar por día sin tocar tus pagos fijos ni tu ahorro.</span></div>
+    </div>`;
+  const q = pf_calcQueda(ingresos, gastos, txs);
+  const estados = { bien: 'Vas bien', rapido: 'Vas rápido', pasaste: 'Te pasaste' };
+  const dia = q.queda > 0 ? `Podés gastar <strong>${pf_fmtGs(q.porDia)} por día</strong> hasta el ${q.diasMes}`
+    : q.queda < 0 ? 'Gastaste más de lo que tenías libre. Frená los gastos que no sean necesarios.' : 'Llegaste justo: no te queda margen este mes.';
+  return `
+    <div class="pfx-card pfx-q" id="pfxQueda">
+      <div class="pfx-q-top"><span class="pfx-q-tit">Te queda para gastar ${ayuda}</span><span class="pfx-estado ${q.estado}">${estados[q.estado]}</span></div>
+      <div class="pfx-q-num"><b class="${q.queda < 0 ? 'neg' : ''}">${q.queda < 0 ? '−' : ''}${pf_fmtGs(Math.abs(q.queda))}</b><span>${dia}</span></div>
+      <div class="pfx-ritmo">
+        <div class="pfx-ritmo-barra"><i style="width:${q.gastoPct}%"></i><em style="left:${q.mesPct}%" aria-hidden="true"></em></div>
+        <div class="pfx-ritmo-pie"><span>Gastaste el <b>${q.gastoPct}%</b> de lo libre</span><span>Pasó el <b>${q.mesPct}%</b> del mes</span></div>
+      </div>
+      <div class="pfx-ahorro"><span>Apartar para ahorro</span><div role="group" aria-label="Porcentaje para ahorro">${[0, 10, 20].map(v =>
+        `<button type="button" class="${v === q.pct ? 'on' : ''}" aria-pressed="${v === q.pct}" data-action="ahorroPct" data-value="${v}">${v}%</button>`).join('')}</div></div>
+      <details class="pfx-calc"><summary>Cómo se calcula</summary><div class="pfx-calc-filas">
+        <div><span>Entró este mes</span><span class="pfx-pos">+ ${pf_fmtGs(ingresos)}</span></div>
+        <div><span>Ya gastaste</span><span>− ${pf_fmtGs(gastos)}</span></div>
+        <div><span>Pagos fijos que faltan${q.nFijos ? ` (${q.nFijos})` : ''}</span><span>− ${pf_fmtGs(q.fijosPend)}</span></div>
+        <div><span>Ahorro por apartar (${q.pct}%)</span><span>− ${pf_fmtGs(q.ahorro)}</span></div>
+        <div class="total"><span>Te queda</span><span>${q.queda < 0 ? '−' : ''}${pf_fmtGs(Math.abs(q.queda))}</span></div>
+      </div></details>
+    </div>`;
+}
+
+// ── Por cobrar: trabajos hechos que todavía no te pagaron ──
+function pf_cobrosPend() {
+  return activos(pf_data.porCobrar).filter(c => !c.cobrado).sort((a, b) => (a.fecha || '9').localeCompare(b.fecha || '9'));
+}
+function pf_cobroEstado(c) {
+  const hoy = pf_todayStr();
+  if (!c.fecha) return { cls: '', txt: 'Sin fecha' };
+  if (c.fecha < hoy) {
+    const dias = Math.round((new Date(hoy + 'T00:00:00') - new Date(c.fecha + 'T00:00:00')) / 864e5);
+    return { cls: 'venc', txt: `Atrasado ${dias} ${dias === 1 ? 'día' : 'días'}`, atrasado: true };
+  }
+  if (c.fecha === hoy) return { cls: 'hoy', txt: 'Te paga hoy', hoy: true };
+  return { cls: '', txt: 'El ' + pf_formatDate(c.fecha) };
+}
+function pf_renderCobrarFila() {
+  const pend = pf_cobrosPend();
+  const total = pend.reduce((s, c) => s + c.monto, 0);
+  const atr = pend.filter(c => pf_cobroEstado(c).atrasado).length;
+  const sub = pend.length ? `${pend.length} ${pend.length === 1 ? 'trabajo' : 'trabajos'}${atr ? ` · ${atr} ${atr === 1 ? 'atrasado' : 'atrasados'}` : ''} · no cuenta hasta que entre`
+    : 'Anotá lo que te deben tus clientes';
+  return `<button type="button" class="pfx-cobrar-fila" data-action="view" data-value="cobrar">
+    <span class="pfx-cobrar-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+    <span class="pfx-t"><div>Por cobrar${pend.length ? ' · ' + pf_fmtGs(total) : ''}</div><div>${sub}</div></span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".55" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+  </button>`;
+}
+function pf_renderCobrar() {
+  const pend = pf_cobrosPend();
+  const total = pend.reduce((s, c) => s + c.monto, 0);
+  const atr = pend.filter(c => pf_cobroEstado(c).atrasado).length;
+  const ahora = new Date();
+  const cobrados = activos(pf_data.porCobrar).filter(c => c.cobrado && c.cobradoEn && pf_sameMonth(c.cobradoEn, ahora))
+    .sort((a, b) => b.cobradoEn.localeCompare(a.cobradoEn));
+  const resumen = pend.length ? `${pend.length} ${pend.length === 1 ? 'trabajo' : 'trabajos'} · ${atr ? atr + (atr === 1 ? ' atrasado' : ' atrasados') : 'ninguno atrasado'}` : 'Nadie te debe nada. ¡Al día!';
+  const lista = pend.map(c => {
+    const e = pf_cobroEstado(c);
+    return `<div class="pfx-cobro">
+      <button type="button" class="pfx-cobro-info" data-action="editCobro" data-id="${c.id}" aria-label="Corregir cobro de ${escHtml(c.cliente)}">
+        <span class="pfx-ini">${escHtml((c.cliente || '?').trim().charAt(0))}</span>
+        <span class="pfx-t"><div>${escHtml(c.cliente)}</div><div>${c.nota ? escHtml(c.nota) : 'Tocá para corregir'}</div></span>
+        <span class="pfx-m">${pf_fmtGs(c.monto)}</span>
+      </button>
+      <div class="pfx-cobro-pie">
+        <span class="pfx-cobro-chip ${e.cls}">${e.txt}</span>
+        <div>${e.atrasado || e.hoy ? `<button type="button" class="pfx-btn chico claro" data-action="recordarCobro" data-id="${c.id}">Recordarle</button>` : ''}
+          <button type="button" class="pfx-btn chico" data-action="cobrado" data-id="${c.id}">Me pagaron</button></div>
+      </div>
+    </div>`;
+  }).join('');
+  return `
+    <div class="pfx-cob-top">
+      <button type="button" class="pfx-redondo" data-action="view" data-value="month" aria-label="Volver al resumen">‹</button>
+      <h2>Por cobrar</h2>
+      <button type="button" class="pfx-redondo" data-action="guia" data-value="cobrar" aria-label="Cómo funciona Por cobrar">?</button>
+      <button type="button" class="pfx-btn" data-action="nuevoCobro">+ Nuevo</button>
+    </div>
+    <div class="pfx-total-cob" id="pfxCobTotal"><small>Te deben</small><b>${pf_fmtGs(total)}</b><span>${resumen}</span></div>
+    ${lista || `<div class="pfx-card"><div class="pfx-vacio">Cuando termines un trabajo y el cliente todavía no te pagó, anotalo acá con ＋ Nuevo. Así ningún cobro se te olvida.</div></div>`}
+    ${cobrados.length ? `<h3 class="pfx-h" style="margin:16px 0 8px">Cobrado este mes <span>${pf_fmtGs(cobrados.reduce((s, c) => s + c.monto, 0))}</span></h3>
+      ${cobrados.map(c => `<div class="pfx-cobrado"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="pfx-pos" aria-hidden="true"><path d="M5 12l5 5L19 7"/></svg><span>${escHtml(c.cliente)}</span><b>+ ${pf_fmtGs(c.monto)}</b></div>`).join('')}` : ''}
+  `;
+}
+// "Me pagaron": el cobro se vuelve un ingreso de verdad (Proyectos freelance) y cae una moneda.
+function pf_marcarCobrado(id) {
+  const c = pf_data.porCobrar.find(x => x.id === id);
+  if (!c || c.cobrado) return;
+  const ahora = new Date().toISOString();
+  const tx = { id: pf_uid(), type: 'ingreso', amount: c.monto, category: 'Proyectos freelance', note: c.cliente + (c.nota ? ' · ' + c.nota : ''),
+    date: pf_todayStr(), fixed: false, method: null, paid: true, cobroId: c.id, updatedAt: ahora };
+  pf_data.transactions.push(tx);
+  Object.assign(c, { cobrado: true, cobradoEn: pf_todayStr(), txId: tx.id, updatedAt: ahora });
+  pf_ultimaMoneda = { tipo: 'ingreso', monto: c.monto, t: Date.now() };
+  pf_persist();
+  pf_render();
+  if (navigator.vibrate) navigator.vibrate(25);
+  pf_toast('Pasó a ingresos: ' + pf_fmtGs(c.monto), () => {
+    marcarEliminado(tx);
+    c.cobrado = false; delete c.cobradoEn; delete c.txId; c.updatedAt = new Date().toISOString();
+    pf_ultimaMoneda = null;
+    pf_persist();
+    pf_render();
+  });
+}
+function pf_borrarCobro(id) {
+  const c = pf_data.porCobrar.find(x => x.id === id);
+  if (!c) return;
+  marcarEliminado(c);
+  pf_persist();
+  pf_render();
+  pf_toast('Cobro borrado', () => pf_restaurar(c));
+}
+// Arma un mensaje amable y lo comparte (WhatsApp, Mensajes…); si no se puede, abre WhatsApp.
+function pf_recordarCobro(id) {
+  const c = pf_data.porCobrar.find(x => x.id === id);
+  if (!c) return;
+  const e = pf_cobroEstado(c);
+  const txt = `¡Hola, ${c.cliente}! Te escribo por el pago de ${c.nota ? c.nota : 'el trabajo'} (${pf_fmtGs(c.monto)})${e.atrasado ? ', que habíamos quedado para el ' + pf_formatDate(c.fecha) : ''}. ¿Me avisás cuándo podés transferir? ¡Gracias!`;
+  if (navigator.share) { navigator.share({ text: txt }).catch(() => {}); return; }
+  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank', 'noopener');
+}
+
+// ── Guías: burbuja de 3 pasos que aparece sola la primera vez y avanza cada 6 s ──
+const PF_GUIAS = {
+  queda: [
+    { sel: '#pfxQueda .pfx-q-num', txt: 'Esto es lo que podés gastar sin tocar tus pagos fijos ni tu ahorro. Debajo te dice cuánto te toca por día.' },
+    { sel: '#pfxQueda .pfx-ritmo', txt: 'La rayita es el día de hoy. Si la barra naranja la pasa, estás gastando más rápido que el mes.' },
+    { sel: '#pfxQueda .pfx-ahorro', txt: 'Elegí cuánto apartar para ahorro apenas entra plata. Lo que te deben no cuenta hasta que te paguen.' }
+  ],
+  cobrar: [
+    { sel: '#pfxCobTotal', txt: 'Anotá acá cada trabajo que hiciste y todavía no te pagaron. Así no se te olvida ningún cobro.' },
+    { sel: '#pf-app [data-action="cobrado"]', txt: 'Cuando te paguen, tocá «Me pagaron». Se suma solo a tus ingresos y cae una moneda verde en el resumen.' },
+    { sel: '#pf-app .pfx-cobro-chip', txt: 'Si se pasa la fecha, el cobro se pone naranja. «Recordarle» te arma un mensaje amable para el cliente.' }
+  ]
+};
+let pf_guia = null;          // { clave, paso, timer }
+let pf_guiaPend = null;
+function pf_guiaVista(clave) { return pf_tecLeer('steadfast_guia_' + clave) === '1'; }
+function pf_guiaEl() {
+  let el = document.getElementById('pfxGuia');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'pfxGuia'; el.className = 'pfx-guia'; el.setAttribute('role', 'status');
+    el.innerHTML = '<i class="pfx-guia-flecha" aria-hidden="true"></i><small></small><p></p><div class="pfx-guia-tiempo" aria-hidden="true"><i></i></div>'
+      + '<div class="pfx-guia-pie"><span class="pfx-guia-puntos" aria-hidden="true"></span><div><button type="button">Saltar</button><button type="button" class="sig">Siguiente</button></div></div>';
+    const [saltar, sig] = el.querySelectorAll('.pfx-guia-pie button');
+    saltar.onclick = () => pf_guiaCerrar(true);
+    sig.onclick = () => pf_guiaSiguiente();
+    document.getElementById('sec-finanzas').appendChild(el);
+  }
+  return el;
+}
+function pf_guiaIniciar(clave) {
+  clearTimeout(pf_guiaPend);
+  if (!PF_GUIAS[clave]) return;
+  pf_guia = { clave, paso: 0, timer: null };
+  pf_guiaPintar(true);
+}
+function pf_guiaPintar(desplazar) {
+  if (!pf_guia) return;
+  const pasos = PF_GUIAS[pf_guia.clave];
+  const p = pasos[pf_guia.paso];
+  const sec = document.getElementById('sec-finanzas');
+  const meta = document.querySelector(p.sel) || document.querySelector(pasos[0].sel);
+  if (!meta || !sec.classList.contains('active')) { pf_guiaCerrar(false); return; }
+  const el = pf_guiaEl();
+  el.querySelector('small').textContent = `CÓMO FUNCIONA · ${pf_guia.paso + 1} de ${pasos.length}`;
+  el.querySelector('p').textContent = p.txt;
+  el.querySelector('.pfx-guia-puntos').innerHTML = pasos.map((_, i) => `<i class="${i === pf_guia.paso ? 'on' : ''}"></i>`).join('');
+  el.querySelector('.sig').textContent = pf_guia.paso === pasos.length - 1 ? 'Entendido' : 'Siguiente';
+  const app = document.getElementById('pf-app');
+  const rs = sec.getBoundingClientRect(), ra = app.getBoundingClientRect(), rm = meta.getBoundingClientRect();
+  el.style.left = (ra.left - rs.left) + 'px';
+  el.style.right = (rs.right - ra.right) + 'px';
+  el.style.top = (rm.bottom - rs.top + 12) + 'px';
+  const flecha = Math.max(18, Math.min(ra.width - 32, rm.left - ra.left + Math.min(rm.width / 2, 48) - 7));
+  el.querySelector('.pfx-guia-flecha').style.left = flecha + 'px';
+  const barra = el.querySelector('.pfx-guia-tiempo i');
+  barra.classList.remove('corre'); void barra.offsetWidth; barra.classList.add('corre');
+  el.classList.add('show');
+  if (desplazar) {
+    const r = el.getBoundingClientRect();
+    if (r.bottom > window.innerHeight - 90 || rm.top < 70) window.scrollBy({ top: Math.max(rm.top - 120, r.bottom - window.innerHeight + 110), behavior: 'smooth' });
+  }
+  clearTimeout(pf_guia.timer);
+  pf_guia.timer = setTimeout(pf_guiaSiguiente, 6000);
+}
+function pf_guiaSiguiente() {
+  if (!pf_guia) return;
+  if (pf_guia.paso >= PF_GUIAS[pf_guia.clave].length - 1) { pf_guiaCerrar(true); return; }
+  pf_guia.paso++;
+  pf_guiaPintar(true);
+}
+// vista: true la marca como vista (terminó o tocó Saltar); false solo la esconde (se vuelve a mostrar otro día).
+function pf_guiaCerrar(vista) {
+  clearTimeout(pf_guiaPend);
+  if (!pf_guia) return;
+  clearTimeout(pf_guia.timer);
+  if (vista) pf_tecEscribir('steadfast_guia_' + pf_guia.clave, '1');
+  pf_guia = null;
+  const el = document.getElementById('pfxGuia');
+  if (el) el.classList.remove('show');
+}
+// Después de cada render: reubica la guía abierta o arranca la que toque por primera vez.
+function pf_guiaRevisar() {
+  if (pf_guia) {
+    const vistaGuia = pf_guia.clave === 'cobrar' ? 'cobrar' : 'month';
+    if (pf_view !== vistaGuia) pf_guiaCerrar(false); else pf_guiaPintar(false);
+    return;
+  }
+  const clave = pf_view === 'cobrar' ? 'cobrar' : (pf_view === 'month' && document.getElementById('pfxQueda') ? 'queda' : null);
+  if (!clave || pf_guiaVista(clave)) return;
+  clearTimeout(pf_guiaPend);
+  pf_guiaPend = setTimeout(() => {
+    if (pf_guia || pf_tecEstaAbierto() || !document.getElementById('sec-finanzas').classList.contains('active')) return;
+    if ((clave === 'cobrar') !== (pf_view === 'cobrar')) return;
+    pf_guiaIniciar(clave);
+  }, 700);
 }
 
 // Pagos fijos: un círculo para marcar pagado; lo demás (atrasados, borrar) dentro del ⋯.
@@ -7622,10 +7982,11 @@ function pf_renderYear() {
 function pf_render() {
   const container = document.getElementById('pf-app');
   if (!container) return;
-  container.innerHTML = pf_renderHeader() + (pf_view === 'month' ? pf_renderMonth() : pf_renderYear());
+  container.innerHTML = pf_view === 'cobrar' ? pf_renderCobrar() : pf_renderHeader() + (pf_view === 'month' ? pf_renderMonth() : pf_renderYear());
   pf_bindEvents();
   pf_postRender();
   pf_pintarAjusteTarjeta();
+  pf_guiaRevisar();
 }
 
 function pf_bindEvents() {
@@ -7655,7 +8016,13 @@ function pf_updateMethodHint() {
 function pf_onAction(e) {
   const btn = e.currentTarget;
   const action = btn.dataset.action;
-  if (action === 'view') { pf_view = btn.dataset.value; pf_render(); }
+  if (action === 'view') { const antes = pf_view; pf_view = btn.dataset.value; if (pf_view === 'month' && antes === 'cobrar') pf_cursor = new Date(); pf_render(); if (antes !== pf_view && (antes === 'cobrar' || pf_view === 'cobrar')) window.scrollTo({ top: 0 }); }
+  else if (action === 'ahorroPct') { pf_tecEscribir(PF_KEY_AHORRO, btn.dataset.value); pf_render(); }
+  else if (action === 'guia') pf_guiaIniciar(btn.dataset.value);
+  else if (action === 'nuevoCobro') pf_abrirTeclado('cobrar');
+  else if (action === 'editCobro') pf_editarCobro(btn.dataset.id);
+  else if (action === 'cobrado') pf_marcarCobrado(btn.dataset.id);
+  else if (action === 'recordarCobro') pf_recordarCobro(btn.dataset.id);
   else if (action === 'formType') { pf_formType = btn.dataset.value; pf_render(); }
   else if (action === 'prevMonth') { pf_cursor = new Date(pf_cursor.getFullYear(), pf_cursor.getMonth() - 1, 1); pf_render(); }
   else if (action === 'nextMonth') { pf_cursor = new Date(pf_cursor.getFullYear(), pf_cursor.getMonth() + 1, 1); pf_render(); }
@@ -7978,7 +8345,7 @@ const PF_TEC_KEY_ACTIVO = 'steadfast_teclado_finanzas';
 const PF_TEC_KEY_METODO = 'steadfast_metodo_finanzas';
 const PF_TEC_KEY_CAT    = 'steadfast_cat_finanzas';
 const PF_TEC_VERDE = '#5FD32F';
-let pf_tec = { digitos: '', tipo: 'gasto', cat: { gasto: PF_GASTO_CATS[0], ingreso: PF_INGRESO_CATS[0] }, metodo: 'efectivo', themePrevio: null, ultimoId: null, timerDeshacer: null, fecha: null, nota: '', editId: null };
+let pf_tec = { digitos: '', tipo: 'gasto', cat: { gasto: PF_GASTO_CATS[0], ingreso: PF_INGRESO_CATS[0] }, metodo: 'efectivo', themePrevio: null, ultimoId: null, timerDeshacer: null, fecha: null, nota: '', editId: null, cliente: '', cuando: null, editCobroId: null };
 function pf_tecMetodos() { return PF_QUICK_METODOS.filter(m => m.id !== 'credito' || pf_usaTarjeta()); }
 
 function pf_tecLeer(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -7995,11 +8362,13 @@ function pf_tecPintarAjuste() {
   if (t) t.classList.toggle('on', pf_tecActivo());
 }
 
-function pf_abrirTeclado() {
+function pf_abrirTeclado(tipoInicial) {
   const el = document.getElementById('pfTec');
   if (!el || pf_tecEstaAbierto()) return;
+  pf_guiaCerrar(false);
   pf_tec.digitos = '';
   pf_tec.fecha = null; pf_tec.nota = ''; pf_tec.editId = null;
+  pf_tec.cliente = ''; pf_tec.cuando = null; pf_tec.editCobroId = null;
   const m = pf_tecLeer(PF_TEC_KEY_METODO);
   if (m && PF_QUICK_METODOS.some(x => x.id === m)) pf_tec.metodo = m;
   if (!pf_tecMetodos().some(x => x.id === pf_tec.metodo)) pf_tec.metodo = 'efectivo';
@@ -8008,7 +8377,7 @@ function pf_abrirTeclado() {
     if (PF_GASTO_CATS.includes(c.gasto)) pf_tec.cat.gasto = c.gasto;
     if (PF_INGRESO_CATS.includes(c.ingreso)) pf_tec.cat.ingreso = c.ingreso;
   } catch (e) {}
-  pf_tec.tipo = 'gasto';
+  pf_tec.tipo = tipoInicial === 'cobrar' ? 'cobrar' : 'gasto';
   pf_tecPintar();
   el.classList.add('open');
   el.setAttribute('aria-hidden', 'false');
@@ -8033,7 +8402,9 @@ function pf_cerrarTeclado(irAResumen) {
   clearTimeout(pf_tec.timerDeshacer);
   pf_tec.ultimoId = null;
   pf_tec.editId = null;
+  pf_tec.editCobroId = null;
   const nota = document.getElementById('pfTecNota'); if (nota) nota.blur();
+  const cli = document.getElementById('pfTecCliente'); if (cli) cli.blur();
   if (irAResumen && !document.getElementById('sec-finanzas').classList.contains('active')) switchTabProgrammatic('finanzas');
   // Si se anotó algo, la moneda nueva cae cuando el teclado ya bajó.
   else if (pf_ultimaMoneda && document.getElementById('sec-finanzas').classList.contains('active')) setTimeout(pf_render, 380);
@@ -8087,6 +8458,12 @@ function pf_tecPintarHoy() {
   const hoy = pf_todayStr();
   const txs = pf_data.transactions.filter(t => !t.eliminado && t.date === hoy);
   const el = document.getElementById('pfTecHoy');
+  if (pf_tec.tipo === 'cobrar') {
+    if (pf_tec.editCobroId) { el.innerHTML = '<span>Cambiá lo que necesites y guardá</span>'; return; }
+    const pend = pf_cobrosPend();
+    el.innerHTML = pend.length ? `<span>Te deben ${pf_fmtGs(pend.reduce((s, c) => s + c.monto, 0))} · ${pend.length} ${pend.length === 1 ? 'trabajo' : 'trabajos'}</span>` : '<span>Nadie te debe nada todavía</span>';
+    return;
+  }
   if (pf_tec.editId) { el.innerHTML = '<span>Cambiá lo que necesites y guardá</span>'; return; }
   if (pf_tec.ultimoId) {
     const t = pf_data.transactions.find(x => x.id === pf_tec.ultimoId);
@@ -8115,10 +8492,89 @@ function pf_tecPintarExtra() {
   const conNota = !!pf_tec.nota;
   inp.hidden = !conNota; btn.hidden = conNota;
   if (conNota) inp.value = pf_tec.nota;
-  const edit = !!pf_tec.editId;
-  document.getElementById('pfTecTitulo').textContent = edit ? 'Corregir movimiento' : 'Finanzas';
+  const cobro = pf_tec.tipo === 'cobrar';
+  inp.placeholder = cobro ? 'Qué trabajo (opcional)' : 'Nota (opcional)';
+  btn.textContent = cobro ? '+ Qué trabajo' : '+ Nota';
+  document.getElementById('pfTecFechaPill').hidden = cobro;
+  const edit = !!pf_tec.editId || !!pf_tec.editCobroId;
+  document.getElementById('pfTecTitulo').textContent = pf_tec.editCobroId ? 'Corregir cobro' : (edit ? 'Corregir movimiento' : 'Finanzas');
   document.getElementById('pfTecResumen').hidden = edit;
   document.getElementById('pfTecBorrar').hidden = !edit;
+  document.getElementById('pfTecBorrar').textContent = pf_tec.editCobroId ? 'Borrar cobro' : 'Borrar movimiento';
+}
+
+// Modo "Por cobrar": cliente (con los que ya usaste) y cuándo te pagan.
+function pf_fechaMas(dias) {
+  const d = new Date(); d.setDate(d.getDate() + dias);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function pf_finDeMes() {
+  const d = new Date(); const u = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+  return u.getFullYear() + '-' + String(u.getMonth() + 1).padStart(2, '0') + '-' + String(u.getDate()).padStart(2, '0');
+}
+function pf_tecPintarCobro() {
+  const cobro = pf_tec.tipo === 'cobrar';
+  document.getElementById('pfTecCobro').hidden = !cobro;
+  document.getElementById('pfTecCats').hidden = cobro;
+  if (!cobro) return;
+  const cli = document.getElementById('pfTecCliente');
+  if (document.activeElement !== cli) cli.value = pf_tec.cliente;
+  const vistos = [];
+  activos(pf_data.porCobrar).slice().sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''))).forEach(c => {
+    const n = (c.cliente || '').trim();
+    if (n && !vistos.some(v => v.toLowerCase() === n.toLowerCase())) vistos.push(n);
+  });
+  document.getElementById('pfTecClientes').innerHTML = vistos.slice(0, 8).map(n =>
+    `<button type="button" class="${n === pf_tec.cliente ? 'on' : ''}" data-cliente="${escHtml(n)}">${escHtml(n)}</button>`).join('');
+  if (!pf_tec.cuando) pf_tec.cuando = pf_fechaMas(7);
+  const op = [{ f: pf_fechaMas(7), t: 'En 7 días' }, { f: pf_finDeMes(), t: 'Fin de mes' }];
+  const otra = !op.some(o => o.f === pf_tec.cuando);
+  document.getElementById('pfTecCuando').innerHTML = op.map(o =>
+    `<button type="button" class="${o.f === pf_tec.cuando ? 'on' : ''}" data-cuando="${o.f}">${o.t}</button>`).join('')
+    + `<label class="${otra ? 'on' : ''}">${otra ? 'El ' + pf_formatDate(pf_tec.cuando) : 'Otra fecha'} ▾<input type="date" id="pfTecCuandoFecha" value="${pf_tec.cuando}" aria-label="Fecha en que te pagan"></label>`;
+}
+function pf_tecGuardarCobro(monto) {
+  const cliInp = document.getElementById('pfTecCliente');
+  const cliente = (cliInp.value || pf_tec.cliente).trim();
+  if (!cliente) {
+    cliInp.classList.add('falta'); cliInp.focus();
+    setTimeout(() => cliInp.classList.remove('falta'), 1400);
+    return;
+  }
+  const nota = (document.getElementById('pfTecNota').hidden ? pf_tec.nota : document.getElementById('pfTecNota').value).trim();
+  const fecha = pf_tec.cuando || pf_fechaMas(7);
+  const ahora = new Date().toISOString();
+  if (pf_tec.editCobroId) {
+    const c = pf_data.porCobrar.find(x => x.id === pf_tec.editCobroId);
+    if (c) { Object.assign(c, { cliente, monto, nota, fecha, updatedAt: ahora }); pf_persist(); }
+    pf_cerrarTeclado(false);
+    pf_render();
+    pf_toast('Cobro actualizado');
+    return;
+  }
+  pf_data.porCobrar.push({ id: _uid('pc'), cliente, monto, nota, fecha, cobrado: false, createdAt: ahora, updatedAt: ahora });
+  pf_persist();
+  if (document.getElementById('sec-finanzas').classList.contains('active')) pf_render();
+  document.getElementById('pfTecOkTxt').textContent = 'Anotado por cobrar';
+  document.getElementById('pfTecOkSub').textContent = pf_fmtGs(monto) + ' · ' + cliente + ' · ' + pf_formatDate(fecha);
+  const ok = document.getElementById('pfTecOk');
+  ok.classList.add('show');
+  if (navigator.vibrate) navigator.vibrate(25);
+  setTimeout(() => ok.classList.remove('show'), 1100);
+  pf_tec.digitos = ''; pf_tec.cliente = ''; pf_tec.nota = ''; pf_tec.cuando = null;
+  cliInp.value = ''; cliInp.blur();
+  document.getElementById('pfTecNota').value = '';
+  pf_tecPintar();
+}
+// Tocar un cobro de la lista lo abre en el teclado para corregirlo.
+function pf_editarCobro(id) {
+  const c = pf_data.porCobrar.find(x => x.id === id);
+  if (!c) return;
+  pf_abrirTeclado('cobrar');
+  pf_tec.editCobroId = id;
+  pf_tec.digitos = String(Math.round(c.monto));
+  pf_tec.cliente = c.cliente; pf_tec.nota = c.nota || ''; pf_tec.cuando = c.fecha || null;
+  pf_tecPintar();
 }
 
 // Tocar un movimiento del resumen lo abre en el teclado para corregirlo.
@@ -8137,6 +8593,7 @@ function pf_editarMovimiento(id) {
   pf_tecPintar();
 }
 function pf_tecBorrarEdicion() {
+  if (pf_tec.editCobroId) { const c = pf_tec.editCobroId; pf_cerrarTeclado(false); pf_borrarCobro(c); return; }
   const id = pf_tec.editId;
   pf_cerrarTeclado(true);
   if (id) pf_deleteTransaction(id);
@@ -8147,7 +8604,17 @@ function pf_tecPintar() {
   document.getElementById('pfTecIngreso').classList.toggle('on', pf_tec.tipo === 'ingreso');
   document.getElementById('pfTecGasto').setAttribute('aria-pressed', pf_tec.tipo === 'gasto');
   document.getElementById('pfTecIngreso').setAttribute('aria-pressed', pf_tec.tipo === 'ingreso');
-  document.getElementById('pfTecCta').textContent = pf_tec.editId ? 'Guardar cambios' : (pf_tec.tipo === 'gasto' ? 'Anotar gasto' : 'Anotar ingreso');
+  const bc = document.getElementById('pfTecCobrar');
+  bc.classList.toggle('on', pf_tec.tipo === 'cobrar');
+  bc.setAttribute('aria-pressed', pf_tec.tipo === 'cobrar');
+  // Un movimiento ya anotado no se convierte en cobro, y un cobro se corrige sin cambiar de tipo.
+  bc.hidden = !!pf_tec.editId;
+  document.querySelector('.pf-tec-seg').hidden = !!pf_tec.editCobroId;
+  document.querySelector('.pf-tec-seg').style.gridTemplateColumns = pf_tec.editId ? '1fr 1fr' : '';
+  document.getElementById('pfTecCta').textContent = (pf_tec.editId || pf_tec.editCobroId) ? 'Guardar cambios'
+    : ({ gasto: 'Anotar gasto', ingreso: 'Anotar ingreso', cobrar: 'Anotar por cobrar' })[pf_tec.tipo];
+  document.getElementById('pfTec').classList.toggle('cobro', pf_tec.tipo === 'cobrar');
+  pf_tecPintarCobro();
   pf_tecPintarExtra();
   pf_tecPintarMonto();
   pf_tecPintarMetodo();
@@ -8163,6 +8630,7 @@ function pf_tecGuardar() {
     if (navigator.vibrate) navigator.vibrate(40);
     return;
   }
+  if (pf_tec.tipo === 'cobrar') { pf_tecGuardarCobro(amount); return; }
   const tipo = pf_tec.tipo;
   const category = pf_tec.cat[tipo];
   const esGasto = tipo === 'gasto';
@@ -8254,7 +8722,7 @@ function pf_tecDeshacer() {
   // En la Mac: números, Borrar, Enter para anotar y Esc para ir al resumen.
   document.addEventListener('keydown', e => {
     if (!pf_tecEstaAbierto() || e.metaKey || e.ctrlKey || e.altKey) return;
-    if (e.target && e.target.id === 'pfTecNota') { if (e.key === 'Enter') { e.preventDefault(); pf_tecGuardar(); } return; }
+    if (e.target && (e.target.id === 'pfTecNota' || e.target.id === 'pfTecCliente')) { if (e.key === 'Enter') { e.preventDefault(); pf_tecGuardar(); } return; }
     if (e.target && e.target.matches && e.target.matches('input, select, textarea')) return;
     if (/^[0-9]$/.test(e.key)) { pf_tecTecla(e.key); e.preventDefault(); }
     else if (e.key === 'Backspace') { pf_tecTecla('borrar'); e.preventDefault(); }
@@ -8265,6 +8733,21 @@ function pf_tecDeshacer() {
     pf_tec.fecha = e.target.value || null; pf_tecPintarExtra();
   });
   document.getElementById('pfTecNota').addEventListener('input', e => { pf_tec.nota = e.target.value; });
+  document.getElementById('pfTecCliente').addEventListener('input', e => {
+    pf_tec.cliente = e.target.value;
+    document.querySelectorAll('#pfTecClientes [data-cliente]').forEach(b => b.classList.toggle('on', b.dataset.cliente === pf_tec.cliente.trim()));
+  });
+  document.getElementById('pfTecClientes').addEventListener('click', e => {
+    const b = e.target.closest('[data-cliente]'); if (!b) return;
+    pf_tec.cliente = b.dataset.cliente; pf_tecPintarCobro();
+  });
+  document.getElementById('pfTecCuando').addEventListener('click', e => {
+    const b = e.target.closest('[data-cuando]'); if (!b) return;
+    pf_tec.cuando = b.dataset.cuando; pf_tecPintarCobro();
+  });
+  document.getElementById('pfTecCuando').addEventListener('change', e => {
+    if (e.target.id === 'pfTecCuandoFecha' && e.target.value) { pf_tec.cuando = e.target.value; pf_tecPintarCobro(); }
+  });
   document.getElementById('pfTecNota').addEventListener('blur', e => { if (!e.target.value.trim()) { pf_tec.nota = ''; pf_tecPintarExtra(); } });
   pf_tecPintarAjuste();
 })();
@@ -8272,6 +8755,7 @@ function pf_tecDeshacer() {
 pf_loadData();
 asegurarIdsYTimestamps(pf_data.transactions, 'tx');
 asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
+asegurarIdsYTimestamps(pf_data.porCobrar, 'pc');
 pf_pintarAjusteTarjeta();
 
 // ── WEATHER ──
@@ -9764,6 +10248,7 @@ async function saveToFirestore() {
         normalizarIdsRemoto(remoteState.metas);
         normalizarIdsRemoto(remotePf.transactions);
         normalizarIdsRemoto(remotePf.fixedPayments);
+        normalizarIdsRemoto(remotePf.porCobrar);
         // Migra hábitos legacy del remoto (idempotente) ANTES de mergear — así, si el
         // remoto todavía no pasó por esta migración, sus ids se calculan con el mismo
         // criterio determinístico (posición) que los locales y coinciden en vez de
@@ -9790,6 +10275,7 @@ async function saveToFirestore() {
     if (remotePf) {
       pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
       pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
+      pf_data.porCobrar     = mergeCollectionById(pf_data.porCobrar, remotePf.porCobrar);
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     localStorage.setItem(PF_STORAGE_KEY, JSON.stringify(pf_data));
@@ -9947,8 +10433,10 @@ async function restaurarBackup(backupId) {
   localStorage.setItem(STORAGE_KEY + '_ts', data.updatedAt);
   if (data.pulsoData) {
     pf_data = JSON.parse(data.pulsoData);
+    pf_data.porCobrar = pf_data.porCobrar || [];
     asegurarIdsYTimestamps(pf_data.transactions, 'tx');
     asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
+    asegurarIdsYTimestamps(pf_data.porCobrar, 'pc');
     localStorage.setItem(PF_STORAGE_KEY, data.pulsoData);
   }
   renderAll();
@@ -9981,6 +10469,7 @@ function attachFirestoreListener(uid) {
       normalizarIdsRemoto(remoteState.metas);
       normalizarIdsRemoto(remotePf.transactions);
       normalizarIdsRemoto(remotePf.fixedPayments);
+        normalizarIdsRemoto(remotePf.porCobrar);
       // Migra hábitos legacy del remoto (idempotente) ANTES de mergear — ver nota junto
       // a migrarHabitosLegacy sobre por qué el id tiene que ser determinístico acá.
       remoteState.habitoChecks = migrarHabitosLegacy(remoteState.habitos, remoteState.habitoChecks);
@@ -10003,6 +10492,7 @@ function attachFirestoreListener(uid) {
       );
       pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
       pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
+      pf_data.porCobrar     = mergeCollectionById(pf_data.porCobrar, remotePf.porCobrar);
 
       // Guarda de sanidad del lado de lectura: esto ya NO puede pisar hábitos locales
       // (el merge por id de arriba es aditivo, nunca destructivo), así que acá queda
@@ -10167,6 +10657,7 @@ document.addEventListener('visibilitychange', async () => {
     normalizarIdsRemoto(remoteState.metas);
     normalizarIdsRemoto(remotePf.transactions);
     normalizarIdsRemoto(remotePf.fixedPayments);
+        normalizarIdsRemoto(remotePf.porCobrar);
     remoteState.habitoChecks = migrarHabitosLegacy(remoteState.habitos, remoteState.habitoChecks);
 
     const localTs  = localStorage.getItem(STORAGE_KEY + '_ts') || '0';
@@ -10182,6 +10673,7 @@ document.addEventListener('visibilitychange', async () => {
     );
     pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
     pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
+    pf_data.porCobrar     = mergeCollectionById(pf_data.porCobrar, remotePf.porCobrar);
 
     // Misma guarda de sanidad del lado de lectura que en attachFirestoreListener: ya es
     // solo un aviso, el merge por id de arriba es el que realmente protege los hábitos.
