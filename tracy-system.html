@@ -3088,126 +3088,72 @@
     .afirm-cat-grid { grid-template-columns:repeat(2,1fr); }
   }
 
-  /* ── ONBOARDING ── */
-  .onboarding-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    background: #0F1A2E;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 24px;
-    overflow: hidden;
-  }
-  .onboarding-overlay.open { display: flex; }
-  .ob-skip-btn {
-    position: absolute;
-    top: max(20px, env(safe-area-inset-top));
-    right: 20px;
-    background: rgba(255,255,255,0.1);
-    border: none;
-    border-radius: 99px;
-    color: rgba(255,255,255,0.6);
-    font-family: 'Geist', sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 7px 14px;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-  }
-  .ob-skip-btn:hover { background: rgba(255,255,255,0.18); color: #FFFFFF; }
-  .ob-step {
-    width: 100%;
-    max-width: 480px;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    animation: obFadeSlide 0.4s ease;
-  }
-  @keyframes obFadeSlide { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
-  .ob-emoji-bienvenida { font-size: 72px; margin-bottom: 24px; animation: av-float 2s ease-in-out infinite alternate; }
-  .ob-title {
-    font-family: 'Geist', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    color: #FFFFFF;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    line-height: 1.25;
-    margin-bottom: 12px;
-  }
-  .ob-cita { display: inline-block; margin-top: 8px; font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: .06em; color: rgba(255,255,255,0.55); }
-  .ob-subtitle { font-size: 16px; color: rgba(255,255,255,0.7); line-height: 1.5; margin-bottom: 36px; }
-  .ob-icon { width: 64px; height: 64px; color: #E8450A; margin-bottom: 20px; }
-  .ob-title-light {
-    font-family: 'Geist', sans-serif;
-    font-size: 24px;
-    font-weight: 800;
-    color: #FFFFFF;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 12px;
-  }
-  .ob-desc { font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.6; margin-bottom: 16px; }
-  .ob-quote { font-size: 13px; font-style: italic; color: #E8450A; margin-bottom: 24px; line-height: 1.5; }
-  .ob-input-row { display: flex; gap: 8px; width: 100%; margin-bottom: 10px; }
-  .ob-input-row input {
-    flex: 1;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 10px;
-    padding: 12px 14px;
-    color: #FFFFFF;
-    font-family: 'Geist', sans-serif;
-    font-size: max(0.9rem, 16px);
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .ob-input-row input::placeholder { color: rgba(255,255,255,0.4); }
-  .ob-input-row input:focus { border-color: #E8450A; }
-  .ob-add-btn {
-    background: #E8450A;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 10px;
-    padding: 0 18px;
-    font-family: 'Geist', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .ob-confirm { font-size: 13px; color: #4CAF87; margin-bottom: 14px; }
-  .ob-btn-primary {
-    margin-top: 20px;
-    background: #E8450A;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 14px;
-    padding: 15px 32px;
-    font-family: 'Geist', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    width: 100%;
-    max-width: 280px;
-    transition: transform 0.15s;
-  }
-  .ob-btn-primary:hover { transform: translateY(-2px); }
-  .ob-btn-final { max-width: 340px; padding: 17px 32px; font-size: 16px; }
-  .ob-checklist { list-style: none; text-align: left; margin: 8px 0 24px; }
-  .ob-checklist li { font-size: 14px; color: rgba(255,255,255,0.85); padding: 6px 0; }
-  .ob-dots { display: flex; gap: 8px; position: absolute; bottom: max(28px, env(safe-area-inset-bottom)); }
-  .ob-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.25); transition: background 0.2s, transform 0.2s; }
-  .ob-dot.active { background: #E8450A; transform: scale(1.3); }
-  @media (max-width: 480px) {
-    .ob-title { font-size: 22px; }
-    .ob-title-light { font-size: 19px; }
-    .ob-emoji-bienvenida { font-size: 56px; }
+  /* ── BIENVENIDA (primera vez): sigue de la entrada, misma mancha naranja; 4 pantallas ── */
+  .onboarding-overlay { --ob-bg: #FFFFFF; --ob-fg: #1C1612; --ob-muted: #85766C; --ob-line: #EDE5DF; --ob-chip: #F6F1EE;
+    position: fixed; inset: 0; z-index: 99990; background: var(--ob-bg); color: var(--ob-fg); display: none; overflow: hidden;
+    font-family: 'Geist', sans-serif; }
+  body.dark-mode .onboarding-overlay { --ob-bg: #120E0C; --ob-fg: #F7EFEA; --ob-muted: #A8968A; --ob-line: #2A221E; --ob-chip: #1F1916; }
+  .onboarding-overlay.open { display: block; }
+  .ob-marco { position: relative; height: 100%; max-width: 440px; margin: 0 auto; }
+  .ob-barra { position: absolute; z-index: 2; top: calc(env(safe-area-inset-top, 0px) + 18px); left: 24px; right: 24px; display: flex; gap: 6px; transition: opacity .3s; }
+  .ob-barra span { flex: 1; height: 3px; border-radius: 3px; background: var(--ob-line); overflow: hidden; }
+  .ob-barra i { display: block; height: 100%; width: 0; background: #E8450A; transition: width .45s ease; }
+  .ob-barra.oculta { opacity: 0; }
+  .ob-paso { position: absolute; inset: 0; display: flex; flex-direction: column; overflow-y: auto;
+    padding: calc(env(safe-area-inset-top, 0px) + 52px) 24px calc(env(safe-area-inset-bottom, 0px) + 24px);
+    opacity: 0; visibility: hidden; transform: translateX(24px); transition: opacity .4s ease, transform .5s cubic-bezier(.2,.8,.2,1), visibility .4s; }
+  .ob-paso.activo { opacity: 1; visibility: visible; transform: none; }
+  .ob-paso.atras { transform: translateX(-24px); }
+  .ob-centro { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; min-height: min-content; }
+  .ob-orbe { position: relative; display: grid; place-items: center; flex-shrink: 0; width: 170px; height: 170px; margin: 0 auto 18px; }
+  .ob-orbe .splash-mancha { inset: -26%; animation: none; }
+  .ob-orbe .splash-gira { filter: blur(26px) saturate(1.1); }
+  .ob-orbe .splash-logo { width: 92px; height: 92px; }
+  .ob-orbe.mini { width: 46px; height: 46px; margin: 0; }
+  .ob-orbe.mini .splash-mancha { inset: -40%; }
+  .ob-orbe.mini .splash-gira { filter: blur(10px); }
+  .ob-orbe.mini .splash-logo { width: 26px; height: 26px; }
+  .ob-eyebrow { font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: #E8450A; }
+  .ob-h { font-size: 30px; line-height: 1.08; letter-spacing: -.025em; font-weight: 800; margin: 0; text-wrap: balance; }
+  .ob-txt { font-size: 15px; line-height: 1.5; color: var(--ob-muted); margin: 0; }
+  .ob-cta { margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+  .ob-btn { font: inherit; font-weight: 600; font-size: 16px; border: 0; border-radius: 16px; padding: 16px; background: #E8450A; color: #fff; cursor: pointer; transition: transform .15s, opacity .2s; }
+  .ob-btn:active { transform: scale(.98); }
+  .ob-btn[disabled] { opacity: .35; cursor: default; }
+  .ob-btn-sec { font: inherit; font-size: 14px; background: none; border: 0; color: var(--ob-muted); cursor: pointer; padding: 6px; }
+  .ob-btn:focus-visible, .ob-btn-sec:focus-visible, .ob-chip:focus-visible, .ob-campo input:focus-visible, .ob-campo button:focus-visible { outline: 2px solid #E8450A; outline-offset: 2px; }
+  #obPaso1 .ob-centro, #obPaso4 .ob-centro { align-items: center; text-align: center; }
+  .ob-pilares { display: flex; flex-direction: column; gap: 10px; text-align: left; width: 100%; }
+  .ob-pilar { display: grid; grid-template-columns: 28px minmax(0,1fr); gap: 12px; align-items: start; font-size: 14px; line-height: 1.4; }
+  .ob-pilar b { display: block; font-weight: 600; }
+  .ob-pilar span { color: var(--ob-muted); }
+  .ob-pilar .n { width: 28px; height: 28px; border-radius: 8px; background: var(--ob-chip); color: #E8450A; display: grid; place-items: center; font-family: 'Geist Mono', monospace; font-size: 12px; }
+  .ob-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ob-chip { font: inherit; font-size: 14px; border: 1.5px solid var(--ob-line); background: var(--ob-chip); color: var(--ob-fg); border-radius: 999px; padding: 9px 14px; cursor: pointer; transition: background .2s, border-color .2s, color .2s; }
+  .ob-chip[aria-pressed="true"] { background: #E8450A; border-color: #E8450A; color: #fff; }
+  .ob-campo { display: flex; gap: 8px; }
+  .ob-campo input { flex: 1; min-width: 0; font: inherit; font-size: 16px; border: 1.5px solid var(--ob-line); background: transparent; color: var(--ob-fg); border-radius: 12px; padding: 11px 12px; }
+  .ob-campo input::placeholder { color: var(--ob-muted); }
+  .ob-campo button { font: inherit; font-size: 14px; font-weight: 600; border: 0; border-radius: 12px; padding: 0 16px; background: var(--ob-chip); color: #E8450A; cursor: pointer; }
+  .ob-cuenta { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--ob-muted); }
+  .ob-lista { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .ob-lista li { display: flex; align-items: center; gap: 10px; font-size: 15px; padding: 12px; border-radius: 12px; background: var(--ob-chip); animation: obEntra .35s ease both; }
+  .ob-lista .o { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #E8450A; flex-shrink: 0; }
+  .ob-lista .t { min-width: 0; overflow-wrap: anywhere; }
+  .ob-lista .x { margin-left: auto; background: none; border: 0; color: var(--ob-muted); cursor: pointer; font-size: 18px; line-height: 1; padding: 0 4px; }
+  .ob-resumen { display: flex; gap: 10px; justify-content: center; }
+  .ob-resumen div { padding: 10px 18px; border-radius: 14px; background: var(--ob-chip); }
+  .ob-resumen b { display: block; font-size: 24px; font-weight: 800; color: #E8450A; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .ob-resumen span { font-size: 12px; color: var(--ob-muted); }
+  #obPaso4 .sp-fuste, #obPaso4 .sp-capitel { animation: none; }
+  #obPaso4.activo .sp-fuste { animation: spFuste .5s cubic-bezier(.2,.8,.2,1) both; }
+  #obPaso4.activo .sp-f1 { animation-delay: .2s; } #obPaso4.activo .sp-f2 { animation-delay: .32s; } #obPaso4.activo .sp-f3 { animation-delay: .44s; }
+  #obPaso4.activo .sp-capitel { animation: spCapitel .6s cubic-bezier(.3,1.4,.5,1) .7s both; }
+  #obPaso1 .sp-base, #obPaso1 .sp-fuste, #obPaso1 .sp-capitel, .ob-orbe.mini rect, #obPaso4 .sp-base { animation: none; }
+  @keyframes obEntra { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .ob-paso { transition: opacity .2s; transform: none !important; }
+    .ob-lista li, #obPaso4.activo .sp-fuste, #obPaso4.activo .sp-capitel { animation: none !important; }
   }
 
   /* ── FINANZAS (Pulso Financiero) ── */
@@ -4267,72 +4213,65 @@
 </div>
 
 <!-- ══ ONBOARDING ══ -->
-<div class="onboarding-overlay" id="onboardingOverlay">
-  <button class="ob-skip-btn" onclick="saltarOnboarding()">Saltar</button>
+<!-- ══ BIENVENIDA (primera vez): frase y Comenzar, primeros hábitos, tareas de hoy y listo ══ -->
+<div class="onboarding-overlay" id="onboardingOverlay" role="dialog" aria-modal="true" aria-label="Bienvenida a Steadfast">
+  <div class="ob-marco">
+    <div class="ob-barra oculta" id="obBarra" aria-hidden="true"><span><i></i></span><span><i></i></span><span><i></i></span></div>
 
-  <div class="ob-step" id="obStep1">
-    <div class="ob-emoji-bienvenida">🦊</div>
-    <h1 class="ob-title">BIENVENIDO A STEADFAST</h1>
-    <p class="ob-subtitle">“Así que dejen que crezca, pues una vez que su constancia se haya desarrollado plenamente, serán perfectos y completos, y no les faltará nada.”<br><span class="ob-cita">Santiago 1:4</span></p>
-    <button class="ob-btn-primary" onclick="obSiguiente()">Comenzar →</button>
-  </div>
+    <section class="ob-paso activo" id="obPaso1">
+      <div class="ob-centro">
+        <div class="ob-orbe" aria-hidden="true"><div class="splash-mancha"><div class="splash-gira"><span class="splash-blob b1"></span><span class="splash-blob b2"></span><span class="splash-blob b3"></span><span class="splash-blob b4"></span><span class="splash-blob b5"></span></div><div class="splash-grano"></div></div><svg class="splash-logo" viewBox="0 0 100 100"><g transform="translate(0,-1)"><rect class="sp-base" x="29" y="74" width="42" height="8" rx="2"/><rect class="sp-fuste sp-f1" x="36" y="32" width="7" height="38" rx="2"/><rect class="sp-fuste sp-f2" x="46.5" y="32" width="7" height="38" rx="2"/><rect class="sp-fuste sp-f3" x="57" y="32" width="7" height="38" rx="2"/><rect class="sp-capitel" x="29" y="20" width="42" height="8" rx="2"/></g></svg></div>
+        <h1 class="ob-h">La constancia se construye de a un día.</h1>
+        <p class="ob-txt">Steadfast te ayuda a sostener lo que importa, aunque pese. Armemos tu base en un minuto.</p>
+        <div class="ob-pilares">
+          <div class="ob-pilar"><span class="n">1</span><div><b>Hábitos</b><span>lo que repetís cada día</span></div></div>
+          <div class="ob-pilar"><span class="n">2</span><div><b>Tareas</b><span>lo que hacés hoy, con tu rana primero</span></div></div>
+        </div>
+      </div>
+      <div class="ob-cta"><button class="ob-btn" type="button" onclick="obIr(2)">Comenzar</button><button class="ob-btn-sec" type="button" onclick="saltarOnboarding()">Ahora no</button></div>
+    </section>
 
-  <div class="ob-step" id="obStep2" style="display:none">
-    <i data-lucide="check-circle" class="ob-icon"></i>
-    <h2 class="ob-title-light">CONSTRUÍ TUS HÁBITOS</h2>
-    <p class="ob-desc">Registrá tus hábitos diarios y seguí tu progreso con rachas. Cada día que completás un hábito te acerca más a tu mejor versión.</p>
-    <p class="ob-quote">"Los hábitos exitosos construyen el futuro que querés."</p>
-    <div class="ob-input-row">
-      <input type="text" id="obHabitoInput" placeholder="¿Cuál es tu primer hábito?"/>
-      <button class="ob-add-btn" onclick="obAgregarHabito()">Agregar</button>
-    </div>
-    <div class="ob-confirm" id="obHabitoConfirm" style="display:none">✅ ¡Hábito agregado!</div>
-    <button class="ob-btn-primary" onclick="obSiguiente()">Siguiente →</button>
-  </div>
+    <section class="ob-paso" id="obPaso2" aria-label="Tus primeros hábitos">
+      <div class="ob-centro">
+        <div class="ob-orbe mini" aria-hidden="true"><div class="splash-mancha"><div class="splash-gira"><span class="splash-blob b1"></span><span class="splash-blob b2"></span><span class="splash-blob b3"></span><span class="splash-blob b5"></span></div></div><svg class="splash-logo" viewBox="0 0 100 100"><g transform="translate(0,-1)"><rect class="sp-base" x="29" y="74" width="42" height="8" rx="2"/><rect class="sp-fuste sp-f1" x="36" y="32" width="7" height="38" rx="2"/><rect class="sp-fuste sp-f2" x="46.5" y="32" width="7" height="38" rx="2"/><rect class="sp-fuste sp-f3" x="57" y="32" width="7" height="38" rx="2"/><rect class="sp-capitel" x="29" y="20" width="42" height="8" rx="2"/></g></svg></div>
+        <span class="ob-eyebrow">Paso 1 de 2 · Hábitos</span>
+        <h2 class="ob-h">¿Qué querés sostener cada día?</h2>
+        <p class="ob-txt">Elegí uno o más. Empezar con pocos es mejor que abandonar muchos.</p>
+        <div class="ob-chips" id="obChipsHab">
+          <button type="button" class="ob-chip" aria-pressed="false" data-cat="🧠 Mente">Leer 20 min</button>
+          <button type="button" class="ob-chip" aria-pressed="false" data-cat="❤️ Personal">Orar</button>
+          <button type="button" class="ob-chip" aria-pressed="false" data-cat="💪 Cuerpo">Entrenar</button>
+          <button type="button" class="ob-chip" aria-pressed="false" data-cat="💪 Cuerpo">Tomar 2 L de agua</button>
+          <button type="button" class="ob-chip" aria-pressed="false" data-cat="💪 Cuerpo">Dormir antes de las 23</button>
+          <button type="button" class="ob-chip" aria-pressed="false" data-cat="❤️ Personal">Leer la Biblia</button>
+        </div>
+        <div class="ob-campo"><input id="obHabitoInput" type="text" placeholder="Otro hábito…" aria-label="Otro hábito" enterkeyhint="done"><button type="button" onclick="obAgregarHabito()">Agregar</button></div>
+        <span class="ob-cuenta" id="obCuentaHab">0 elegidos</span>
+      </div>
+      <div class="ob-cta"><button class="ob-btn" id="obSigHab" type="button" onclick="obIr(3)" disabled>Siguiente</button><button class="ob-btn-sec" type="button" onclick="obIr(1)">Volver</button></div>
+    </section>
 
-  <div class="ob-step" id="obStep3" style="display:none">
-    <i data-lucide="target" class="ob-icon"></i>
-    <h2 class="ob-title-light">DEFINÍ TUS METAS</h2>
-    <p class="ob-desc">Una meta no escrita es solo un deseo. Escribí tu primera meta con fecha límite.</p>
-    <div class="ob-input-row">
-      <input type="text" id="obMetaInput" placeholder="¿Cuál es tu meta principal?"/>
-    </div>
-    <div class="ob-input-row">
-      <input type="date" id="obMetaFecha" placeholder="¿Para cuándo?"/>
-      <button class="ob-add-btn" onclick="obAgregarMeta()">Agregar</button>
-    </div>
-    <div class="ob-confirm" id="obMetaConfirm" style="display:none">✅ ¡Meta agregada!</div>
-    <button class="ob-btn-primary" onclick="obSiguiente()">Siguiente →</button>
-  </div>
+    <section class="ob-paso" id="obPaso3" aria-label="Tus primeras tareas">
+      <div class="ob-centro">
+        <div class="ob-orbe mini" aria-hidden="true"><div class="splash-mancha"><div class="splash-gira"><span class="splash-blob b1"></span><span class="splash-blob b2"></span><span class="splash-blob b3"></span><span class="splash-blob b5"></span></div></div><svg class="splash-logo" viewBox="0 0 100 100"><g transform="translate(0,-1)"><rect class="sp-base" x="29" y="74" width="42" height="8" rx="2"/><rect class="sp-fuste sp-f1" x="36" y="32" width="7" height="38" rx="2"/><rect class="sp-fuste sp-f2" x="46.5" y="32" width="7" height="38" rx="2"/><rect class="sp-fuste sp-f3" x="57" y="32" width="7" height="38" rx="2"/><rect class="sp-capitel" x="29" y="20" width="42" height="8" rx="2"/></g></svg></div>
+        <span class="ob-eyebrow">Paso 2 de 2 · Tareas</span>
+        <h2 class="ob-h">¿Qué tenés que hacer hoy?</h2>
+        <p class="ob-txt">Anotá hasta tres. Después, en Tareas, elegís cuál es tu rana del día.</p>
+        <div class="ob-campo"><input id="obTareaInput" type="text" placeholder="Ej: Terminar el informe" aria-label="Nueva tarea" enterkeyhint="done"><button type="button" onclick="obAgregarTarea()">Agregar</button></div>
+        <ul class="ob-lista" id="obListaTareas"></ul>
+      </div>
+      <div class="ob-cta"><button class="ob-btn" id="obSigTar" type="button" onclick="obIr(4)">Saltar por ahora</button><button class="ob-btn-sec" type="button" onclick="obIr(2)">Volver</button></div>
+    </section>
 
-  <div class="ob-step" id="obStep4" style="display:none">
-    <i data-lucide="wallet" class="ob-icon"></i>
-    <h2 class="ob-title-light">CONTROLÁ TUS FINANZAS</h2>
-    <p class="ob-desc">Tocá el botón <strong>+</strong> flotante desde cualquier pantalla para anotar un ingreso o gasto en segundos, sin salir de lo que estás haciendo.</p>
-    <p class="ob-quote">"No gastes lo que no has ganado." — Thomas Jefferson</p>
-    <button class="ob-btn-primary" onclick="obSiguiente()">Siguiente →</button>
-  </div>
-
-  <div class="ob-step" id="obStep5" style="display:none">
-    <div class="ob-emoji-bienvenida">🎯</div>
-    <h1 class="ob-title" id="obFinalTitle">¡TODO LISTO!</h1>
-    <ul class="ob-checklist">
-      <li>✅ Registrar hábitos diarios</li>
-      <li>✅ Hacer seguimiento de metas</li>
-      <li>✅ Usar el Pomodoro para concentrarte</li>
-      <li>✅ Visualizar tus metas cada mañana</li>
-      <li>✅ Registrar tus movimientos financieros</li>
-    </ul>
-    <p class="ob-quote">"El éxito es el resultado de hacer pequeñas cosas correctamente cada día."</p>
-    <button class="ob-btn-primary ob-btn-final" onclick="completarOnboarding()">¡EMPEZAR MI SISTEMA! →</button>
-  </div>
-
-  <div class="ob-dots" id="obDots">
-    <span class="ob-dot active" data-dot="1"></span>
-    <span class="ob-dot" data-dot="2"></span>
-    <span class="ob-dot" data-dot="3"></span>
-    <span class="ob-dot" data-dot="4"></span>
-    <span class="ob-dot" data-dot="5"></span>
+    <section class="ob-paso" id="obPaso4" aria-label="Todo listo">
+      <div class="ob-centro">
+        <div class="ob-orbe" aria-hidden="true"><div class="splash-mancha"><div class="splash-gira"><span class="splash-blob b1"></span><span class="splash-blob b2"></span><span class="splash-blob b3"></span><span class="splash-blob b4"></span><span class="splash-blob b5"></span></div><div class="splash-grano"></div></div><svg class="splash-logo" viewBox="0 0 100 100"><g transform="translate(0,-1)"><rect class="sp-base" x="29" y="74" width="42" height="8" rx="2"/><rect class="sp-fuste sp-f1" x="36" y="32" width="7" height="38" rx="2"/><rect class="sp-fuste sp-f2" x="46.5" y="32" width="7" height="38" rx="2"/><rect class="sp-fuste sp-f3" x="57" y="32" width="7" height="38" rx="2"/><rect class="sp-capitel" x="29" y="20" width="42" height="8" rx="2"/></g></svg></div>
+        <h2 class="ob-h" id="obFinalTitle">Tu columna está en pie.</h2>
+        <div class="ob-resumen"><div><b id="obNHab">0</b><span>hábitos</span></div><div><b id="obNTar">0</b><span>tareas hoy</span></div></div>
+        <p class="ob-txt">“Dejen que crezca.” Santiago 1:4</p>
+      </div>
+      <div class="ob-cta"><button class="ob-btn" type="button" onclick="completarOnboarding()">Entrar a Steadfast</button><button class="ob-btn-sec" type="button" onclick="obIr(3)">Volver</button></div>
+    </section>
   </div>
 </div>
 
@@ -9569,42 +9508,83 @@ if (window.lucide) lucide.createIcons();
 // (y iOS en particular) exigen que salga de un gesto del usuario. Se pide desde el botón
 // de activar recordatorio (activarRecordatorio → pedirPermisoNotificaciones).
 
-// ── ONBOARDING ──
-let obStepActual = 1;
-function obMostrarPaso(n) {
-  document.querySelectorAll('.ob-step').forEach(s => s.style.display = 'none');
-  document.getElementById('obStep' + n).style.display = 'flex';
-  document.querySelectorAll('.ob-dot').forEach(d => d.classList.toggle('active', Number(d.dataset.dot) === n));
-  obStepActual = n;
-  if (n === 5) {
-    document.getElementById('obFinalTitle').textContent = `¡TODO LISTO, ${obtenerNombreUsuario().toUpperCase()}!`;
+// ── BIENVENIDA (primera vez) ──
+// Los hábitos y tareas se eligen en pantalla y se guardan todos juntos al tocar "Entrar a Steadfast".
+const OB_COLOR_CAT = { '🧠 Mente': '#5B8CFF', '💪 Cuerpo': '#4CAF87', '❤️ Personal': '#C94C6B', '🎯 Productividad': '#C9A84C' };
+let obPasoActual = 1;
+let obTareas = [];
+function obIr(n) {
+  const prev = document.getElementById('obPaso' + obPasoActual);
+  document.querySelectorAll('.ob-paso').forEach(p => p.classList.remove('activo', 'atras'));
+  if (prev && n > obPasoActual) prev.classList.add('atras');
+  document.getElementById('obPaso' + n).classList.add('activo');
+  obPasoActual = n;
+  const barra = document.getElementById('obBarra');
+  barra.classList.toggle('oculta', n === 1);
+  barra.querySelectorAll('i').forEach((b, i) => { b.style.width = i < n - 1 ? '100%' : '0'; });
+  if (n === 4) {
+    document.getElementById('obNHab').textContent = obHabitosElegidos().length;
+    document.getElementById('obNTar').textContent = obTareas.length;
+    document.getElementById('obFinalTitle').textContent = `Tu columna está en pie, ${obtenerNombreUsuario()}.`;
   }
-  if (window.lucide) lucide.createIcons();
 }
-function obSiguiente() {
-  if (obStepActual < 5) obMostrarPaso(obStepActual + 1);
+function obHabitosElegidos() { return [...document.querySelectorAll('#obChipsHab .ob-chip[aria-pressed="true"]')]; }
+function obActualizarHabitos() {
+  const n = obHabitosElegidos().length;
+  document.getElementById('obCuentaHab').textContent = n + (n === 1 ? ' elegido' : ' elegidos');
+  document.getElementById('obSigHab').disabled = n === 0;
 }
+document.getElementById('obChipsHab').addEventListener('click', e => {
+  const c = e.target.closest('.ob-chip'); if (!c) return;
+  c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') !== 'true');
+  obActualizarHabitos();
+});
 function obAgregarHabito() {
   const input = document.getElementById('obHabitoInput');
   const nombre = input.value.trim();
   if (!nombre) return;
-  state.habitos.push({ id: _uid('habito'), nombre, categoria: '🎯 Productividad', color: '#C9A84C', updatedAt: new Date().toISOString() });
-  saveState();
+  const c = document.createElement('button');
+  c.type = 'button'; c.className = 'ob-chip'; c.dataset.cat = '🎯 Productividad'; c.setAttribute('aria-pressed', 'true'); c.textContent = nombre;
+  document.getElementById('obChipsHab').appendChild(c);
   input.value = '';
-  document.getElementById('obHabitoConfirm').style.display = 'block';
+  obActualizarHabitos();
 }
-function obAgregarMeta() {
-  const nombre = document.getElementById('obMetaInput').value.trim();
-  const fecha = document.getElementById('obMetaFecha').value;
-  if (!nombre) return;
-  const ahora = new Date().toISOString();
-  state.metas.push({ id: _uid('meta'), titulo: nombre, razon: '', fecha, steps: [], creado: ahora, updatedAt: ahora });
-  saveState();
-  document.getElementById('obMetaInput').value = '';
-  document.getElementById('obMetaConfirm').style.display = 'block';
+function obPintarTareas() {
+  const lista = document.getElementById('obListaTareas');
+  lista.innerHTML = '';
+  obTareas.forEach((t, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = '<span class="o"></span><span class="t"></span><button class="x" type="button" aria-label="Quitar">×</button>';
+    li.querySelector('.t').textContent = t;
+    li.querySelector('.x').onclick = () => { obTareas.splice(i, 1); obPintarTareas(); };
+    lista.appendChild(li);
+  });
+  const input = document.getElementById('obTareaInput');
+  input.disabled = obTareas.length >= 3;
+  input.placeholder = obTareas.length >= 3 ? 'Con tres alcanza para hoy' : 'Ej: Terminar el informe';
+  document.getElementById('obSigTar').textContent = obTareas.length ? 'Siguiente' : 'Saltar por ahora';
 }
-function saltarOnboarding() { completarOnboarding(); }
+function obAgregarTarea() {
+  const input = document.getElementById('obTareaInput');
+  const texto = input.value.trim();
+  if (!texto || obTareas.length >= 3) return;
+  obTareas.push(texto);
+  input.value = '';
+  obPintarTareas();
+}
+document.getElementById('obHabitoInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); obAgregarHabito(); } });
+document.getElementById('obTareaInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); obAgregarTarea(); } });
+function saltarOnboarding() { obTareas = []; document.querySelectorAll('#obChipsHab .ob-chip').forEach(c => c.setAttribute('aria-pressed', 'false')); completarOnboarding(); }
 function completarOnboarding() {
+  const ahora = new Date().toISOString();
+  obHabitosElegidos().forEach(c => {
+    const nombre = c.textContent.trim();
+    if (state.habitos.some(h => (h.nombre || '').toLowerCase() === nombre.toLowerCase())) return;
+    const categoria = c.dataset.cat || '🎯 Productividad';
+    state.habitos.push({ id: _uid('habito'), nombre, categoria, color: OB_COLOR_CAT[categoria] || '#C9A84C', updatedAt: ahora });
+  });
+  obTareas.forEach(texto => state.tareas.push({ id: _uid('tarea'), texto, etiquetaId: null, estado: 'sin_empezar', updatedAt: ahora }));
+  obTareas = [];
   state.onboardingCompletado = true;
   saveState();
   document.getElementById('onboardingOverlay').classList.remove('open');
@@ -9613,7 +9593,8 @@ function completarOnboarding() {
   if (window.lucide) lucide.createIcons();
 }
 function mostrarOnboarding() {
-  obMostrarPaso(1);
+  obIr(1);
+  obPintarTareas();
   document.getElementById('onboardingOverlay').classList.add('open');
 }
 if (!state.onboardingCompletado) mostrarOnboarding();
