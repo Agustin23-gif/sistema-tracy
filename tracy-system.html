@@ -2688,6 +2688,8 @@
     position: relative;
     animation: ranaFadeIn 0.3s ease;
   }
+  /* El temporizador hereda el color del texto; sobre el verde de la rana va siempre amarillo claro */
+  .rana-dia-block .rana-timer { color: #FFE9A6; }
   .rana-dia-block.completada { opacity: 0.78; background: linear-gradient(135deg, #142B1E, #1E3D2A); }
   .rana-dia-etiqueta {
     font-family: 'Geist Mono', monospace;
@@ -4893,6 +4895,21 @@ function mergeCollectionById(localArr, remoteArr) {
     if ((item.updatedAt || '') > (local.updatedAt || '')) porId.set(item.id, item);
   });
   return Array.from(porId.values());
+}
+
+// La rana del día se sincroniza por su propia hora de cambio (updatedAt), no por la del
+// documento entero: antes, cualquier guardado de otro dispositivo (aunque no tocara la
+// rana) volvía a escribir su rana vieja o vacía y borraba la recién elegida.
+// Sin updatedAt (datos viejos), gana la de fecha más reciente y, a igual fecha, la que
+// tiene tarea.
+function mergeRanaDelDia(local, remota) {
+  const a = local || { tareaId: null, fecha: null };
+  const b = remota || { tareaId: null, fecha: null };
+  const ta = a.updatedAt || '', tb = b.updatedAt || '';
+  if (ta !== tb) return tb > ta ? b : a;
+  const fa = a.fecha || '', fb = b.fecha || '';
+  if (fa !== fb) return fb > fa ? b : a;
+  return (!a.tareaId && b.tareaId) ? b : a;
 }
 
 // Premios, canjes y bloques del reloj siguen el mismo merge por id. Se excluyen del
@@ -10126,19 +10143,17 @@ function renderCardVisualizacion() {
 function getRanaHoy() {
   const r = state.ranaDelDia;
   if (!r || !r.tareaId) return null;
-  if (r.fecha !== todayKey) {
-    state.ranaDelDia = { tareaId: null, fecha: null };
-    saveState();
-    return null;
-  }
+  // Una rana de otro día simplemente no cuenta; no se borra ni se guarda acá, porque ese
+  // guardado pisaba en la nube la rana que se acababa de elegir en otro dispositivo.
+  if (r.fecha !== todayKey) return null;
   return state.tareas.find(t => t.id === r.tareaId && !t.eliminado) || null;
 }
 
 function toggleRana(id) {
   if (state.ranaDelDia && state.ranaDelDia.tareaId === id && state.ranaDelDia.fecha === todayKey) {
-    state.ranaDelDia = { tareaId: null, fecha: null };
+    state.ranaDelDia = { tareaId: null, fecha: null, updatedAt: new Date().toISOString() };
   } else {
-    state.ranaDelDia = { tareaId: id, fecha: todayKey };
+    state.ranaDelDia = { tareaId: id, fecha: todayKey, updatedAt: new Date().toISOString() };
   }
   saveState();
   renderRanaDelDia();
@@ -10165,7 +10180,7 @@ function completarRana() {
 }
 
 function quitarRana() {
-  state.ranaDelDia = { tareaId: null, fecha: null };
+  state.ranaDelDia = { tareaId: null, fecha: null, updatedAt: new Date().toISOString() };
   saveState();
   renderRanaDelDia();
   renderTareas();
@@ -10467,6 +10482,7 @@ async function saveToFirestore() {
       state.metas   = mergeCollectionById(state.metas, remoteState.metas);
       state.habitos = mergeCollectionById(state.habitos, remoteState.habitos);
       mergeColeccionesProgreso(remoteState);
+      state.ranaDelDia = mergeRanaDelDia(state.ranaDelDia, remoteState.ranaDelDia);
       // Sin timestamp de documento para comparar acá (a diferencia del lado de lectura):
       // esta función está a punto de persistir el estado local, así que ante un conflicto
       // real (misma fecha+id con valor distinto en ambos lados) gana el valor local, que
@@ -10680,6 +10696,7 @@ function attachFirestoreListener(uid) {
 
       const localTs  = localStorage.getItem(STORAGE_KEY + '_ts') || '0';
       const remoteTs = data.updatedAt || '0';
+      const ranaFusionada = mergeRanaDelDia(state.ranaDelDia, remoteState.ranaDelDia);
 
       // Merge por id de tareas/metas/hábitos/transacciones/pagos fijos — SIEMPRE, sin
       // importar si este snapshot remoto es "más nuevo" que el local a nivel de
@@ -10724,6 +10741,7 @@ function attachFirestoreListener(uid) {
         const { tareas, metas, habitos, habitoChecks, premios, canjes, bloques, ...restoRemoto } = remoteState;
         Object.assign(state, restoRemoto);
       }
+      state.ranaDelDia = ranaFusionada;
       window.lastKnownCounts = {
         habitos: contarActivos(state.habitos),
         tareas: contarActivos(state.tareas),
