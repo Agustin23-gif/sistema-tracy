@@ -3828,12 +3828,15 @@
      izquierda, racha y cuenta a la derecha) y el bloque llega hasta arriba, detrás de la Dynamic Island */
   .portada-cab { display: none; }
   @media (max-width: 640px) {
-    body.en-inicio header { background: var(--pa-bg); border-bottom-color: transparent; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "cab actions"; padding-bottom: 4px; }
+    body.en-inicio header { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "cab actions"; padding-bottom: 4px; transition: background-color .25s ease, border-color .25s ease; }
+    html.portada-arriba { background: var(--pa-bg); }
+    html.portada-arriba body.en-inicio header { background: var(--pa-bg); border-bottom-color: transparent; }
+    html.portada-arriba body.en-inicio .portada-cab { color: var(--pa-fg); }
+    html.portada-arriba body.en-inicio .racha-chip { background: rgba(255,255,255,.18); color: var(--pa-fg); }
     body.en-inicio .header-cal, body.en-inicio .daily-meter { display: none; }
-    body.en-inicio .portada-cab { display: flex; grid-area: cab; align-items: center; gap: 10px; color: var(--pa-fg); font-size: 14px; font-weight: 600; min-width: 0; }
+    body.en-inicio .portada-cab { display: flex; grid-area: cab; align-items: center; gap: 10px; color: var(--text); font-size: 14px; font-weight: 600; min-width: 0; }
     .portada-cab .pa-chip { display: inline-flex; align-items: center; gap: 5px; }
     .portada-cab svg { width: 16px; height: 16px; }
-    body.en-inicio .racha-chip { background: rgba(255,255,255,.18); color: var(--pa-fg); }
     body.en-inicio .header-finanzas-btn { display: none; }
     body.en-inicio .auth-btn { font-size: 0; gap: 0; padding: 7px; border-radius: 99px; }
     body.en-inicio .auth-avatar-wrap { box-shadow: 0 0 0 2px rgba(255,255,255,.35); border-radius: 99px; }
@@ -5586,7 +5589,8 @@ function renderPortada(ctx) {
   const h = ahora.getHours(), min = ahora.getMinutes();
   const m = momentoDelDia(h);
   const oscuro = document.body.classList.contains('dark-mode');
-  const tono = PORTADA_TONO[m];
+  // En modo oscuro el bloque usa el marrón de la noche a cualquier hora.
+  const tono = oscuro ? PORTADA_TONO.noche : PORTADA_TONO[m];
   const tonoB = oscuro ? PORTADA_TONO.noche : tono;
   const pad = n => String(n).padStart(2, '0');
 
@@ -5660,16 +5664,34 @@ function renderPortada(ctx) {
 // En el celular, mientras se ve Inicio, la barra de estado (theme-color) y el encabezado toman el color del bloque.
 const PORTADA_THEME_BASE = '#F5F0EB';
 function portadaTema() {
+  const html = document.documentElement;
   const sec = document.getElementById('sec-inicio');
   const enInicio = !!(sec && sec.classList.contains('active'));
+  const movil = window.matchMedia('(max-width: 640px)').matches;
   document.body.classList.toggle('en-inicio', enInicio);
-  if (document.documentElement.classList.contains('pf-tec-abierto')) return;
+  // "Arriba": el bloque de color todavía se ve debajo del encabezado. Al bajar más allá, el encabezado
+  // y la franja de la Dynamic Island vuelven al color normal de la app.
+  let arriba = false;
+  if (enInicio && movil) {
+    const bloque = document.querySelector('.pa-bloque');
+    const header = document.querySelector('header');
+    arriba = !bloque || !header || bloque.getBoundingClientRect().bottom > header.offsetHeight + 12;
+  }
+  html.classList.toggle('portada-arriba', arriba);
+  if (html.classList.contains('pf-tec-abierto')) return;
   const meta = document.querySelector('meta[name="theme-color"]');
   if (!meta) return;
-  const movil = window.matchMedia('(max-width: 640px)').matches;
-  const color = getComputedStyle(document.documentElement).getPropertyValue('--pa-bg').trim();
-  meta.setAttribute('content', enInicio && movil && color ? color : PORTADA_THEME_BASE);
+  const color = getComputedStyle(html).getPropertyValue('--pa-bg').trim();
+  const base = document.body.classList.contains('dark-mode') ? getComputedStyle(document.body).getPropertyValue('--bg').trim() || PORTADA_THEME_BASE : PORTADA_THEME_BASE;
+  const nuevo = arriba && color ? color : base;
+  if (meta.getAttribute('content') !== nuevo) meta.setAttribute('content', nuevo);
 }
+let portadaScrollPend = false;
+window.addEventListener('scroll', () => {
+  if (portadaScrollPend || !document.body.classList.contains('en-inicio')) return;
+  portadaScrollPend = true;
+  requestAnimationFrame(() => { portadaScrollPend = false; portadaTema(); });
+}, { passive: true });
 window.addEventListener('resize', () => portadaTema());
 
 // Reloj de la portada: avanza solo y, si cambia el momento del día, el saludo se reescribe.
