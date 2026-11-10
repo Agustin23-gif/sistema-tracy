@@ -3822,6 +3822,23 @@
     .portada .intro-ayuda.flota { background: rgba(30,22,18,.55); border-color: transparent; color: #fff; }
   }
 
+  /* Celular: el bloque de color llega hasta arriba (detrás de la Dynamic Island) y el encabezado se pinta del mismo color */
+  @media (max-width: 640px) {
+    body.en-inicio header { background: var(--pa-bg); border-bottom-color: transparent; transition: background .4s ease; }
+    body.en-inicio .header-cal-day, body.en-inicio .header-cal-month, body.en-inicio .meter-pct { color: var(--pa-fg); }
+    body.en-inicio .header-cal-weekday, body.en-inicio .daily-meter span:not(.meter-pct) { color: var(--pa-fg); opacity: .75; }
+    body.en-inicio .meter-bar { background: rgba(255,255,255,.22); }
+    body.en-inicio .meter-fill { background: var(--pa-fg); }
+    body.en-inicio .racha-chip { background: rgba(255,255,255,.18); color: var(--pa-fg); }
+    .pa-bloque { margin: -28px -20px 0; border-radius: 0 0 32px 32px; padding-top: 8px; min-height: 0; gap: 14px; }
+    .pa-top { min-height: 28px; }
+    .pa-bloque .portada-saludo { margin-top: 18px; }
+    .pa-top .pa-fecha { display: none; }
+  }
+  @media (max-width: 480px) {
+    .pa-bloque { margin: -16px -14px 0; }
+  }
+
   /* Entrada animada: solo al abrir Inicio o cuando cambia el saludo */
   .portada.animar .w { animation: ptPalabra .7s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * 110ms + 150ms); }
   @keyframes ptPalabra { from { opacity: 0; transform: translateY(.25em) rotate(-2deg); filter: blur(4px); } }
@@ -5193,6 +5210,7 @@ function switchTab(tab) {
   document.getElementById('sec-' + tab).classList.add('active');
   marcarTabActivo(tab);
   renderSeccion(tab);
+  if (typeof portadaTema === 'function') portadaTema();
   const conIntro = introRevisar(tab);
   // Al tocar Finanzas en la barra se abre el teclado verde (se apaga en Ajustes), salvo la primera vez, que va la presentación.
   if (tab === 'finanzas' && !conIntro && typeof pf_tecActivo === 'function' && pf_tecActivo()) pf_abrirTeclado();
@@ -5302,6 +5320,7 @@ function switchTabProgrammatic(tab) {
   document.getElementById('sec-' + tab).classList.add('active');
   marcarTabActivo(tab);
   renderSeccion(tab);
+  if (typeof portadaTema === 'function') portadaTema();
   introRevisar(tab);
   if (window.lucide) lucide.createIcons();
 }
@@ -5583,10 +5602,12 @@ function renderPortada(ctx) {
   const sig = portadaSiguiente();
   const fechaCorta = `${PORTADA_DIAS[ahora.getDay()]} ${ahora.getDate()}`;
 
-  A.style.cssText = `--pa-bg:${tono.pa};--pa-fg:${tono.paFg}`;
+  document.documentElement.style.setProperty('--pa-bg', tono.pa);
+  document.documentElement.style.setProperty('--pa-fg', tono.paFg);
+  portadaTema();
   A.innerHTML = `
     <div class="pa-bloque pt-pop">
-      <div class="pa-top"><span>${fechaCorta}</span>${hayClima ? `<span class="pa-chip"><i data-lucide="${icoClima}"></i>${weatherTemp}°</span>` : ''}</div>
+      <div class="pa-top"><span class="pa-fecha">${fechaCorta}</span>${hayClima ? `<span class="pa-chip"><i data-lucide="${icoClima}"></i>${weatherTemp}°</span>` : ''}</div>
       <h1 class="portada-saludo">${saludoHtml}</h1>
       <p class="pa-verso pt-sube">${escHtml(fraseTexto)}${esVerso ? ` <cite>${escHtml(cita)}</cite>` : ''}</p>
     </div>
@@ -5625,6 +5646,21 @@ function renderPortada(ctx) {
   }
   if (window.lucide) lucide.createIcons();
 }
+
+// En el celular, mientras se ve Inicio, la barra de estado (theme-color) y el encabezado toman el color del bloque.
+const PORTADA_THEME_BASE = '#F5F0EB';
+function portadaTema() {
+  const sec = document.getElementById('sec-inicio');
+  const enInicio = !!(sec && sec.classList.contains('active'));
+  document.body.classList.toggle('en-inicio', enInicio);
+  if (document.documentElement.classList.contains('pf-tec-abierto')) return;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) return;
+  const movil = window.matchMedia('(max-width: 640px)').matches;
+  const color = getComputedStyle(document.documentElement).getPropertyValue('--pa-bg').trim();
+  meta.setAttribute('content', enInicio && movil && color ? color : PORTADA_THEME_BASE);
+}
+window.addEventListener('resize', () => portadaTema());
 
 // Reloj de la portada: avanza solo y, si cambia el momento del día, el saludo se reescribe.
 setInterval(() => {
