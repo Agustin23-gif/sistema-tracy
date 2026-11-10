@@ -992,6 +992,28 @@
    "captured_at": "2026-11-10",
    "author": null,
    "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_23d2e91",
+   "label": "Commit 23d2e91: rana del día entre dispositivos",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_rana_sync",
+   "label": "Merge de la rana del día por updatedAt",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
   }
  ],
  "edges": [
@@ -3779,6 +3801,96 @@
    "source": "docs_contexto_estado_actual_pend_finanzas_freelance",
    "target": "docs_contexto_estado_actual_te_queda_por_cobrar",
    "relation": "conceptually_related_to",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_23d2e91",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_23d2e91",
+   "target": "docs_contexto_estado_actual_rana_sync",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_sync",
+   "target": "tracy_system_mergeranadeldia",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_sync",
+   "target": "tracy_system_getranahoy",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_sync",
+   "target": "tracy_system_savetofirestore",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_sync",
+   "target": "tracy_system_attachfirestorelistener",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_sync",
+   "target": "docs_contexto_arquitectura_documento_mas_nuevo_gana",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_rana_sync",
+   "target": "docs_contexto_estado_actual_regla_rana_manual",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_pend_probar_sync",
+   "target": "docs_contexto_estado_actual_rana_sync",
+   "relation": "references",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",

@@ -1,6 +1,6 @@
 # Estado actual y flujo de trabajo (10/11/2026)
 
-Punto de partida para retomar. Lo más nuevo está en `main` y `gh-pages` (commit `1ace207`, 10/11/2026).
+Punto de partida para retomar. Lo más nuevo está en `main` y `gh-pages` (commit `23d2e91`, 10/11/2026).
 
 ## La app se llama Steadfast
 
@@ -91,11 +91,12 @@ Desde el 08/11 la app se llama **Steadfast** (antes "Sistema Tracy"). El nombre 
    - Boceto con las 4 ideas: https://claude.ai/artifact/9QVwM1NVVGZ5se2KsyaUfY
 17. `bfa87d0` (10/11), panel de Nueva tarea: el ícono del + ya no cambia, y el texto va a lo ancho con el estado y la etiqueta debajo.
 18. `1ace207` (10/11), racha: si hoy todavía está pendiente, la racha se cuenta desde ayer en vez de quedar en 0 (`calcularRachaGlobal`, `calcStreak`). Por eso ahora sí aparece el aviso de "racha en riesgo" después de las 20:00.
+19. `23d2e91` (10/11), Rana del día entre dispositivos: `state.ranaDelDia` se fusiona por su propio `updatedAt` (`mergeRanaDelDia`, al leer y al guardar), en vez de pisarse con el documento entero. Antes, la rana elegida en la Mac no aparecía en el iPhone. Además, `getRanaHoy` ya no borra ni guarda la rana vencida al abrir la app, y el temporizador de la tarjeta de la rana en Hoy va en amarillo claro (`#FFE9A6`), legible en modo claro.
 
 ## Pendiente
 
 - Finanzas para freelancer, ideas que faltan: apartados al cobrar (impuestos IVA/IRP, emergencia, meta), fondo de emergencia en meses cubiertos, ingresos por cliente y USD/₲. No agregar multi-cuenta, gráficos complejos ni presupuesto por categoría.
-- Probar la sincronización real entre dos dispositivos, sobre todo premios, canjes, bloques, `ranaTimer`, los recordatorios y `porCobrar`.
+- Probar la sincronización real entre dos dispositivos, sobre todo premios, canjes, bloques, `ranaTimer`, los recordatorios y `porCobrar`. Los campos sueltos que no tienen merge propio (ajustes, `ranaTimer`, etc.) siguen con "el último guardado pisa todo"; la rana del día ya se arregló en `23d2e91`.
 - De la [revisión](REVISION-2026-11-06.md) siguen abiertos:
   - `saveToFirestore` no es transaccional.
   - El merge está copiado en tres lugares.
