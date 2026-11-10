@@ -1,10 +1,11 @@
 // Cambiar CACHE_NAME solo hace falta si cambia la lista de PRECACHE o la estrategia:
 // el HTML ya no queda "congelado" porque se pide primero a la red (ver más abajo).
-const CACHE_NAME = 'sistema-tracy-v7';
+const CACHE_NAME = 'sistema-tracy-v8';
 
 // Archivos propios que se guardan al instalar, para poder abrir la app sin conexión.
 const PRECACHE = [
   './tracy-system.html',
+  './fonts/Messi-Regular.ttf',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
