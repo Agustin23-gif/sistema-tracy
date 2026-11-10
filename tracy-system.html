@@ -3822,11 +3822,13 @@
     .portada .intro-ayuda.flota { background: rgba(30,22,18,.55); border-color: transparent; color: #fff; }
   }
 
+  /* El encabezado sigue pegado arriba (sticky) a propósito: en la app instalada iOS pinta la franja de la
+     Dynamic Island con el color de lo que está pegado arriba; si no, toma el crema del fondo. */
   /* Celular en Inicio: el encabezado se vuelve la primera fila del bloque de color (fecha y clima a la
      izquierda, racha y cuenta a la derecha) y el bloque llega hasta arriba, detrás de la Dynamic Island */
   .portada-cab { display: none; }
   @media (max-width: 640px) {
-    body.en-inicio header { position: relative; background: var(--pa-bg); border-bottom-color: transparent; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "cab actions"; padding-bottom: 4px; }
+    body.en-inicio header { background: var(--pa-bg); border-bottom-color: transparent; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "cab actions"; padding-bottom: 4px; }
     body.en-inicio .header-cal, body.en-inicio .daily-meter { display: none; }
     body.en-inicio .portada-cab { display: flex; grid-area: cab; align-items: center; gap: 10px; color: var(--pa-fg); font-size: 14px; font-weight: 600; min-width: 0; }
     .portada-cab .pa-chip { display: inline-flex; align-items: center; gap: 5px; }
