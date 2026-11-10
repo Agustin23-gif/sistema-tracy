@@ -1,6 +1,6 @@
-# Estado actual y flujo de trabajo (09/11/2026)
+# Estado actual y flujo de trabajo (10/11/2026)
 
-Punto de partida para retomar. Lo más nuevo está en `main` y `gh-pages` (commit `4862565`, 09/11/2026).
+Punto de partida para retomar. Lo más nuevo está en `main` y `gh-pages` (commit `1ace207`, 10/11/2026).
 
 ## La app se llama Steadfast
 
@@ -23,7 +23,8 @@ Desde el 08/11 la app se llama **Steadfast** (antes "Sistema Tracy"). El nombre 
 ## Reglas de producto
 
 - La Rana del Día es siempre manual: la elige el usuario, la app nunca la elige ni la sugiere.
-- Siempre en naranja. Diseño simple y minimalista.
+- Siempre en naranja. Diseño simple y minimalista. La única excepción es Finanzas, que usa verde (dinero).
+- Antes de implementar un cambio de diseño, se muestra un boceto con opciones y se espera a que Agustín elija.
 
 ## Qué se publicó (orden cronológico)
 
@@ -59,16 +60,47 @@ Desde el 08/11 la app se llama **Steadfast** (antes "Sistema Tracy"). El nombre 
    - Con la app abierta, `revisarRecordatorios()` hace sonar la alarma y manda la notificación.
 9. `3a657aa` (09/11), entrada estilo Luma: mancha naranja difusa que respira detrás de la columna, fondo blanco u oscuro según el tema. Prototipo: https://claude.ai/artifact/W7dm7SEbK7f4iQ5KQpFQca
 10. `4862565` (09/11), bienvenida nueva de primera vez (`obIr`, `obAgregarHabito`, `obAgregarTarea`, `completarOnboarding`), con la misma mancha. Boceto: https://claude.ai/artifact/AGqS5XbFNhsQN5SAggNtw6
+11. `8b3e775` (09/11), barra inferior y filtros de Tareas:
+   - Barra inferior: una cápsula oscura con íconos. La sección activa se pone naranja y muestra su nombre. El + de acciones rápidas pasa a la barra y rota al abrirse; el botón flotante se oculta.
+   - Filtros de Tareas: los 4 estados en un control segmentado con la cantidad de cada uno (`setFiltroEstado`). Las etiquetas van en una fila deslizable con su color (`renderFiltrosEtiqueta`, `setFiltroEtiqueta`), y "Gestionar etiquetas" queda al final de la fila.
+   - Boceto: https://claude.ai/artifact/SU5XqihgTAVPRCyqbtugan
+12. `884e3e9` (09/11), menú del + estilo Phantom: el fondo se desenfoca (`#accionesFondo`) y Nueva tarea, Pomodoro y Anotar movimiento suben de a una como pastillas con un pequeño rebote (`abrirFabMenu`, `cerrarFabMenu`).
+13. `d06934a`, `0353254` y `883f66c` (09/11), teclado verde de Finanzas:
+   - Al tocar Finanzas se abre una pantalla verde con teclado numérico (`#pfTec`, `pf_abrirTeclado`, `pf_tecGuardar`). Tiene la tecla 000 para guaraníes, Gasto/Ingreso, categorías y método de pago (solo en gastos), y se puede deshacer durante 7 s.
+   - El verde llega hasta arriba, detrás de la Dynamic Island: en la app instalada funcionó pintar también el encabezado fijo (`html.pf-tec-abierto header`).
+   - Se puede apagar en Ajustes. Preferencias en `localStorage`: `steadfast_teclado_finanzas`, `steadfast_metodo_finanzas` y `steadfast_cat_finanzas`.
+   - El verde es solo para Finanzas; el resto de la app sigue en naranja.
+14. `8620f4c` y `881fd08` (09/11), resumen nuevo de Finanzas:
+   - Pilas de monedas (entró / salió) con relieve (`pf_pilaSVG`); al anotar cae una moneda nueva.
+   - Tarjeta de crédito dibujada con el total pendiente. Solo aparece si se usa (Ajustes, `steadfast_usa_tarjeta`).
+   - Pagos fijos con un círculo para marcar pagado, y menú ⋯ para atrasados, editar (`pf_editFijo`) o borrar.
+   - Movimientos agrupados por día; al tocarlos se abren en el teclado para corregirlos (`pf_editarMovimiento`).
+   - Se quitó el formulario "Agregar movimiento": el teclado suma fecha y nota.
+   - Deshacer con `pf_toast`.
+   - Boceto: https://claude.ai/artifact/HuARgYe38yGZrDJEhyB3P3
+15. `6e93e8a` (09/11), Finanzas para freelancer:
+   - "Te queda para gastar" arriba del resumen (`pf_calcQueda`, `pf_renderQueda`): ingresos menos gastos, menos los pagos fijos que faltan, menos el ahorro por apartar (0/10/20 %, `steadfast_ahorro_pct`, 10 por defecto). Muestra también el gasto por día y el ritmo del mes.
+   - "Por cobrar" (`pf_renderCobrar`): los trabajos que todavía no te pagaron. "Me pagaron" los pasa a ingreso en Proyectos freelance (`pf_marcarCobrado`), con Deshacer. Los atrasados se ven en naranja y "Recordarle" arma el mensaje para el cliente. Se sincroniza como `pf_data.porCobrar` en los tres merges. Lo que está por cobrar no suma a "Te queda".
+   - El teclado tiene una tercera opción, "Por cobrar" (`pf_tecGuardarCobro`).
+   - Guías de 3 pasos la primera vez, con botón ? para repetirlas (`PF_GUIAS`, `pf_guiaIniciar`).
+   - Boceto: https://claude.ai/artifact/92hJD4MU6GqBSWL9E9a7ns
+16. `31c59b0` (10/11), presentación de cada sección:
+   - La primera vez que se entra a Inicio, Hoy, Tareas, Finanzas, Progreso, Premios o Reloj del día aparece un mazo de 3 tarjetas que pasan solas y explican la sección (overlay `#secIntro`, `INTRO_SECCIONES`, `introMostrar`, `introCerrar`).
+   - El botón ? junto al título la vuelve a mostrar (`introAgregarBotones`).
+   - Se guarda por dispositivo en `steadfast_intro_<sección>`. Espera a que terminen la entrada y la bienvenida; en Finanzas va antes del teclado verde.
+   - Boceto con las 4 ideas: https://claude.ai/artifact/9QVwM1NVVGZ5se2KsyaUfY
+17. `bfa87d0` (10/11), panel de Nueva tarea: el ícono del + ya no cambia, y el texto va a lo ancho con el estado y la etiqueta debajo.
+18. `1ace207` (10/11), racha: si hoy todavía está pendiente, la racha se cuenta desde ayer en vez de quedar en 0 (`calcularRachaGlobal`, `calcStreak`). Por eso ahora sí aparece el aviso de "racha en riesgo" después de las 20:00.
 
 ## Pendiente
 
-- Diseño: barra inferior y filtros en pastillas. Las tarjetas de tarea ya están hechas.
-- Probar la sincronización real entre dos dispositivos, sobre todo premios, canjes, bloques, `ranaTimer` y los recordatorios.
+- Finanzas para freelancer, ideas que faltan: apartados al cobrar (impuestos IVA/IRP, emergencia, meta), fondo de emergencia en meses cubiertos, ingresos por cliente y USD/₲. No agregar multi-cuenta, gráficos complejos ni presupuesto por categoría.
+- Probar la sincronización real entre dos dispositivos, sobre todo premios, canjes, bloques, `ranaTimer`, los recordatorios y `porCobrar`.
 - De la [revisión](REVISION-2026-11-06.md) siguen abiertos:
   - `saveToFirestore` no es transaccional.
   - El merge está copiado en tres lugares.
   - La portada se guarda en base64 dentro del documento.
   - Las metas están indexadas por posición.
   - Las reglas de Firestore no están versionadas.
-  - Todo es un monolito sin tests (ya pasa de 9.500 líneas).
+  - Todo es un monolito sin tests (ya pasa de 11.000 líneas).
 - Los recordatorios diarios de hábitos siguen funcionando solo con la app abierta. Los de tareas se resolvieron con el calendario.

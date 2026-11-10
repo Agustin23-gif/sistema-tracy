@@ -487,7 +487,7 @@
   },
   {
    "id": "docs_contexto_estado_actual_estado",
-   "label": "Estado actual y flujo de trabajo (08/11)",
+   "label": "Estado actual y flujo de trabajo (10/11)",
    "file_type": "document",
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",
    "source_location": null,
@@ -608,28 +608,6 @@
    "contributor": "Claude"
   },
   {
-   "id": "docs_contexto_estado_actual_pend_barra_inferior",
-   "label": "Pendiente: barra inferior (rediseño)",
-   "file_type": "concept",
-   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
-   "source_location": null,
-   "source_url": null,
-   "captured_at": "2026-11-06",
-   "author": null,
-   "contributor": "Claude"
-  },
-  {
-   "id": "docs_contexto_estado_actual_pend_filtros_pastillas",
-   "label": "Pendiente: filtros en pastillas",
-   "file_type": "concept",
-   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
-   "source_location": null,
-   "source_url": null,
-   "captured_at": "2026-11-06",
-   "author": null,
-   "contributor": "Claude"
-  },
-  {
    "id": "docs_contexto_estado_actual_pend_probar_sync",
    "label": "Pendiente: probar sincronización real entre dispositivos",
    "file_type": "concept",
@@ -676,7 +654,7 @@
   },
   {
    "id": "docs_contexto_estado_actual_regla_naranja",
-   "label": "Regla: siempre naranja, diseño minimalista",
+   "label": "Regla: siempre naranja (Finanzas en verde), minimalista",
    "file_type": "concept",
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",
    "source_location": null,
@@ -814,6 +792,204 @@
    "source_location": null,
    "source_url": null,
    "captured_at": "2026-11-09",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_regla_boceto",
+   "label": "Regla: boceto con opciones antes de implementar diseño",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_8b3e775",
+   "label": "Commit 8b3e775: barra inferior y filtros",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_barra_filtros",
+   "label": "Barra inferior de íconos y filtros en segmento",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_884e3e9",
+   "label": "Commit 884e3e9: menú del + estilo Phantom",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_menu_acciones",
+   "label": "Menú del + con fondo desenfocado",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_d06934a",
+   "label": "Commits d06934a/0353254/883f66c: teclado verde",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_teclado_verde",
+   "label": "Teclado verde de Finanzas (#pfTec)",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_8620f4c",
+   "label": "Commits 8620f4c/881fd08: resumen de Finanzas con monedas",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_resumen_monedas",
+   "label": "Resumen con pilas de monedas, tarjeta dibujada y pagos fijos",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_6e93e8a",
+   "label": "Commit 6e93e8a: Te queda, Por cobrar y guías",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "label": "Te queda para gastar y Por cobrar (freelance)",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_31c59b0",
+   "label": "Commit 31c59b0: presentación de cada sección",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_intro_secciones",
+   "label": "Presentación por sección (mazo de 3 tarjetas + botón ?)",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_bfa87d0",
+   "label": "Commit bfa87d0: panel de Nueva tarea",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_panel_tarea",
+   "label": "Panel de Nueva tarea a lo ancho",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_1ace207",
+   "label": "Commit 1ace207: racha con hoy pendiente",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_racha_fix",
+   "label": "Racha: hoy pendiente no corta la racha",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_pend_finanzas_freelance",
+   "label": "Pendiente: apartados, fondo de emergencia, ingresos por cliente, USD/₲",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-10",
    "author": null,
    "contributor": "Claude"
   }
@@ -2401,26 +2577,6 @@
   },
   {
    "source": "docs_contexto_estado_actual_estado",
-   "target": "docs_contexto_estado_actual_pend_barra_inferior",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
-   "source_location": null,
-   "weight": 1.0
-  },
-  {
-   "source": "docs_contexto_estado_actual_estado",
-   "target": "docs_contexto_estado_actual_pend_filtros_pastillas",
-   "relation": "references",
-   "confidence": "EXTRACTED",
-   "confidence_score": 1.0,
-   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
-   "source_location": null,
-   "weight": 1.0
-  },
-  {
-   "source": "docs_contexto_estado_actual_estado",
    "target": "docs_contexto_estado_actual_pend_probar_sync",
    "relation": "references",
    "confidence": "EXTRACTED",
@@ -2445,26 +2601,6 @@
    "relation": "references",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
-   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
-   "source_location": null,
-   "weight": 1.0
-  },
-  {
-   "source": "docs_contexto_estado_actual_pend_barra_inferior",
-   "target": "docs_contexto_estado_actual_commit_a7e8ede",
-   "relation": "conceptually_related_to",
-   "confidence": "INFERRED",
-   "confidence_score": 0.75,
-   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
-   "source_location": null,
-   "weight": 1.0
-  },
-  {
-   "source": "docs_contexto_estado_actual_pend_filtros_pastillas",
-   "target": "docs_contexto_estado_actual_commit_a7e8ede",
-   "relation": "conceptually_related_to",
-   "confidence": "INFERRED",
-   "confidence_score": 0.75,
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",
    "source_location": null,
    "weight": 1.0
@@ -3018,6 +3154,636 @@
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",
    "source_location": null,
    "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_regla_boceto",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_8b3e775",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_8b3e775",
+   "target": "docs_contexto_estado_actual_barra_filtros",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_barra_filtros",
+   "target": "tracy_system_setfiltroestado",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_barra_filtros",
+   "target": "tracy_system_setfiltroetiqueta",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_barra_filtros",
+   "target": "tracy_system_renderfiltrosetiqueta",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_barra_filtros",
+   "target": "tracy_system_switchtab",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_884e3e9",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_884e3e9",
+   "target": "docs_contexto_estado_actual_menu_acciones",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_menu_acciones",
+   "target": "tracy_system_abrirfabmenu",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_menu_acciones",
+   "target": "tracy_system_cerrarfabmenu",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_menu_acciones",
+   "target": "tracy_system_togglefabmenu",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_d06934a",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_d06934a",
+   "target": "docs_contexto_estado_actual_teclado_verde",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_teclado_verde",
+   "target": "tracy_system_pf_abrirteclado",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_teclado_verde",
+   "target": "tracy_system_pf_cerrarteclado",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_teclado_verde",
+   "target": "tracy_system_pf_tectecla",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_teclado_verde",
+   "target": "tracy_system_pf_tecguardar",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_teclado_verde",
+   "target": "tracy_system_pf_tecdeshacer",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_teclado_verde",
+   "target": "tracy_system_pf_tecsettipo",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_teclado_verde",
+   "target": "tracy_system_pf_tecsetcat",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_teclado_verde",
+   "target": "tracy_system_pf_tecpintar",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_8620f4c",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_8620f4c",
+   "target": "docs_contexto_estado_actual_resumen_monedas",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_resumen_monedas",
+   "target": "tracy_system_pf_pilasvg",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_resumen_monedas",
+   "target": "tracy_system_pf_rendermonth",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_resumen_monedas",
+   "target": "tracy_system_pf_rendercardpanel",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_resumen_monedas",
+   "target": "tracy_system_pf_renderfixedpanel",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_resumen_monedas",
+   "target": "tracy_system_pf_editarmovimiento",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_resumen_monedas",
+   "target": "tracy_system_pf_toast",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_resumen_monedas",
+   "target": "tracy_system_pf_usatarjeta",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_6e93e8a",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_6e93e8a",
+   "target": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "target": "tracy_system_pf_calcqueda",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "target": "tracy_system_pf_renderqueda",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "target": "tracy_system_pf_rendercobrar",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "target": "tracy_system_pf_marcarcobrado",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "target": "tracy_system_pf_recordarcobro",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "target": "tracy_system_pf_tecguardarcobro",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "target": "tracy_system_pf_guiainiciar",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "target": "tracy_system_pf_guiasiguiente",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_31c59b0",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_31c59b0",
+   "target": "docs_contexto_estado_actual_intro_secciones",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_intro_secciones",
+   "target": "tracy_system_intromostrar",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_intro_secciones",
+   "target": "tracy_system_introcerrar",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_intro_secciones",
+   "target": "tracy_system_introrevisar",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_intro_secciones",
+   "target": "tracy_system_introagregarbotones",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_intro_secciones",
+   "target": "tracy_system_introavanzar",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_bfa87d0",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_bfa87d0",
+   "target": "docs_contexto_estado_actual_panel_tarea",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_panel_tarea",
+   "target": "tracy_system_opentaskpanel",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_panel_tarea",
+   "target": "tracy_system_closetaskpanel",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_1ace207",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_1ace207",
+   "target": "docs_contexto_estado_actual_racha_fix",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_racha_fix",
+   "target": "tracy_system_calcularrachaglobal",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_racha_fix",
+   "target": "tracy_system_calcstreak",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_teclado_verde",
+   "target": "docs_contexto_estado_actual_regla_naranja",
+   "relation": "conceptually_related_to",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "target": "docs_contexto_arquitectura_pf_data",
+   "relation": "shares_data_with",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "target": "docs_contexto_estado_actual_teclado_verde",
+   "relation": "conceptually_related_to",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_pend_probar_sync",
+   "target": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_intro_secciones",
+   "target": "docs_contexto_estado_actual_onboarding",
+   "relation": "semantically_similar_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_pend_finanzas_freelance",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_pend_finanzas_freelance",
+   "target": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "relation": "conceptually_related_to",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
   }
  ],
  "hyperedges": [
@@ -3075,6 +3841,19 @@
     "docs_contexto_estado_actual_vista_tarjetas",
     "docs_contexto_estado_actual_rana_timer",
     "docs_contexto_estado_actual_recordatorio_tarea"
+   ],
+   "relation": "form",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md"
+  },
+  {
+   "id": "finanzas_09_11",
+   "label": "Rediseño de Finanzas del 09/11",
+   "nodes": [
+    "docs_contexto_estado_actual_teclado_verde",
+    "docs_contexto_estado_actual_resumen_monedas",
+    "docs_contexto_estado_actual_te_queda_por_cobrar"
    ],
    "relation": "form",
    "confidence": "EXTRACTED",

@@ -4,7 +4,7 @@ PWA personal de productividad inspirada en Brian Tracy: hábitos, metas, tareas,
 
 ## Archivos
 
-- `tracy-system.html`: toda la app en un único archivo (~9.600 líneas al 08/11/2026; en la revisión del 06/11 eran 8.3k: ~3.200 de CSS, ~650 de HTML y ~4.400 de JavaScript). El nombre del archivo se mantuvo después del renombre a Steadfast. Sin framework, sin bundler, sin `package.json`, sin tests.
+- `tracy-system.html`: toda la app en un único archivo (~11.000 líneas al 10/11/2026; en la revisión del 06/11 eran 8.3k: ~3.200 de CSS, ~650 de HTML y ~4.400 de JavaScript). El nombre del archivo se mantuvo después del renombre a Steadfast. Sin framework, sin bundler, sin `package.json`, sin tests.
   - Primer `<script type="module">` (línea 16): inicializa Firebase (Auth con Google + Firestore) y expone las funciones de sesión y sincronización en `window`.
   - Segundo `<script>` (línea 3896): el resto de la app (estado, render, hábitos, tareas, metas, visión, finanzas, pomodoro, onboarding, notificaciones).
 - `service-worker.js` (`sistema-tracy-v7`): red primero para el HTML y el manifest; cache primero para íconos, Lucide, SDK de Firebase y fuentes (precacheados para uso sin conexión). No intercepta Firestore. Tiene un handler `push` sin servidor que envíe pushes.
