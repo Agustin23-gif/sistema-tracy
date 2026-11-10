@@ -961,6 +961,16 @@
     overflow: hidden;
   }
   .task-panel.open { transform: translateX(0); }
+  /* En el panel (angosto) el texto usa todo el ancho y el estado y la etiqueta van debajo */
+  .task-panel .task-item { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto auto; grid-template-areas: "check rana text edit del" ". . meta . ."; column-gap: 8px; row-gap: 5px; align-items: start; }
+  .task-panel .task-item > .task-check { grid-area: check; margin-top: 1px; }
+  .task-panel .task-item > .rana-btn { grid-area: rana; }
+  .task-panel .task-item > .task-text { grid-area: text; overflow-wrap: anywhere; }
+  .task-panel .task-item > .tarea-edit-input { grid-area: text; min-width: 0; }
+  .task-panel .task-item > .task-edit { grid-area: edit; }
+  .task-panel .task-item > .task-del:not(.task-edit) { grid-area: del; }
+  .task-panel .panel-meta { grid-area: meta; display: flex; flex-wrap: wrap; gap: 6px; }
+  .task-panel .panel-meta:empty { display: none; }
 
   .panel-header {
     padding: 22px 20px 16px;
@@ -6465,7 +6475,6 @@ function openTaskPanel() {
   panelOpen = true;
   document.getElementById('taskPanel').classList.add('open');
   document.getElementById('panelOverlay').classList.add('open');
-  document.getElementById('fabBtn').textContent = '✕';
   renderTareas();
 }
 
@@ -6473,7 +6482,6 @@ function closeTaskPanel() {
   panelOpen = false;
   document.getElementById('taskPanel').classList.remove('open');
   document.getElementById('panelOverlay').classList.remove('open');
-  document.getElementById('fabBtn').textContent = '✎';
 }
 
 function renderTagPillsPanel() {
@@ -6558,8 +6566,7 @@ function renderTareas() {
         ${checkHtml(t)}
         <button class="rana-btn${esRana ? ' activa' : ''}" onclick="toggleRana('${t.id}')" title="Rana del día">🐸</button>
         <span class="task-text" id="tarea-texto-${t.id}-panel">${escHtml(t.texto)}</span>
-        ${estadoPill(t)}
-        ${tagPillHtml(t.etiquetaId, t.id)}
+        <div class="panel-meta">${estadoPill(t)}${tagPillHtml(t.etiquetaId, t.id)}</div>
         <button class="task-del task-edit" onclick="editarTarea('${t.id}', 'panel')"><i data-lucide="pencil"></i></button>
         <button class="task-del" onclick="deleteTarea('${t.id}')">×</button>
       </div>`;
