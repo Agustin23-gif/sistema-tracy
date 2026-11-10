@@ -3712,6 +3712,44 @@
   .pf-tec.cobro .pf-tec-resumen { display: none; }
   @media (max-height: 700px) { .pf-tec.cobro .pf-tec-cobro-aviso span { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; } .pf-tec.cobro .pf-tec-hoy { display: none; } }
   .pf-tec-cuando-tit { font-size: 11.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+  /* ── Presentación de cada sección (mazo de 3 tarjetas) ── */
+  .sec-intro { --in-bg: #F5F0EB; --in-fg: #1A1512; --in-muted: #6B625C; --in-punto: #CDBFB3;
+    position: fixed; inset: 0; z-index: 1100; background: var(--in-bg); color: var(--in-fg); display: none; justify-content: center;
+    font-family: 'Geist', sans-serif; }
+  body.dark-mode .sec-intro { --in-bg: #120E0C; --in-fg: #F7EFEA; --in-muted: #A8968A; --in-punto: #3A302B; }
+  .sec-intro.open { display: flex; animation: introFondo .3s ease both; }
+  .sec-intro.saliendo { animation: introSale .28s ease both; }
+  @keyframes introFondo { from { opacity: 0; } }
+  @keyframes introSale { to { opacity: 0; transform: scale(1.03); } }
+  .sec-intro, .sec-intro * { box-sizing: border-box; }
+  .intro-in { position: relative; width: 100%; max-width: 440px; height: 100%; display: flex; flex-direction: column; overflow-y: auto;
+    padding: calc(14px + env(safe-area-inset-top, 0px)) max(22px, env(safe-area-inset-right, 0px)) calc(22px + env(safe-area-inset-bottom, 0px)) max(22px, env(safe-area-inset-left, 0px)); }
+  .intro-saltar { align-self: flex-end; border: 0; background: transparent; color: var(--in-muted); font: inherit; font-size: 14px; font-weight: 600; padding: 8px 4px; cursor: pointer; }
+  .intro-mazo { position: relative; width: min(230px, 62vw); aspect-ratio: 210 / 250; margin: 4vh auto 0; flex: none; }
+  .intro-carta { position: absolute; inset: 0; border: 0; border-radius: 26px; padding: 20px; display: grid; align-content: space-between; text-align: left; font: inherit; cursor: pointer;
+    box-shadow: 0 16px 30px -14px rgba(60,25,5,.4); opacity: 0; transform: translateY(-140%) rotate(-12deg);
+    transition: transform .55s cubic-bezier(.3,1.3,.5,1), opacity .4s; -webkit-tap-highlight-color: transparent; }
+  .intro-ico { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: rgba(255,255,255,.22); }
+  .intro-ico svg { width: 30px; height: 30px; }
+  .intro-carta b { display: block; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  .intro-carta small { display: block; font-size: 13.5px; line-height: 1.35; margin-top: 6px; opacity: .88; }
+  .intro-pie { margin-top: auto; padding-top: 22px; display: grid; gap: 10px; text-align: center; }
+  .intro-puntos { display: flex; justify-content: center; gap: 6px; margin-bottom: 4px; }
+  .intro-puntos i { width: 7px; height: 7px; border-radius: 4px; background: var(--in-punto); transition: width .3s, background .3s; }
+  .intro-puntos i.on { width: 20px; background: #E8450A; }
+  .intro-eti { font-size: 11.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--in-muted); }
+  .intro-pie h2 { margin: 0; font-size: 28px; line-height: 1.1; font-weight: 800; letter-spacing: -0.025em; text-wrap: balance; }
+  .intro-pie p { margin: 0; font-size: 15px; line-height: 1.5; color: var(--in-muted); text-wrap: pretty; }
+  .intro-ok { margin-top: 8px; height: 52px; border: 0; border-radius: 99px; background: var(--in-fg); color: var(--in-bg); font: inherit; font-size: 16px; font-weight: 700; cursor: pointer; }
+  .intro-ok:focus-visible, .intro-saltar:focus-visible, .intro-carta:focus-visible { outline: 2px solid #E8450A; outline-offset: 3px; }
+  .intro-entra { animation: introEntra .6s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes introEntra { from { opacity: 0; transform: translateY(14px); } }
+  /* Botón ? en el encabezado de cada sección */
+  .intro-tit { display: flex; flex-wrap: wrap; align-items: center; column-gap: 10px; }
+  .intro-tit > p { flex-basis: 100%; }
+  .intro-ayuda { width: 28px; height: 28px; border-radius: 99px; border: 1px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Geist', sans-serif; font-size: 13px; font-weight: 800; cursor: pointer; padding: 0; display: inline-grid; place-items: center; flex: none; }
+  .intro-ayuda.flota { position: absolute; bottom: 12px; right: 12px; z-index: 2; background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.2); color: rgba(255,255,255,.85); }
+  @media (prefers-reduced-motion: reduce) { .intro-carta, .intro-puntos i { transition: none; } .intro-entra, .sec-intro.open, .sec-intro.saliendo { animation: none; } }
   @media (prefers-reduced-motion: reduce) { .pfx-cg, .pfx-nueva, .pfx-guia-tiempo i.corre { animation: none; } .pfx-guia { transition: none; } }
 
   /* ── PROGRESO: ÁREAS, XP, FICHAS Y RELOJ ── */
@@ -4710,6 +4748,9 @@
   <div class="pf-quick-credito-hint" id="pfQuickCreditoHint" style="display:none">💳 Este gasto se sumará a tu deuda de tarjeta</div>
 </div>
 
+<!-- ══ PRESENTACIÓN DE CADA SECCIÓN (primera vez y botón ?) ══ -->
+<div class="sec-intro" id="secIntro" role="dialog" aria-modal="true" aria-label="Para qué sirve esta sección" aria-hidden="true"></div>
+
 <!-- ══ FINANZAS: TECLADO VERDE PARA ANOTAR RÁPIDO ══ -->
 <div class="pf-tec" id="pfTec" role="dialog" aria-modal="true" aria-label="Anotar movimiento" aria-hidden="true">
   <div class="pf-tec-in">
@@ -5073,8 +5114,9 @@ function switchTab(tab) {
   document.getElementById('sec-' + tab).classList.add('active');
   marcarTabActivo(tab);
   renderSeccion(tab);
-  // Al tocar Finanzas en la barra se abre el teclado verde (se apaga en Ajustes).
-  if (tab === 'finanzas' && typeof pf_tecActivo === 'function' && pf_tecActivo()) pf_abrirTeclado();
+  const conIntro = introRevisar(tab);
+  // Al tocar Finanzas en la barra se abre el teclado verde (se apaga en Ajustes), salvo la primera vez, que va la presentación.
+  if (tab === 'finanzas' && !conIntro && typeof pf_tecActivo === 'function' && pf_tecActivo()) pf_abrirTeclado();
 }
 
 // ── PANEL "MÁS" ──
@@ -5178,8 +5220,161 @@ function switchTabProgrammatic(tab) {
   document.getElementById('sec-' + tab).classList.add('active');
   marcarTabActivo(tab);
   renderSeccion(tab);
+  introRevisar(tab);
   if (window.lucide) lucide.createIcons();
 }
+
+// ── PRESENTACIÓN DE CADA SECCIÓN ──
+// La primera vez que se entra a una sección aparece un mazo de 3 tarjetas que explica para qué sirve.
+// El botón ? del encabezado de la sección la vuelve a mostrar. Visto por dispositivo: localStorage steadfast_intro_<sección>.
+const INTRO_SECCIONES = {
+  inicio: { nombre: 'Inicio', titulo: 'Tu día de un vistazo', txt: 'Ves cómo vas hoy: el anillo de lo que ya cumpliste, tu racha, el clima y un versículo para arrancar.',
+    f: [['ring', 'Anillo del día', 'Se llena con cada hábito y tarea que cumplís.'], ['flame', 'Tu racha', 'Los días seguidos que no aflojaste.'], ['book', 'Versículo', 'Una frase para empezar con la mirada puesta en lo importante.']] },
+  hoy: { nombre: 'Hoy', titulo: 'Tus hábitos de hoy', txt: 'Marcá cada hábito cuando lo cumplas. Elegí tu Rana del Día: la tarea más difícil, para hacerla primero.',
+    f: [['check', 'Hábitos', 'Un toque y queda marcado. Cada check suma.'], ['frog', 'Rana del Día', 'La elegís vos: lo más difícil, primero.'], ['star', 'XP y fichas', 'Cada check te da experiencia y fichas para premios.']] },
+  tareas: { nombre: 'Tareas', titulo: 'Todo lo que tenés que hacer', txt: 'Anotá tus tareas, ordenalas por estado y etiqueta, y ponele recordatorio en tu calendario.',
+    f: [['grid', 'Lista o tarjetas', 'Miralas como lista o como notas adhesivas.'], ['bell', 'Recordatorios', 'Van a tu calendario y te avisan aunque cierres la app.'], ['timer', 'Temporizador', 'Ponele tiempo a la rana y enfocate.']] },
+  finanzas: { nombre: 'Finanzas', verde: true, titulo: 'Tu plata del mes', txt: 'Anotá gastos e ingresos con el teclado verde. Mirá cuánto te queda para gastar y quién te debe.',
+    f: [['keypad', 'Teclado verde', 'Monto, gasto o ingreso y categoría, en segundos.'], ['wallet', 'Te queda', 'Lo que podés gastar por día sin tocar fijos ni ahorro.'], ['hand', 'Por cobrar', 'Los trabajos que todavía no te pagaron.']] },
+  progreso: { nombre: 'Progreso', titulo: 'Cómo vas creciendo', txt: 'Cada hábito cumplido suma experiencia a su área. Subí de nivel en lo que más te importa.',
+    f: [['layers', 'Áreas', 'Cada categoría de hábitos es un área con su barra.'], ['trophy', 'Niveles', 'Subís de nivel a medida que sumás experiencia.'], ['star', 'Nivel general', 'Tu nivel total junta todas tus áreas.']] },
+  premios: { nombre: 'Premios', titulo: 'Premiate por cumplir', txt: 'Cada hábito y tarea te dan fichas. Canjealas por premios que vos mismo elegís.',
+    f: [['coin', 'Fichas', '2 por hábito, 3 por tarea completada.'], ['gift', 'Tus premios', 'Un café, una salida, lo que te motive.'], ['check', 'Canjes', 'Canjeás cuando juntás las fichas, y se puede deshacer.']] },
+  reloj: { nombre: 'Reloj del día', titulo: 'Planificá tus horas', txt: 'Armá bloques de tiempo para tu día y mirá en qué se te va cada hora.',
+    f: [['layers', 'Bloques', 'Trabajo, estudio, descanso: cada uno con su hora.'], ['clock', 'Tu día en un reloj', 'Ves de un vistazo cómo está repartido.'], ['cal', 'Día por día', 'Pasá a mañana y dejá tu día planificado.']] }
+};
+const INTRO_ICONOS = {
+  ring: '<circle cx="12" cy="12" r="8.5" opacity=".35"/><path d="M12 3.5a8.5 8.5 0 0 1 8.2 10.7"/>',
+  flame: '<path d="M12 21c4 0 6.5-2.6 6.5-6.2 0-3.6-3-6-4-9.3-2.6 1.8-3.4 4-3.6 5.6-.8-.8-1.3-1.8-1.4-3C7 9.6 5.5 12 5.5 14.8 5.5 18.4 8 21 12 21z"/>',
+  book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5"/>',
+  check: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9"/>',
+  frog: '<circle cx="8" cy="7.5" r="2.5"/><circle cx="16" cy="7.5" r="2.5"/><path d="M4 14c0-3 3.6-5 8-5s8 2 8 5-3.6 6-8 6-8-3-8-6z"/><path d="M9 15.5c1.8 1.2 4.2 1.2 6 0"/>',
+  star: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
+  grid: '<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>',
+  bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+  timer: '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M9.5 2.5h5"/>',
+  keypad: '<rect x="5" y="3" width="14" height="18" rx="3"/><path d="M9 8h.01M12 8h.01M15 8h.01M9 12h.01M12 12h.01M15 12h.01M9 16h6"/>',
+  wallet: '<path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v4"/><rect x="4" y="9" width="16" height="11" rx="2.5"/><path d="M16 14.5h.01"/>',
+  hand: '<path d="M3 13h3l4 2h4a1.5 1.5 0 0 1 0 3H9"/><path d="M14 18l5-2.5a1.6 1.6 0 0 1 1.5 2.8L14 21H6l-3-1"/><circle cx="15" cy="7" r="3.5"/>',
+  layers: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+  trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5a3 3 0 0 0 3.5 4M16 6h3.5a3 3 0 0 1-3.5 4M12 13v4M8.5 20h7"/>',
+  coin: '<circle cx="12" cy="12" r="9"/><path d="M14.8 9.2a3.4 3.4 0 1 0 0 5.6M12 6.5v11M12 12h3"/>',
+  gift: '<rect x="3.5" y="9" width="17" height="11" rx="2"/><path d="M3.5 13h17M12 9v11"/><path d="M12 9c-2-4-6-4-6-1.5S10 9 12 9c2 0 6 1 6-1.5S14 5 12 9z"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/>'
+};
+let intro_actual = null, intro_frente = 0, intro_timers = [], intro_espera = null;
+function introVista(id) { try { return localStorage.getItem('steadfast_intro_' + id) === '1'; } catch (e) { return true; } }
+function introMarcar(id) { try { localStorage.setItem('steadfast_intro_' + id, '1'); } catch (e) {} }
+function introAbierta() { const el = document.getElementById('secIntro'); return !!el && el.classList.contains('open'); }
+function introLimpiar() { intro_timers.forEach(t => { clearTimeout(t); clearInterval(t); }); intro_timers = []; }
+
+// Se llama al entrar a una sección. Devuelve true si la presentación se va a mostrar.
+function introRevisar(id) {
+  if (!INTRO_SECCIONES[id] || introVista(id)) return false;
+  clearTimeout(intro_espera);
+  const intentar = (n) => {
+    const sec = document.getElementById('sec-' + id);
+    if (!sec || !sec.classList.contains('active') || introVista(id)) return;
+    const bloqueada = document.getElementById('splash') || (document.getElementById('onboardingOverlay') || {}).classList?.contains('open');
+    if (bloqueada) { if (n < 120) intro_espera = setTimeout(() => intentar(n + 1), 500); return; }
+    introMostrar(id);
+  };
+  intentar(0);
+  return true;
+}
+
+function introMostrar(id) {
+  const s = INTRO_SECCIONES[id];
+  const el = document.getElementById('secIntro');
+  if (!s || !el) return;
+  if (typeof pf_guiaCerrar === 'function') pf_guiaCerrar(false);
+  introLimpiar();
+  intro_actual = id; intro_frente = 0;
+  const fondos = s.verde ? ['#5FD32F', '#2FA84F', '#1F6B32'] : ['#E8450A', '#1A1512', '#F5B841'];
+  const tintas = s.verde ? ['#0C1F05', '#FFFFFF', '#FFFFFF'] : ['#FFFFFF', '#F5F0EB', '#2A1A10'];
+  const ico = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${INTRO_ICONOS[k] || ''}</svg>`;
+  el.innerHTML = `<div class="intro-in">
+    <button type="button" class="intro-saltar" onclick="introCerrar()">Saltar</button>
+    <div class="intro-mazo">${s.f.map((x, i) => `<button type="button" class="intro-carta" data-c="${i}" onclick="introAvanzar(true)" style="background:${fondos[i]};color:${tintas[i]}" aria-label="${x[1]}: ${x[2]}">
+      <span class="intro-ico">${ico(x[0])}</span><span><b>${x[1]}</b><small>${x[2]}</small></span></button>`).join('')}</div>
+    <div class="intro-pie">
+      <div class="intro-puntos" aria-hidden="true">${s.f.map(() => '<i></i>').join('')}</div>
+      <span class="intro-eti intro-entra" style="animation-delay:.8s">${s.nombre}</span>
+      <h2 class="intro-entra" style="animation-delay:.9s">${s.titulo}</h2>
+      <p class="intro-entra" style="animation-delay:1s">${s.txt}</p>
+      <button type="button" class="intro-ok intro-entra" style="animation-delay:1.1s" onclick="introCerrar()">Entendido</button>
+    </div>
+  </div>`;
+  el.classList.add('open');
+  el.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  const cartas = [...el.querySelectorAll('.intro-carta')];
+  // Caen de a una y después pasan solas cada 2,5 s (tocarlas también las pasa).
+  cartas.forEach((c, i) => intro_timers.push(setTimeout(() => {
+    c.style.opacity = 1;
+    c.style.transform = `translate(${[-26, 26, 0][i]}px, ${[20, 10, 0][i]}px) rotate(${[-9, 7, -2][i]}deg)`;
+  }, 150 + i * 180)));
+  intro_timers.push(setTimeout(introPintar, 900));
+  intro_timers.push(setTimeout(() => intro_timers.push(setInterval(() => introAvanzar(false), 2500)), 1500));
+}
+function introPintar() {
+  const el = document.getElementById('secIntro');
+  el.querySelectorAll('.intro-carta').forEach((c, i) => {
+    const pos = (i - intro_frente + 3) % 3;
+    c.style.zIndex = 3 - pos;
+    c.style.opacity = 1;
+    c.style.transform = pos === 0 ? 'rotate(-2deg)' : `translate(${pos === 1 ? 26 : -26}px, ${pos * 10}px) rotate(${pos === 1 ? 7 : -9}deg) scale(${1 - pos * .06})`;
+  });
+  el.querySelectorAll('.intro-puntos i').forEach((p, i) => p.classList.toggle('on', i === intro_frente));
+}
+function introAvanzar(manual) {
+  intro_frente = (intro_frente + 1) % 3;
+  introPintar();
+  if (manual) { // si la tocó, el reloj vuelve a empezar para que alcance a leerla
+    introLimpiar();
+    intro_timers.push(setInterval(() => introAvanzar(false), 2500));
+  }
+}
+function introCerrar() {
+  const el = document.getElementById('secIntro');
+  if (!el || !el.classList.contains('open')) return;
+  introLimpiar();
+  const id = intro_actual;
+  if (id) introMarcar(id);
+  el.classList.add('saliendo');
+  setTimeout(() => { el.classList.remove('open', 'saliendo'); el.setAttribute('aria-hidden', 'true'); el.innerHTML = ''; }, 280);
+  document.body.style.overflow = '';
+  intro_actual = null;
+  // En Finanzas, después de la presentación siguen las guías de Te queda / Por cobrar.
+  if (id === 'finanzas' && typeof pf_guiaRevisar === 'function') setTimeout(pf_guiaRevisar, 350);
+}
+// Botón ? en el encabezado de cada sección.
+function introAgregarBotones() {
+  Object.keys(INTRO_SECCIONES).forEach(id => {
+    const sec = document.getElementById('sec-' + id);
+    if (!sec || sec.querySelector('.intro-ayuda')) return;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'intro-ayuda';
+    b.textContent = '?';
+    b.setAttribute('aria-label', 'Para qué sirve ' + INTRO_SECCIONES[id].nombre);
+    b.onclick = (e) => { e.stopPropagation(); introMostrar(id); };
+    if (id === 'inicio') {
+      const hero = document.getElementById('inicioHero');
+      if (!hero) return;
+      b.classList.add('flota');
+      hero.appendChild(b);
+      return;
+    }
+    const h2 = sec.querySelector('.sec-header h2, .tareas-page-header h2');
+    if (!h2) return;
+    h2.parentElement.classList.add('intro-tit');
+    h2.insertAdjacentElement('afterend', b);
+  });
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && introAbierta()) introCerrar(); });
+
 
 function activarEscudo() {
   const mes = todayKey.slice(0, 7);
@@ -7774,7 +7969,7 @@ function pf_guiaRevisar() {
   if (!clave || pf_guiaVista(clave)) return;
   clearTimeout(pf_guiaPend);
   pf_guiaPend = setTimeout(() => {
-    if (pf_guia || pf_tecEstaAbierto() || !document.getElementById('sec-finanzas').classList.contains('active')) return;
+    if (pf_guia || pf_tecEstaAbierto() || (typeof introAbierta === 'function' && introAbierta()) || !document.getElementById('sec-finanzas').classList.contains('active')) return;
     if ((clave === 'cobrar') !== (pf_view === 'cobrar')) return;
     pf_guiaIniciar(clave);
   }, 700);
@@ -10837,6 +11032,8 @@ function mostrarOnboarding() {
   document.getElementById('onboardingOverlay').classList.add('open');
 }
 if (!state.onboardingCompletado) mostrarOnboarding();
+introAgregarBotones();
+{ const activa = document.querySelector('main .section.active'); if (activa) introRevisar(activa.id.replace('sec-', '')); }
 </script>
 
 <script>
