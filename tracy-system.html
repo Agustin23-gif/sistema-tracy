@@ -5203,8 +5203,11 @@ function calcularRachaGlobal() {
     // seguir "completando el día" con un check fantasma que quedó en habitoChecks.
     const done   = habitosActivos.filter(h => checks[h.id]).length;
     const shieldProtectsToday = (i === 0) && (state.escudoUsado === mesActual);
-    if (done >= total || shieldProtectsToday) { streak++; d.setDate(d.getDate() - 1); }
-    else break;
+    if (done >= total || shieldProtectsToday) streak++;
+    // Hoy todavía está en curso: si no completaste los hábitos de hoy, la racha
+    // no se corta, se sigue contando desde ayer. Solo un día pasado incompleto la corta.
+    else if (i > 0) break;
+    d.setDate(d.getDate() - 1);
   }
   return streak;
 }
@@ -5822,10 +5825,9 @@ function calcStreak(habitoId) {
   const d = new Date();
   for (let i = 0; i < 365; i++) {
     const key = fechaLocal(d);
-    if (state.habitoChecks[key] && state.habitoChecks[key][habitoId]) {
-      streak++;
-      d.setDate(d.getDate() - 1);
-    } else { break; }
+    if (state.habitoChecks[key] && state.habitoChecks[key][habitoId]) streak++;
+    else if (i > 0) break; // hoy sin marcar todavía no corta la racha
+    d.setDate(d.getDate() - 1);
   }
   return streak;
 }
