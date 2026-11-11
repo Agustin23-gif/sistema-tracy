@@ -64,7 +64,7 @@ Queda como una app más en tu pantalla de inicio, con su ícono. En Android, des
 La app está viva y quiero mejorarla con lo que te sirva a vos.
 
 - **Si tenés cuenta de GitHub:** abrí un [Issue](https://github.com/Agustin23-gif/sistema-tracy/issues/new) contando qué pasó o qué se te ocurre.
-- **Si no:** escribime por Instagram.
+- **Si no:** escribime por Instagram a [@agustin_lezcano](https://www.instagram.com/agustin_lezcano/).
 
 Si sabés programar y querés proponer un cambio, la app entera está en un solo archivo, [`tracy-system.html`](tracy-system.html): se abre en el navegador sin instalar nada. Respetá el estilo, que es simple y minimalista, siempre en naranja (`#E8450A`), con la excepción de Finanzas, que va en verde.
 
@@ -74,4 +74,4 @@ Es HTML, CSS y JavaScript en un solo archivo, sin frameworks. Usa [Firebase](htt
 
 ## Licencia
 
-[MIT](LICENSE). Podés usarla, copiarla y modificarla libremente, siempre que mantengas el aviso de autoría.
+[MIT](LICENSE), © 2026 Agustin Lezcano. Podés usarla, copiarla y modificarla libremente, siempre que mantengas el aviso de autoría.
