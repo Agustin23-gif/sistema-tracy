@@ -7,7 +7,7 @@
 <p align="center"><i>"Así que dejen que crezca, pues una vez que su constancia se haya desarrollado plenamente,<br>serán perfectos y completos, y no les faltará nada."</i><br>Santiago 1:4 (NTV)</p>
 
 <p align="center">
-  <a href="https://agustin23-gif.github.io/sistema-tracy/tracy-system.html"><b>Abrir la app</b></a> ·
+  <a href="https://agustin23-gif.github.io/sistema-tracy/"><b>Abrir la app</b></a> ·
   <a href="#cómo-instalarla-en-el-iphone">Instalarla en el iPhone</a> ·
   <a href="#ideas-y-errores">Dejar una idea o avisar de un error</a>
 </p>
@@ -44,7 +44,7 @@ Steadfast nació como una herramienta personal para entrenar esa constancia todo
 
 ## Cómo usarla
 
-Entrá a **[agustin23-gif.github.io/sistema-tracy/tracy-system.html](https://agustin23-gif.github.io/sistema-tracy/tracy-system.html)** desde cualquier navegador. Eso es todo: no se descarga nada de una tienda de apps.
+Entrá a **[agustin23-gif.github.io/sistema-tracy](https://agustin23-gif.github.io/sistema-tracy/)** desde cualquier navegador. Eso es todo: no se descarga nada de una tienda de apps.
 
 ### Cómo instalarla en el iPhone
 
