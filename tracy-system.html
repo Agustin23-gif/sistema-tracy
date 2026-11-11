@@ -1427,6 +1427,9 @@
     font-size: 0.9rem; font-weight: 500; color: var(--text);
   }
   .ajustes-row-label i, .ajustes-row-label svg { width: 18px; height: 18px; color: var(--muted); }
+  .ajustes-input { width: 50%; max-width: 220px; font: inherit; font-size: 16px; text-align: right; color: var(--text); background: transparent; border: 1px solid transparent; border-radius: 10px; padding: 6px 10px; }
+  .ajustes-input:hover { border-color: var(--border); }
+  .ajustes-input:focus { outline: none; border-color: #E8450A; text-align: left; }
 
   /* Backup */
   .backup-section {
@@ -3144,6 +3147,7 @@
   .ob-chip { font: inherit; font-size: 14px; border: 1.5px solid var(--ob-line); background: var(--ob-chip); color: var(--ob-fg); border-radius: 999px; padding: 9px 14px; cursor: pointer; transition: background .2s, border-color .2s, color .2s; }
   .ob-chip[aria-pressed="true"] { background: #E8450A; border-color: #E8450A; color: #fff; }
   .ob-campo { display: flex; gap: 8px; }
+  .ob-campo-nombre { margin-top: 18px; }
   .ob-campo input { flex: 1; min-width: 0; font: inherit; font-size: 16px; border: 1.5px solid var(--ob-line); background: transparent; color: var(--ob-fg); border-radius: 12px; padding: 11px 12px; }
   .ob-campo input::placeholder { color: var(--ob-muted); }
   .ob-campo button { font: inherit; font-size: 14px; font-weight: 600; border: 0; border-radius: 12px; padding: 0 16px; background: var(--ob-chip); color: #E8450A; cursor: pointer; }
@@ -4314,7 +4318,13 @@
       </div>
     </div>
 
-    <h3 class="inicio-section-title">Apariencia</h3>
+    <h3 class="inicio-section-title">Perfil</h3>
+    <div class="ajustes-row">
+      <label class="ajustes-row-label" for="ajustesNombre"><i data-lucide="user"></i> Tu nombre</label>
+      <input id="ajustesNombre" class="ajustes-input" type="text" placeholder="Para los saludos" autocomplete="given-name" maxlength="40" enterkeyhint="done" onchange="guardarNombreUsuario(this.value)" onkeydown="if(event.key==='Enter')this.blur()">
+    </div>
+
+    <h3 class="inicio-section-title" style="margin-top:28px">Apariencia</h3>
     <div class="ajustes-row">
       <span class="ajustes-row-label"><i data-lucide="moon"></i> Modo oscuro</span>
       <div class="dark-toggle" id="darkToggleAjustes" onclick="toggleDarkMode()" role="button" aria-label="Modo oscuro">
@@ -4758,6 +4768,7 @@
           <div class="ob-pilar"><span class="n">1</span><div><b>Hábitos</b><span>lo que repetís cada día</span></div></div>
           <div class="ob-pilar"><span class="n">2</span><div><b>Tareas</b><span>lo que hacés hoy, con tu rana primero</span></div></div>
         </div>
+        <div class="ob-campo ob-campo-nombre"><input id="obNombreInput" type="text" placeholder="¿Cómo te llamás?" aria-label="Tu nombre" autocomplete="given-name" maxlength="40" enterkeyhint="next"></div>
       </div>
       <div class="ob-cta"><button class="ob-btn" type="button" onclick="obIr(2)">Comenzar</button><button class="ob-btn-sec" type="button" onclick="saltarOnboarding()">Ahora no</button></div>
     </section>
@@ -4896,11 +4907,30 @@ function loadState() {
   return { metas: [], habitos: [], habitoChecks: {}, tareas: [] };
 }
 
+// El nombre que se muestra en saludos: el que eligió la persona (bienvenida o Ajustes),
+// si no el de su cuenta de Google, y si no ninguno (los textos se acomodan sin nombre).
 function obtenerNombreUsuario() {
+  const propio = (state.nombre || '').trim();
+  if (propio) return propio;
   if (window.currentUser && window.currentUser.displayName) {
-    return window.currentUser.displayName.split(' ')[0];
+    return window.currentUser.displayName.trim().split(/\s+/)[0];
   }
-  return 'Agustín';
+  return '';
+}
+// Reemplaza {n} / {nombre} por el nombre; sin nombre, saca también la coma que lo precede
+// ("Buen día, {n}. Un paso" → "Buen día. Un paso"; "¡Hola {nombre}!" → "¡Hola!").
+function ponerNombre(texto, n = obtenerNombreUsuario()) {
+  if (n) return texto.replace(/\{(n|nombre)\}/g, n);
+  return texto.replace(/,?\s*\{(n|nombre)\}/g, '');
+}
+function guardarNombreUsuario(valor) {
+  const limpio = (valor || '').trim().slice(0, 40);
+  if (limpio === (state.nombre || '')) return;
+  state.nombre = limpio;
+  saveState();
+  const enAjustes = document.getElementById('ajustesNombre');
+  if (enAjustes && enAjustes !== document.activeElement) enAjustes.value = limpio;
+  if (typeof renderInicio === 'function') { try { renderInicio(); } catch (e) {} }
 }
 
 function saveState() {
@@ -5213,6 +5243,7 @@ function renderSeccion(tab) {
   if (tab === 'progreso')   renderProgreso();
   if (tab === 'premios')    renderPremios();
   if (tab === 'reloj')      renderReloj();
+  if (tab === 'ajustes')    { const aj = document.getElementById('ajustesNombre'); if (aj) aj.value = state.nombre || ''; }
   actualizarBadgeVision();
 }
 
@@ -5555,19 +5586,18 @@ let portadaUltimoCtx = { doneH: 0, totalH: 0, racha: 0 };
 function momentoDelDia(h) { return h >= 5 && h < 12 ? 'manana' : h >= 12 && h < 19 ? 'tarde' : 'noche'; }
 
 function getSaludoAmigo(ctx, ahora) {
-  const n = obtenerNombreUsuario();
   const h = ahora.getHours(), dia = ahora.getDay();
   const m = momentoDelDia(h);
-  if (h < 5) return `¿Todavía despierto, ${n}? Andá a descansar`;
-  if (ctx.totalH > 0 && ctx.doneH >= ctx.totalH) return `Día completo, ${n}. Qué orgullo`;
-  if ([7, 30, 100].includes(ctx.racha)) return `${ctx.racha} días seguidos, ${n}. Seguí firme`;
-  if (m === 'tarde' && h >= 15 && ctx.totalH > 0 && ctx.doneH === 0) return `Todavía hay tiempo, ${n}. Empezá por una`;
-  if (dia === 1 && m === 'manana') return `Feliz lunes, ${n}. Semana nueva, página en blanco`;
-  if (dia === 5 && m !== 'noche') return `Último empujón de la semana, ${n}`;
-  if (dia === 0 && m !== 'noche') return `Domingo de descanso, ${n}. Recargá fuerzas`;
+  if (h < 5) return ponerNombre('¿Todavía despierto, {n}? Andá a descansar');
+  if (ctx.totalH > 0 && ctx.doneH >= ctx.totalH) return ponerNombre('Día completo, {n}. Qué orgullo');
+  if ([7, 30, 100].includes(ctx.racha)) return ponerNombre(`${ctx.racha} días seguidos, {n}. Seguí firme`);
+  if (m === 'tarde' && h >= 15 && ctx.totalH > 0 && ctx.doneH === 0) return ponerNombre('Todavía hay tiempo, {n}. Empezá por una');
+  if (dia === 1 && m === 'manana') return ponerNombre('Feliz lunes, {n}. Semana nueva, página en blanco');
+  if (dia === 5 && m !== 'noche') return ponerNombre('Último empujón de la semana, {n}');
+  if (dia === 0 && m !== 'noche') return ponerNombre('Domingo de descanso, {n}. Recargá fuerzas');
   const lista = SALUDOS_AMIGO[m];
   const diaAnio = Math.floor((ahora - new Date(ahora.getFullYear(), 0, 0)) / 86400000);
-  return lista[diaAnio % lista.length].replace('{n}', n);
+  return ponerNombre(lista[diaAnio % lista.length]);
 }
 
 function portadaSiguiente() {
@@ -9655,7 +9685,7 @@ function getAvatarMsg(section) {
   const avState = getAvatarState();
   const pool = (AVATAR_MSGS[section] || {})[avState] || AVATAR_MSGS[section].idle;
   const msg = pool[Math.floor(Math.random() * pool.length)];
-  return msg.replace('{nombre}', obtenerNombreUsuario());
+  return ponerNombre(msg);
 }
 
 function buildAvatarSVG(avState, small) {
@@ -11220,6 +11250,7 @@ const OB_COLOR_CAT = { '🧠 Mente': '#5B8CFF', '💪 Cuerpo': '#4CAF87', '❤�
 let obPasoActual = 1;
 let obTareas = [];
 function obIr(n) {
+  if (obPasoActual === 1) obGuardarNombre();
   const prev = document.getElementById('obPaso' + obPasoActual);
   document.querySelectorAll('.ob-paso').forEach(p => p.classList.remove('activo', 'atras'));
   if (prev && n > obPasoActual) prev.classList.add('atras');
@@ -11231,7 +11262,8 @@ function obIr(n) {
   if (n === 4) {
     document.getElementById('obNHab').textContent = obHabitosElegidos().length;
     document.getElementById('obNTar').textContent = obTareas.length;
-    document.getElementById('obFinalTitle').textContent = `Tu columna está en pie, ${obtenerNombreUsuario()}.`;
+    const nom = obtenerNombreUsuario();
+    document.getElementById('obFinalTitle').textContent = nom ? `Tu columna está en pie, ${nom}.` : 'Tu columna está en pie.';
   }
 }
 function obHabitosElegidos() { return [...document.querySelectorAll('#obChipsHab .ob-chip[aria-pressed="true"]')]; }
@@ -11280,7 +11312,8 @@ function obAgregarTarea() {
 }
 document.getElementById('obHabitoInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); obAgregarHabito(); } });
 document.getElementById('obTareaInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); obAgregarTarea(); } });
-function saltarOnboarding() { obTareas = []; document.querySelectorAll('#obChipsHab .ob-chip').forEach(c => c.setAttribute('aria-pressed', 'false')); completarOnboarding(); }
+function obGuardarNombre() { const i = document.getElementById('obNombreInput'); if (i && i.value.trim()) state.nombre = i.value.trim().slice(0, 40); }
+function saltarOnboarding() { obGuardarNombre(); obTareas = []; document.querySelectorAll('#obChipsHab .ob-chip').forEach(c => c.setAttribute('aria-pressed', 'false')); completarOnboarding(); }
 function completarOnboarding() {
   const ahora = new Date().toISOString();
   obHabitosElegidos().forEach(c => {
@@ -11300,10 +11333,13 @@ function completarOnboarding() {
 }
 function mostrarOnboarding() {
   obIr(1);
+  const obNombre = document.getElementById('obNombreInput');
+  if (obNombre && !obNombre.value) obNombre.value = obtenerNombreUsuario();
   obPintarTareas();
   document.getElementById('onboardingOverlay').classList.add('open');
 }
 if (!state.onboardingCompletado) mostrarOnboarding();
+{ const aj = document.getElementById('ajustesNombre'); if (aj) aj.value = state.nombre || ''; }
 introAgregarBotones();
 { const activa = document.querySelector('main .section.active'); if (activa) introRevisar(activa.id.replace('sec-', '')); }
 </script>
