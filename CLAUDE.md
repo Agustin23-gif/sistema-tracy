@@ -9,7 +9,7 @@ Antes de trabajar en el código, leé el contexto guardado:
 - `docs/contexto/PR-1-arreglos-rapidos.md`: qué proponía el PR #1 (entró a main en `d443a33`).
 - `graphify-out/GRAPH_REPORT.md`: resumen del grafo de conocimiento (funciones centrales y comunidades).
 
-Para preguntas sobre cómo se conectan las funciones, usá el grafo en vez de leer las ~11.000 líneas:
+Para preguntas sobre cómo se conectan las funciones, usá el grafo en vez de leer las ~11.500 líneas:
 `graphify query "<pregunta>"`, `graphify explain "saveToFirestore()"`, `graphify path "A" "B"`.
 
 Después de cambios grandes, regenerá el grafo con `python scripts/graphify_contexto.py` (requiere `pip install graphifyy`).
@@ -20,4 +20,5 @@ Reglas fijas:
 - Nunca subir la carpeta de finanzas al repo.
 - La Rana del Día es siempre manual.
 - Siempre naranja (`#E8450A`); logos y diseño simples y minimalistas. Única excepción: Finanzas usa verde.
+- Nunca reemplazar las reglas enteras de Firestore con `firestore.rules`: el proyecto Firebase lo comparte otra app.
 - No cambiar las claves de storage `tracy_*` ni los ids de Firebase (se conservaron al renombrar).

@@ -487,7 +487,7 @@
   },
   {
    "id": "docs_contexto_estado_actual_estado",
-   "label": "Estado actual y flujo de trabajo (10/11)",
+   "label": "Estado actual y flujo de trabajo (12/11)",
    "file_type": "document",
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",
    "source_location": null,
@@ -1012,6 +1012,161 @@
    "source_location": null,
    "source_url": null,
    "captured_at": "2026-11-10",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_portada",
+   "label": "Commits d53fbdc…015d313: portada nueva de Inicio",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_portada_inicio",
+   "label": "Portada de Inicio: saludos de amigo, bloque en celular, fecha grande en compu",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_40cdd9c",
+   "label": "Commit 40cdd9c: nombre propio en los saludos",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_nombre_propio",
+   "label": "Nombre propio (state.nombre) en bienvenida y Ajustes",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_3458684",
+   "label": "Commit 3458684: empezar Finanzas de cero",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_borrar_finanzas",
+   "label": "Borrar registro de Finanzas con Deshacer",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_1b98c33",
+   "label": "Commit 1b98c33: aviso de ahorro de fin de mes",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_aviso_ahorro",
+   "label": "Aviso de fin de mes para apartar el ahorro",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_codigo_abierto",
+   "label": "Código abierto: README, licencia MIT, capturas",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_open_source",
+   "label": "Commits e07a0f6/4a4f79e: README y licencia",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_reglas_firestore",
+   "label": "firestore.rules versionadas (se suman, no reemplazar)",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude",
+   "rationale": "El proyecto Firebase lo comparte otra app (notas_marian): reemplazar las reglas enteras la rompería."
+  },
+  {
+   "id": "docs_contexto_estado_actual_commit_ed224a5",
+   "label": "Commits ed224a5/8b5ce8e: index.html y firestore.rules",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_pend_instagram",
+   "label": "Pendiente: mostrar Steadfast en Instagram (8 Reels)",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
+   "author": null,
+   "contributor": "Claude"
+  },
+  {
+   "id": "docs_contexto_estado_actual_pend_fuente_messi",
+   "label": "Pendiente: permiso del autor de la letra Messi",
+   "file_type": "concept",
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": "2026-11-12",
    "author": null,
    "contributor": "Claude"
   }
@@ -3896,6 +4051,466 @@
    "source_file": "docs/contexto/ESTADO-ACTUAL.md",
    "source_location": null,
    "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_portada",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_portada",
+   "target": "docs_contexto_estado_actual_portada_inicio",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_portada_inicio",
+   "target": "tracy_system_getsaludoamigo",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_portada_inicio",
+   "target": "tracy_system_momentodeldia",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_portada_inicio",
+   "target": "tracy_system_renderportada",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_portada_inicio",
+   "target": "tracy_system_portadasiguiente",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_portada_inicio",
+   "target": "tracy_system_portadatema",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_portada_inicio",
+   "target": "tracy_system_renderinicio",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_40cdd9c",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_40cdd9c",
+   "target": "docs_contexto_estado_actual_nombre_propio",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_nombre_propio",
+   "target": "tracy_system_obtenernombreusuario",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_nombre_propio",
+   "target": "tracy_system_ponernombre",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_nombre_propio",
+   "target": "tracy_system_guardarnombreusuario",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_nombre_propio",
+   "target": "tracy_system_obguardarnombre",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_3458684",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_3458684",
+   "target": "docs_contexto_estado_actual_borrar_finanzas",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_borrar_finanzas",
+   "target": "tracy_system_pf_borrartodo",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_borrar_finanzas",
+   "target": "tracy_system_marcareliminado",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_1b98c33",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_1b98c33",
+   "target": "docs_contexto_estado_actual_aviso_ahorro",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_aviso_ahorro",
+   "target": "tracy_system_pf_renderavisoahorro",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_aviso_ahorro",
+   "target": "tracy_system_pf_avisoahorroenventana",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_aviso_ahorro",
+   "target": "tracy_system_pf_avisoahorrolisto",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_aviso_ahorro",
+   "target": "tracy_system_pf_avisoahorrosaltar",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_aviso_ahorro",
+   "target": "tracy_system_pf_avisoahorroinicio",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_aviso_ahorro",
+   "target": "tracy_system_pf_iraavisoahorro",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_aviso_ahorro",
+   "target": "tracy_system_pf_ahorromonto",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_aviso_ahorro",
+   "target": "tracy_system_pf_ingresosmesactual",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_aviso_ahorro",
+   "target": "tracy_system_pf_ahorropct",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_nombre_propio",
+   "target": "docs_contexto_revision_2026_11_06_bug_nombre_hardcode",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_aviso_ahorro",
+   "target": "docs_contexto_estado_actual_te_queda_por_cobrar",
+   "relation": "conceptually_related_to",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_aviso_ahorro",
+   "target": "docs_contexto_estado_actual_regla_naranja",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_borrar_finanzas",
+   "target": "docs_contexto_arquitectura_tombstones",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_portada_inicio",
+   "target": "docs_contexto_estado_actual_regla_naranja",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_portada_inicio",
+   "target": "service_worker",
+   "relation": "references",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_open_source",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_open_source",
+   "target": "docs_contexto_estado_actual_codigo_abierto",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_commit_ed224a5",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_commit_ed224a5",
+   "target": "docs_contexto_estado_actual_reglas_firestore",
+   "relation": "implements",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_reglas_firestore",
+   "target": "docs_contexto_revision_2026_11_06_seguridad_reglas",
+   "relation": "rationale_for",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_reglas_firestore",
+   "target": "docs_contexto_arquitectura_doc_firestore",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_pend_instagram",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_pend_instagram",
+   "target": "docs_contexto_estado_actual_codigo_abierto",
+   "relation": "conceptually_related_to",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_estado",
+   "target": "docs_contexto_estado_actual_pend_fuente_messi",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_pend_fuente_messi",
+   "target": "docs_contexto_estado_actual_portada_inicio",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "docs_contexto_estado_actual_pend_fuente_messi",
+   "target": "docs_contexto_estado_actual_codigo_abierto",
+   "relation": "conceptually_related_to",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md",
+   "source_location": null,
+   "weight": 1.0
   }
  ],
  "hyperedges": [
@@ -3970,6 +4585,21 @@
    "relation": "form",
    "confidence": "EXTRACTED",
    "confidence_score": 1.0,
+   "source_file": "docs/contexto/ESTADO-ACTUAL.md"
+  },
+  {
+   "id": "abrir_al_mundo",
+   "label": "Abrir Steadfast al mundo",
+   "nodes": [
+    "docs_contexto_estado_actual_codigo_abierto",
+    "docs_contexto_estado_actual_reglas_firestore",
+    "docs_contexto_estado_actual_nombre_propio",
+    "docs_contexto_estado_actual_pend_instagram",
+    "docs_contexto_estado_actual_pend_fuente_messi"
+   ],
+   "relation": "participate_in",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
    "source_file": "docs/contexto/ESTADO-ACTUAL.md"
   }
  ]
