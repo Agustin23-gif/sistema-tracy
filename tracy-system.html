@@ -4341,6 +4341,10 @@
       <span class="ajustes-row-label"><i data-lucide="credit-card"></i> Uso tarjeta de crédito</span>
       <div class="dark-toggle" id="tarjetaFinanzasToggle" onclick="pf_toggleTarjeta()" role="button" aria-label="Uso tarjeta de crédito"><div class="dark-toggle-thumb"></div></div>
     </div>
+    <div class="ajustes-row">
+      <span class="ajustes-row-label"><i data-lucide="eraser"></i> Empezar Finanzas de cero</span>
+      <button class="backup-btn" type="button" onclick="pf_borrarTodo()">Borrar registro</button>
+    </div>
 
     <h3 class="inicio-section-title" style="margin-top:28px">Recordatorio diario</h3>
     <!-- Recordatorio diario -->
@@ -8391,6 +8395,29 @@ function pf_toast(msg, deshacer) {
   clearTimeout(pf_toastTimer);
   pf_toastTimer = setTimeout(() => el.classList.remove('show'), 6000);
 }
+// Ajustes → "Empezar Finanzas de cero": marca como eliminado todo lo registrado
+// (movimientos, pagos fijos y por cobrar). Es borrado suave para que también se borre
+// en la nube y en los otros dispositivos al sincronizar.
+function pf_borrarTodo() {
+  const items = [].concat(activos(pf_data.transactions), activos(pf_data.fixedPayments), activos(pf_data.porCobrar));
+  if (!items.length) { pf_toast('Finanzas ya está vacía'); return; }
+  const n = activos(pf_data.transactions).length, f = activos(pf_data.fixedPayments).length, c = activos(pf_data.porCobrar).length;
+  if (!confirm(`¿Seguro que querés borrar todo el registro de Finanzas?\n\nSe borran ${n} movimientos, ${f} pagos fijos y ${c} por cobrar, de todos los meses. Tus hábitos, tareas y metas no se tocan.`)) return;
+  items.forEach(marcarEliminado);
+  pf_persist();
+  pf_renderSiVisible();
+  pf_toast('Registro de Finanzas borrado', () => {
+    const ahora = new Date().toISOString();
+    items.forEach(it => { it.eliminado = false; delete it.eliminadoEn; it.updatedAt = ahora; });
+    pf_persist();
+    pf_renderSiVisible();
+  });
+}
+
+function pf_renderSiVisible() {
+  if (document.getElementById('sec-finanzas').classList.contains('active')) pf_render();
+}
+
 function pf_restaurar(item) {
   if (!item) return;
   item.eliminado = false;
