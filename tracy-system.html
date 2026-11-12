@@ -3545,6 +3545,46 @@
   #pf-app { --pfx-pos: #2A9D3A; --pfx-neg: var(--gold); --pfx-amb: #C98A06; --pfx-suave: var(--input-bg); }
   body.dark-mode #pf-app { --pfx-pos: #6BD88A; --pfx-amb: #F0B53A; }
   .pfx-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 16px; display: grid; gap: 12px; margin-bottom: 12px; }
+  /* Aviso de fin de mes para apartar el ahorro */
+  .pfx-apartar { background: #5FD32F; color: #0E2A05; border-radius: 22px; padding: 16px; display: grid; gap: 12px; margin-bottom: 12px; }
+  .pfx-apartar.entra { animation: pfxApartarEntra .5s cubic-bezier(.2,.8,.2,1); }
+  @keyframes pfxApartarEntra { from { transform: translateY(-8px) scale(.98); opacity: .4; } to { transform: none; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .pfx-apartar.entra { animation: none; } }
+  .pfx-apartar-cab { display: flex; gap: 10px; align-items: flex-start; }
+  .pfx-apartar-cab b { display: block; font-size: 16px; font-weight: 800; line-height: 1.2; }
+  .pfx-apartar-cab div span { font-size: 13px; line-height: 1.35; opacity: .85; }
+  .pfx-apartar-ico { width: 36px; height: 36px; border-radius: 12px; background: #0E2A05; color: #A8EC85; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .pfx-apartar-ico svg { width: 20px; height: 20px; }
+  .pfx-apartar-chips { display: flex; gap: 6px; }
+  .pfx-apartar-chips button { flex: 1; height: 40px; border-radius: 20px; border: none; background: rgba(14,42,5,.12); color: #0E2A05; font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .pfx-apartar-chips button[aria-pressed="true"] { background: #0E2A05; color: #fff; }
+  .pfx-apartar-otro { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,.55); border-radius: 14px; padding: 0 12px; height: 46px; }
+  .pfx-apartar-otro span { flex: 1; font-size: 13px; font-weight: 600; }
+  #sec-finanzas .pfx-apartar-otro input { width: 64px; flex: none; margin: 0; padding: 0; height: auto; border: none; border-radius: 0; box-shadow: none; background: transparent; font-family: 'Geist Mono', monospace; font-size: 18px; font-weight: 700; color: #0E2A05; text-align: right; -moz-appearance: textfield; }
+  .pfx-apartar-otro input::-webkit-outer-spin-button, .pfx-apartar-otro input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .pfx-apartar-otro input::placeholder { color: rgba(14,42,5,.35); }
+  #sec-finanzas .pfx-apartar-otro input:focus { outline: none; border: none; box-shadow: none; }
+  .pfx-apartar-otro:focus-within { box-shadow: 0 0 0 2px #0E2A05; }
+  .pfx-apartar-calc { background: #0E2A05; color: #fff; border-radius: 16px; padding: 12px 14px; display: grid; gap: 2px; }
+  .pfx-apartar-calc span { font-size: 12px; color: #A8EC85; }
+  .pfx-apartar-calc b { font-family: 'Geist Mono', monospace; font-size: 30px; font-weight: 700; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .pfx-apartar-acc { display: flex; gap: 8px; }
+  .pfx-apartar-acc button { flex: 1; height: 46px; border-radius: 15px; border: none; background: rgba(14,42,5,.12); color: #0E2A05; font: inherit; font-weight: 800; font-size: 14px; cursor: pointer; }
+  .pfx-apartar-acc button.ya { flex: 1.6; background: #0E2A05; color: #fff; }
+  .pfx-apartar-acc button:disabled { opacity: .4; cursor: default; }
+  .pfx-apartar-hecho { background: #E3F7D8; color: #0E2A05; border-radius: 20px; padding: 14px 16px; display: grid; gap: 6px; margin-bottom: 12px; }
+  .pfx-apartar-hecho > b { font-weight: 800; }
+  .pfx-apartar-hecho > div { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+  .pfx-apartar-hecho > div span:last-child { font-family: 'Geist Mono', monospace; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .pfx-apartar-hecho button { justify-self: start; background: none; border: none; padding: 4px 0; color: #0E2A05; font: inherit; font-weight: 700; font-size: 13px; text-decoration: underline; cursor: pointer; }
+  body.dark-mode .pfx-apartar-hecho { background: #17300C; color: #D9F5CB; }
+  body.dark-mode .pfx-apartar-hecho button { color: #D9F5CB; }
+  .aviso-ahorro-inicio { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; background: #5FD32F; color: #0E2A05; border: none; border-radius: 18px; padding: 12px 14px; margin-bottom: 16px; font: inherit; cursor: pointer; }
+  .aviso-ahorro-inicio[hidden] { display: none; }
+  .aviso-ahorro-inicio .t { display: grid; }
+  .aviso-ahorro-inicio .t b { font-size: 14px; font-weight: 800; }
+  .aviso-ahorro-inicio .t span { font-size: 12px; opacity: .85; }
+  .aviso-ahorro-inicio .fl { margin-left: auto; font-size: 20px; font-weight: 700; }
   .pfx-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 0; }
   .pfx-h span { text-transform: none; letter-spacing: 0; color: var(--text); font-size: 12.5px; font-weight: 600; }
   .pfx-pos { color: var(--pfx-pos); } .pfx-neg { color: var(--pfx-neg); }
@@ -4268,6 +4308,9 @@
 
     <!-- Bloque 2-4: Contenido claro -->
     <div class="inicio-body">
+
+      <!-- Aviso de fin de mes para apartar el ahorro (lo pinta pf_avisoAhorroInicio) -->
+      <button type="button" class="aviso-ahorro-inicio" id="avisoAhorroInicio" onclick="pf_irAAvisoAhorro()" hidden></button>
 
       <!-- Alerta racha en riesgo (hidden by default) -->
       <div class="racha-alerta" id="rachaAlerta" style="display:none">
@@ -5259,7 +5302,7 @@ function switchTab(tab) {
   if (typeof portadaTema === 'function') portadaTema();
   const conIntro = introRevisar(tab);
   // Al tocar Finanzas en la barra se abre el teclado verde (se apaga en Ajustes), salvo la primera vez, que va la presentación.
-  if (tab === 'finanzas' && !conIntro && typeof pf_tecActivo === 'function' && pf_tecActivo()) pf_abrirTeclado();
+  if (tab === 'finanzas' && !conIntro && typeof pf_tecActivo === 'function' && pf_tecActivo() && !pf_avisoAhorroPendiente()) pf_abrirTeclado();
 }
 
 // ── PANEL "MÁS" ──
@@ -5741,6 +5784,7 @@ setInterval(() => {
 }, 20000);
 
 function renderInicio() {
+  if (typeof pf_avisoAhorroInicio === 'function') pf_avisoAhorroInicio();
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
@@ -8003,7 +8047,7 @@ function pf_renderMonth() {
       <div class="cal-month-label">${label}</div>
       <button class="cal-nav-btn" data-action="nextMonth">›</button>
     </div>
-    ${esActual ? pf_renderQueda(ingresos, gastos, txs) + pf_renderCobrarFila() : ''}
+    ${esActual ? pf_renderAvisoAhorro(ingresos) + pf_renderQueda(ingresos, gastos, txs) + pf_renderCobrarFila() : ''}
     <div class="pfx-card">
       <div class="pfx-pilas">
         <div class="pfx-pcol"><span class="pfx-et">${pf_corto(ingresos)}</span>${pila(nIn, 'in')}</div>
@@ -8031,7 +8075,7 @@ function pf_renderMonth() {
 const PF_KEY_AHORRO = 'steadfast_ahorro_pct';
 function pf_ahorroPct() {
   const v = parseInt(pf_tecLeer(PF_KEY_AHORRO), 10);
-  return [0, 10, 20].includes(v) ? v : 10;
+  return v >= 0 && v <= 100 ? v : 10;
 }
 function pf_calcQueda(ingresos, gastos, txs) {
   const hoy = new Date();
@@ -8079,6 +8123,122 @@ function pf_renderQueda(ingresos, gastos, txs) {
         <div class="total"><span>Te queda</span><span>${q.queda < 0 ? '−' : ''}${pf_fmtGs(Math.abs(q.queda))}</span></div>
       </div></details>
     </div>`;
+}
+
+// ── Aviso de fin de mes: apartar el ahorro ──
+// Los últimos 3 días del mes aparece una tarjeta verde arriba de Finanzas (y un aviso corto
+// en Inicio) para elegir el porcentaje, ver el monto en guaraníes y marcar "Ya lo pasé".
+// Eso anota un gasto "Ahorro / Inversión" con ahorroMes = 'YYYY-MM' (se sincroniza). El
+// "Este mes no" queda solo en este dispositivo (localStorage).
+const PF_KEY_AVISO_AHORRO = 'steadfast_ahorro_aviso_';
+let pf_avisoAhorroVisto = false;
+function pf_mesClave(d = new Date()) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+function pf_avisoAhorroEnVentana() {
+  const h = new Date();
+  return h.getDate() >= new Date(h.getFullYear(), h.getMonth() + 1, 0).getDate() - 2;
+}
+function pf_ahorroMesTx() {
+  const clave = pf_mesClave();
+  return pf_data.transactions.find(t => !t.eliminado && t.ahorroMes === clave);
+}
+function pf_avisoAhorroPendiente() {
+  return pf_avisoAhorroEnVentana() && !pf_ahorroMesTx() && pf_tecLeer(PF_KEY_AVISO_AHORRO + pf_mesClave()) !== 'saltado';
+}
+function pf_ahorroMonto(ingresos, pct) { return Math.round(ingresos * pct / 100 / 1000) * 1000; }
+function pf_ingresosMesActual() {
+  return pf_monthTx(new Date()).filter(t => t.type === 'ingreso').reduce((s, t) => s + t.amount, 0);
+}
+const PF_ICONO_AHORRO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>';
+function pf_renderAvisoAhorro(ingresos) {
+  const mes = PF_MESES[new Date().getMonth()].toLowerCase();
+  const hecho = pf_ahorroMesTx();
+  if (hecho) {
+    const anio = String(new Date().getFullYear());
+    const totalAnio = pf_data.transactions.filter(t => !t.eliminado && t.ahorroMes && t.ahorroMes.slice(0, 4) === anio).reduce((s, t) => s + t.amount, 0);
+    return `
+    <div class="pfx-apartar-hecho" id="pfxAvisoAhorro">
+      <b>Ahorro de ${mes} apartado ✓</b>
+      <div><span>Este mes${hecho.ahorroPct != null ? ` (${hecho.ahorroPct}%)` : ''}</span><span>${pf_fmtGs(hecho.amount)}</span></div>
+      <div><span>Apartado en ${anio}</span><span>${pf_fmtGs(totalAnio)}</span></div>
+      ${pf_avisoAhorroEnVentana() ? '<button type="button" data-action="avisoCambiar">Cambiar</button>' : ''}
+    </div>`;
+  }
+  if (!pf_avisoAhorroPendiente()) return '';
+  const pct = pf_ahorroPct();
+  const monto = pf_ahorroMonto(ingresos, pct);
+  const libre = ![0, 10, 20].includes(pct);
+  const entra = pf_avisoAhorroVisto ? '' : ' entra';
+  pf_avisoAhorroVisto = true; // la animación de entrada va una sola vez, no en cada toque
+  return `
+    <div class="pfx-apartar${entra}" id="pfxAvisoAhorro">
+      <div class="pfx-apartar-cab"><span class="pfx-apartar-ico">${PF_ICONO_AHORRO}</span><div><b>Se termina ${mes}</b><span>¿Cuánto apartás para tu ahorro este mes?</span></div></div>
+      <div class="pfx-apartar-chips" role="group" aria-label="Porcentaje para ahorro">${[0, 10, 20].map(v =>
+        `<button type="button" aria-pressed="${v === pct}" data-action="avisoPct" data-value="${v}">${v}%</button>`).join('')}</div>
+      <div class="pfx-apartar-otro"><span>Otro porcentaje</span><input id="pfxAvisoOtro" type="number" inputmode="numeric" min="0" max="100" placeholder="15" value="${libre ? pct : ''}" aria-label="Otro porcentaje"><b>%</b></div>
+      <div class="pfx-apartar-calc">
+        <span id="pfxAvisoDe">${ingresos ? `${pct}% de ${pf_fmtGs(ingresos)} que te entraron` : 'Todavía no anotaste lo que te entró este mes'}</span>
+        <b id="pfxAvisoMonto">${pf_fmtGs(monto)}</b>
+      </div>
+      <div class="pfx-apartar-acc">
+        <button type="button" class="ya" id="pfxAvisoYa" data-action="avisoListo" ${monto ? '' : 'disabled'}>Ya lo pasé</button>
+        <button type="button" data-action="avisoSaltar">Este mes no</button>
+      </div>
+    </div>`;
+}
+// Al escribir otro porcentaje se actualiza el monto sin redibujar (para no perder el foco).
+function pf_avisoAhorroOtro(e) {
+  const v = Math.max(0, Math.min(100, parseInt(e.target.value, 10) || 0));
+  pf_tecEscribir(PF_KEY_AHORRO, String(v));
+  const ingresos = pf_ingresosMesActual();
+  const monto = pf_ahorroMonto(ingresos, v);
+  document.querySelectorAll('.pfx-apartar-chips button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.value === v)));
+  if (ingresos) document.getElementById('pfxAvisoDe').textContent = `${v}% de ${pf_fmtGs(ingresos)} que te entraron`;
+  document.getElementById('pfxAvisoMonto').textContent = pf_fmtGs(monto);
+  document.getElementById('pfxAvisoYa').disabled = !monto;
+}
+function pf_avisoAhorroListo() {
+  const pct = pf_ahorroPct();
+  const monto = pf_ahorroMonto(pf_ingresosMesActual(), pct);
+  if (!monto || pf_ahorroMesTx()) return;
+  const tx = {
+    id: pf_uid(), type: 'gasto', amount: monto, category: 'Ahorro / Inversión',
+    note: `Ahorro de ${PF_MESES[new Date().getMonth()].toLowerCase()} (${pct}%)`,
+    date: pf_todayStr(), fixed: false, method: 'Efectivo / Débito', paid: true,
+    ahorroMes: pf_mesClave(), ahorroPct: pct, updatedAt: new Date().toISOString()
+  };
+  pf_data.transactions.push(tx);
+  pf_persist();
+  pf_render();
+  pf_avisoAhorroInicio();
+  pf_toast('Anotado como ahorro: ' + pf_fmtGs(monto), () => { marcarEliminado(tx); pf_persist(); pf_render(); pf_avisoAhorroInicio(); });
+}
+function pf_avisoAhorroSaltar() {
+  const k = PF_KEY_AVISO_AHORRO + pf_mesClave();
+  pf_tecEscribir(k, 'saltado');
+  pf_render();
+  pf_avisoAhorroInicio();
+  pf_toast('Listo, este mes no te aviso más', () => { pf_tecEscribir(k, ''); pf_render(); pf_avisoAhorroInicio(); });
+}
+function pf_avisoAhorroCambiar() {
+  const tx = pf_ahorroMesTx();
+  if (!tx) return;
+  marcarEliminado(tx);
+  pf_persist();
+  pf_render();
+  pf_avisoAhorroInicio();
+}
+// Aviso corto en Inicio: lleva a Finanzas, donde está la tarjeta completa.
+function pf_irAAvisoAhorro() {
+  pf_view = 'month'; pf_cursor = new Date();
+  switchTabProgrammatic('finanzas');
+  window.scrollTo({ top: 0 });
+}
+function pf_avisoAhorroInicio() {
+  const el = document.getElementById('avisoAhorroInicio');
+  if (!el) return;
+  const ver = pf_avisoAhorroPendiente();
+  el.hidden = !ver;
+  if (ver) el.innerHTML = `<span class="pfx-apartar-ico">${PF_ICONO_AHORRO}</span><span class="t"><b>Se termina ${PF_MESES[new Date().getMonth()].toLowerCase()}</b><span>Apartá tu ahorro del mes</span></span><span class="fl" aria-hidden="true">›</span>`;
 }
 
 // ── Por cobrar: trabajos hechos que todavía no te pagaron ──
@@ -8516,6 +8676,11 @@ function pf_bindEvents() {
   document.querySelectorAll('#pf-app [data-action]').forEach(el => {
     el.addEventListener('click', pf_onAction);
   });
+  const otroPct = document.getElementById('pfxAvisoOtro');
+  if (otroPct) {
+    otroPct.addEventListener('input', pf_avisoAhorroOtro);
+    otroPct.addEventListener('change', () => pf_render());
+  }
   const catSel = document.getElementById('pfCategory');
   if (catSel) { catSel.addEventListener('change', pf_updateAhorroHint); pf_updateAhorroHint(); }
   const methodSel = document.getElementById('pfMethod');
@@ -8541,6 +8706,10 @@ function pf_onAction(e) {
   const action = btn.dataset.action;
   if (action === 'view') { const antes = pf_view; pf_view = btn.dataset.value; if (pf_view === 'month' && antes === 'cobrar') pf_cursor = new Date(); pf_render(); if (antes !== pf_view && (antes === 'cobrar' || pf_view === 'cobrar')) window.scrollTo({ top: 0 }); }
   else if (action === 'ahorroPct') { pf_tecEscribir(PF_KEY_AHORRO, btn.dataset.value); pf_render(); }
+  else if (action === 'avisoPct') { pf_tecEscribir(PF_KEY_AHORRO, btn.dataset.value); pf_render(); }
+  else if (action === 'avisoListo') pf_avisoAhorroListo();
+  else if (action === 'avisoSaltar') pf_avisoAhorroSaltar();
+  else if (action === 'avisoCambiar') pf_avisoAhorroCambiar();
   else if (action === 'guia') pf_guiaIniciar(btn.dataset.value);
   else if (action === 'nuevoCobro') pf_abrirTeclado('cobrar');
   else if (action === 'editCobro') pf_editarCobro(btn.dataset.id);
