@@ -822,7 +822,7 @@
  "questions": [
   {
    "type": "bridge_node",
-   "question": "Why does `Logo: columna blanca sobre naranja (icon.svg)` connect `Community 21` to `Community 20`, `Community 22`?",
+   "question": "Why does `Logo: columna blanca sobre naranja (icon.svg)` connect `Steadfast: logo, entrada y bienvenida` to `Manifest PWA`, `Generador de íconos`?",
    "why": "High betweenness centrality (0.062) - this node is a cross-community bridge."
   },
   {
@@ -832,27 +832,27 @@
   },
   {
    "type": "low_cohesion",
-   "question": "Should `Community 0` be split into smaller, more focused modules?",
+   "question": "Should `Núcleo de la app y Firebase` be split into smaller, more focused modules?",
    "why": "Cohesion score 0.028985507246376812 - nodes in this community are weakly interconnected."
   },
   {
    "type": "bridge_node",
-   "question": "Why does `Regla: siempre naranja (Finanzas en verde), minimalista` connect `Community 21` to `Community 17`, `Community 10`, `Community 18`, `Community 7`?",
+   "question": "Why does `Regla: siempre naranja (Finanzas en verde), minimalista` connect `Steadfast: logo, entrada y bienvenida` to `Estado actual, código abierto y commits`, `Aviso de ahorro de fin de mes`, `Portada de Inicio`, `Finanzas: teclado verde`?",
    "why": "High betweenness centrality (0.061) - this node is a cross-community bridge."
   },
   {
    "type": "low_cohesion",
-   "question": "Should `Community 1` be split into smaller, more focused modules?",
+   "question": "Should `Tareas: barra, filtros y tarjetas` be split into smaller, more focused modules?",
    "why": "Cohesion score 0.06153846153846154 - nodes in this community are weakly interconnected."
   },
   {
    "type": "bridge_node",
-   "question": "Why does `Estado actual y flujo de trabajo (12/11)` connect `Community 17` to `Community 1`, `Community 2`, `Community 4`, `Community 7`, `Community 8`, `Community 10`, `Community 11`, `Community 13`, `Community 18`, `Community 19`, `Community 21`, `Community 28`, `Community 30`?",
+   "question": "Why does `Estado actual y flujo de trabajo (12/11)` connect `Estado actual, código abierto y commits` to `Tareas: barra, filtros y tarjetas`, `Arquitectura y datos`, `Sincronización y merge`, `Finanzas: teclado verde`, `Finanzas: resumen con monedas`, `Aviso de ahorro de fin de mes`, `Nombre propio y bienvenida`, `Racha`, `Portada de Inicio`, `Menú del +`, `Steadfast: logo, entrada y bienvenida`, `Panel de Nueva tarea`, `Finanzas: Te queda y Por cobrar`?",
    "why": "High betweenness centrality (0.054) - this node is a cross-community bridge."
   },
   {
    "type": "low_cohesion",
-   "question": "Should `Community 2` be split into smaller, more focused modules?",
+   "question": "Should `Arquitectura y datos` be split into smaller, more focused modules?",
    "why": "Cohesion score 0.07180851063829788 - nodes in this community are weakly interconnected."
   }
  ]
