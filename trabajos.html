@@ -14,7 +14,9 @@
 <!-- Ingreso con Google Identity Services: el inicio de sesión pasa en esta misma página y no
      por sistema-tracy.firebaseapp.com, que Safari (iPhone y Mac) bloquea por ser de otro dominio. -->
 <script src="https://accounts.google.com/gsi/client" async></script>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<!-- Letras de la marca de Agustín: Helvetica bold apretada (ya viene en iPhone y Mac) y, para los
+     títulos de sección, Libre Caslon Condensed (gratis, licencia OFL), la más parecida a Advercase. -->
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Condensed:wght@700&display=swap" rel="stylesheet">
 
 <!-- Trabajos: app hermana de Steadfast para los pedidos (remeras, webs, diseños).
      Usa el mismo proyecto de Firebase y la misma cuenta de Google. Guarda sus datos en
@@ -45,6 +47,9 @@
     --accent: #E8450A; --accent-soft: #FCE9E1; --on-accent: #FFFFFF;
     --ok: #1F8A4C; --ok-soft: #E3F3EA; --warn: #A86A12; --warn-soft: #FBF0DC;
     --shade: rgba(20,14,10,.35);
+    --mat: #C9BFB6; --accent-2: #F6A27F; --grid: #ECE5DE;
+    --f-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --f-titulo: 'Libre Caslon Condensed', 'Times New Roman', serif;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -52,20 +57,23 @@
       --accent: #FF6A33; --accent-soft: #3A2A26;
       --ok: #4CC987; --ok-soft: #1D3B33; --warn: #E3B04B; --warn-soft: #3A3426;
       --shade: rgba(0,0,0,.55); color-scheme: dark;
+      --mat: #4A5A70; --accent-2: #9A4A2E; --grid: #2A3A4F;
     }
   }
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
   html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Geist', system-ui, -apple-system, sans-serif; font-size: 15px; }
-  .num { font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--f-sans); font-size: 15px; }
+  .num { font-family: var(--f-sans); font-weight: 700; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+  .tight { font-weight: 700; letter-spacing: -.045em; line-height: .95; }
+  .titulo { font-family: var(--f-titulo); font-weight: 700; text-transform: uppercase; word-spacing: .12em; margin: 0; font-size: 24px; line-height: 1; }
   button { font: inherit; color: inherit; }
   button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   .wrap { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;
     padding: calc(env(safe-area-inset-top, 0px) + 16px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 110px) max(16px, env(safe-area-inset-left, 0px)); }
   header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  header h1 { margin: 0; font-size: 26px; letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
+  header h1 { margin: 0; font-size: 30px; font-weight: 700; letter-spacing: -.05em; display: flex; align-items: center; gap: 10px; }
   header h1 img { width: 30px; height: 30px; border-radius: 8px; }
   .cuenta { border: 1px solid var(--border); background: var(--card); border-radius: 99px; padding: 6px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; max-width: 55%; }
   .cuenta span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -77,7 +85,7 @@
 
   .hero { background: var(--accent); color: var(--on-accent); border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
   .hero small { font-size: 12px; opacity: .9; text-transform: uppercase; letter-spacing: .06em; }
-  .hero .big { font-size: 32px; font-weight: 700; letter-spacing: -.02em; }
+  .hero .big { font-size: 40px; font-weight: 700; letter-spacing: -.05em; line-height: .95; }
   .hero .de { font-size: 13px; opacity: .9; margin-top: -6px; }
   .hero button { align-self: flex-start; background: #fff; color: #B5330A; border: 0; border-radius: 99px; padding: 10px 16px; font-weight: 600; font-size: 14px; cursor: pointer; }
   .hero button:disabled { opacity: .55; cursor: default; }
@@ -85,7 +93,7 @@
   .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .stat { background: var(--card); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
   .stat small { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
-  .stat .v { font-size: 19px; font-weight: 600; }
+  .stat .v { font-size: 22px; }
 
   .seg { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -2px; padding: 2px; }
   .seg::-webkit-scrollbar { display: none; }
@@ -124,7 +132,7 @@
 
   .field { display: flex; flex-direction: column; gap: 5px; }
   .field label, .lbl { font-size: 12px; color: var(--muted); }
-  input { font: 500 16px 'Geist', system-ui, sans-serif; background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 10px; width: 100%; min-width: 0; }
+  input { font: 500 16px var(--f-sans); background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 10px; width: 100%; min-width: 0; }
   .line { display: grid; grid-template-columns: 1fr 120px; gap: 8px; }
   .line3 { display: grid; grid-template-columns: 60px 1fr; gap: 8px; }
   .line-x { display: grid; grid-template-columns: 1fr 120px 32px; gap: 6px; align-items: center; }
@@ -136,6 +144,37 @@
   .pctb { align-self: center; font-size: 13px; color: var(--muted); }
   .calc { background: var(--card); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
 
+  .tabs { display: flex; gap: 6px; }
+  .tabs button { border: 0; border-radius: 99px; padding: 9px 16px; font-weight: 700; font-size: 14px; letter-spacing: -.02em; background: var(--card); color: var(--muted); cursor: pointer; }
+  .tabs button.on { background: var(--text); color: var(--bg); }
+  .card { background: var(--card); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .card .bajada { margin: -6px 0 0; font-size: 13px; color: var(--muted); }
+  .meses { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .meses::-webkit-scrollbar { display: none; }
+  .meses button { flex: none; border: 1px solid var(--border); background: transparent; border-radius: 99px; padding: 6px 12px; font-weight: 700; font-size: 13px; letter-spacing: -.02em; cursor: pointer; }
+  .meses button.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .hero .vs { font-size: 14px; font-weight: 600; opacity: .95; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tile { background: var(--card); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .tile small, .tile span { font-size: 12px; color: var(--muted); }
+  .tile b { font-size: 28px; }
+  .grafico svg { display: block; width: 100%; height: auto; }
+  .grafico text { font-family: var(--f-sans); fill: var(--muted); font-size: 11px; }
+  .split { display: flex; height: 28px; gap: 2px; }
+  .split div { border-radius: 6px; min-width: 4px; }
+  .leyenda { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); }
+  .leyenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .leyenda b { color: var(--text); }
+  .rank { display: flex; flex-direction: column; gap: 10px; }
+  .rank .r { display: grid; grid-template-columns: 96px 1fr 76px; gap: 8px; align-items: center; font-size: 14px; }
+  .rank .r span:first-child { font-weight: 700; letter-spacing: -.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rank .r span:last-child { text-align: right; }
+  .rank .pista { background: var(--grid); border-radius: 4px; height: 12px; }
+  .rank .barra { height: 12px; border-radius: 0 4px 4px 0; background: var(--accent); }
+  .alerta { background: var(--card); border-radius: 18px; padding: 14px; display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.4; }
+  .alerta .punto { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+  .alerta a, .wa { color: var(--accent); font-weight: 700; }
+  .tip { position: fixed; pointer-events: none; background: var(--text); color: var(--bg); border-radius: 10px; padding: 8px 10px; font-size: 13px; line-height: 1.35; z-index: 10; white-space: nowrap; }
   .fab { position: fixed; right: max(18px, calc(env(safe-area-inset-right, 0px) + 18px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 22px); background: var(--accent); color: var(--on-accent); border: 0; border-radius: 99px; padding: 14px 20px; font-weight: 600; font-size: 15px; box-shadow: 0 8px 24px rgba(232,69,10,.35); cursor: pointer; }
   .shade { position: fixed; inset: 0; background: var(--shade); display: flex; align-items: flex-end; justify-content: center; z-index: 20; }
   .sheet { background: var(--bg); width: 100%; max-width: 520px; max-height: 92%; overflow: auto; border-radius: 22px 22px 0 0; display: flex; flex-direction: column; gap: 12px;
@@ -164,6 +203,9 @@
     <button class="mini" type="button" id="btnEntrar">¿No aparece el botón? Probá por acá</button>
   </section>
 
+  <nav class="tabs" aria-label="Secciones"><button type="button" class="on" data-vista="trabajos">Trabajos</button><button type="button" data-vista="numeros">Números</button></nav>
+
+  <div id="vTrabajos" style="display:flex;flex-direction:column;gap:16px">
   <section class="hero" aria-live="polite">
     <small>Ganancia para pasar al banco</small>
     <div class="big num" id="hParaPasar">0 Gs</div>
@@ -178,7 +220,11 @@
 
   <nav class="seg" id="seg" aria-label="Filtrar trabajos"></nav>
   <section class="list" id="list"></section>
+  </div>
+
+  <div id="vNumeros" hidden style="display:flex;flex-direction:column;gap:14px"></div>
 </div>
+<div id="tipRoot"></div>
 <button class="fab" id="fab" type="button">+ Nuevo trabajo</button>
 <div id="sheetRoot"></div>
 <div id="toastRoot"></div>
@@ -335,6 +381,7 @@ function conDeshacer(j, cambio, texto) {
 
 // ── Pantalla ──
 function render() {
+  if (vista === 'numeros') renderNumeros();
   const lista = activos();
   const paraPasar = lista.filter(j => j.etapa === 'pagado' && !j.pasado && gan(j) > 0);
   const deben = lista.filter(j => j.etapa !== 'presupuesto' && j.etapa !== 'pagado');
@@ -420,6 +467,7 @@ function tarjeta(j) {
       ${j.etapa === 'presupuesto' ? '' : `<div class="sub">Cobros</div>
         <div class="row"><span>Seña (${pct(sena, T)})</span><span class="num">${gs(sena)} ✓</span></div>
         <div class="row"><span>Saldo</span><span class="num">${gs(T - sena)} ${j.etapa === 'pagado' ? '✓' : 'pendiente'}</span></div>
+        ${j.etapa === 'entregado' ? `<a class="wa" href="${linkWhatsApp(j)}" target="_blank" rel="noopener">Recordarle el saldo por WhatsApp</a>` : ''}
         ${G > sena && j.etapa !== 'pagado' ? `<div class="nota-w">Los materiales (${gs(G)}) superan la seña: ponés ${gs(G - sena)} de tu caja hasta cobrar el saldo.</div>` : ''}`}
       ${j.pasado ? `<div class="row"><span>Pasada al banco</span><span class="num">${fechaCorta(j.pasadoEn)} ✓</span></div>` : ''}
       <div class="mini-row">
@@ -553,6 +601,110 @@ function abrirFormulario(j) {
   if (nuevo) setTimeout(() => document.getElementById('nCliente').focus(), 50);
 }
 document.getElementById('fab').onclick = () => abrirFormulario(null);
+
+// ── Recordatorio por WhatsApp (abre WhatsApp con el mensaje listo; elegís el contacto) ──
+function linkWhatsApp(j) {
+  const saldo = total(j) - (j.sena || 0);
+  const txt = `Hola ${j.cliente}! Te escribo por el saldo de tu pedido (${j.items.map(x => x.c + ' ' + x.d).join(', ')}): quedan ${gs(saldo)}. Cuando puedas me avisás. ¡Gracias!`;
+  return 'https://wa.me/?text=' + encodeURIComponent(txt);
+}
+
+// ── Pestañas ──
+let vista = 'trabajos';
+document.querySelector('.tabs').addEventListener('click', e => {
+  const b = e.target.closest('[data-vista]'); if (!b) return;
+  vista = b.dataset.vista;
+  document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.getElementById('vTrabajos').hidden = vista !== 'trabajos';
+  document.getElementById('vNumeros').hidden = vista !== 'numeros';
+  document.getElementById('fab').hidden = vista !== 'trabajos';
+  render();
+  window.scrollTo({ top: 0 });
+});
+
+// ── Números: todo sale de los trabajos cobrados (por la fecha en que pagaron todo) ──
+let mesNum = hoyStr().slice(0, 7);
+const MES_CORTO = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const mesNombre = k => MESES[+k.slice(5, 7) - 1];
+const mesCorto = k => MES_CORTO[+k.slice(5, 7) - 1];
+function mesMenos(k, n) { const d = new Date(+k.slice(0, 4), +k.slice(5, 7) - 1 - n, 1); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+const gsK = n => Math.abs(n) >= 1e6 ? (n / 1e6).toFixed(1).replace('.', ',') + ' M' : Math.round(n / 1000) + ' mil';
+function datosMes(k) {
+  const js = activos().filter(j => j.etapa === 'pagado' && (j.fechaPago || '').slice(0, 7) === k);
+  const cob = js.reduce((a, j) => a + total(j), 0), mat = js.reduce((a, j) => a + gasto(j), 0);
+  const rem = js.filter(j => j.tipo === 'Remeras');
+  const porCli = {}, porTipo = {};
+  js.forEach(j => { porCli[j.cliente] = (porCli[j.cliente] || 0) + gan(j); porTipo[j.tipo] = (porTipo[j.tipo] || 0) + gan(j); });
+  const orden = o => Object.entries(o).sort((a, b) => b[1] - a[1]);
+  return { js, cob, mat, gan: cob - mat, unid: rem.reduce((a, j) => a + unidades(j), 0), ganRem: rem.reduce((a, j) => a + gan(j), 0), cli: orden(porCli), tipos: orden(porTipo) };
+}
+function tip(e, html) {
+  const r = document.getElementById('tipRoot'); if (!html) { r.innerHTML = ''; return; }
+  r.innerHTML = `<div class="tip">${html}</div>`; const t = r.firstChild;
+  t.style.left = Math.max(8, Math.min(e.clientX + 12, innerWidth - t.offsetWidth - 8)) + 'px'; t.style.top = (e.clientY - t.offsetHeight - 12) + 'px';
+}
+function graficoMeses(meses) {
+  const W = 380, H = 190, pl = 50, pr = 6, pt = 22, pb = 24, iw = W - pl - pr, ih = H - pt - pb;
+  const vals = meses.map(k => datosMes(k).gan), maxV = Math.max(1, ...vals);
+  const paso = [100000, 250000, 500000, 1000000, 2500000, 5000000, 10000000].find(p => maxV / p <= 4) || 10000000;
+  const max = Math.ceil(maxV / paso) * paso, ticks = []; for (let t = 0; t <= max; t += paso) ticks.push(t);
+  const bw = iw / meses.length, barW = Math.min(34, bw - 12), y = v => pt + ih - Math.max(0, v) / max * ih;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Ganancia por mes">`;
+  ticks.forEach(t => { s += `<line x1="${pl}" x2="${W - pr}" y1="${y(t)}" y2="${y(t)}" stroke="var(--grid)"/><text x="${pl - 6}" y="${y(t) + 4}" text-anchor="end">${t ? gsK(t) : '0'}</text>`; });
+  meses.forEach((k, i) => {
+    const g = vals[i], x = pl + i * bw + (bw - barW) / 2, yy = y(g), on = k === mesNum;
+    if (g > 0) s += `<path d="M${x},${pt + ih} V${yy + 4} Q${x},${yy} ${x + 4},${yy} H${x + barW - 4} Q${x + barW},${yy} ${x + barW},${yy + 4} V${pt + ih} Z" fill="${on ? 'var(--accent)' : 'var(--accent-2)'}"/>`;
+    s += `<rect x="${pl + i * bw}" y="${pt}" width="${bw}" height="${ih}" fill="transparent" data-mesg="${k}" style="cursor:pointer"/>`;
+    s += `<text x="${x + barW / 2}" y="${H - 6}" text-anchor="middle" style="${on ? 'fill:var(--text);font-weight:700' : ''}">${mesCorto(k)}</text>`;
+    if (on && g > 0) s += `<text x="${x + barW / 2}" y="${yy - 6}" text-anchor="middle" style="fill:var(--text);font-weight:700">${gsK(g)}</text>`;
+  });
+  return s + '</svg>';
+}
+function ranking(rows) {
+  if (!rows.length) return '<p class="bajada" style="margin:0">Todavía nada este mes.</p>';
+  const max = Math.max(1, ...rows.map(r => r[1]));
+  return '<div class="rank">' + rows.slice(0, 5).map(([n, v]) => `<div class="r"><span>${esc(n)}</span><div class="pista"><div class="barra" style="width:${Math.max(0, v) / max * 100}%"></div></div><span class="num">${gsK(v)}</span></div>`).join('') + '</div>';
+}
+function renderNumeros() {
+  const el = document.getElementById('vNumeros');
+  const hoyK = hoyStr().slice(0, 7);
+  const meses = [5, 4, 3, 2, 1, 0].map(n => mesMenos(hoyK, n));
+  if (!meses.includes(mesNum)) mesNum = hoyK;
+  const d = datosMes(mesNum), i = meses.indexOf(mesNum), prevK = mesMenos(mesNum, 1), prev = datosMes(prevK).gan;
+  const vs = !d.js.length ? 'Todavía no cobraste ningún trabajo completo este mes'
+    : prev > 0 ? `${d.gan >= prev ? '▲' : '▼'} ${Math.abs(Math.round((d.gan - prev) / prev * 100))}% vs ${mesNombre(prevK)} (${gs(prev)})` : `${d.js.length} trabajo${d.js.length === 1 ? '' : 's'} cobrado${d.js.length === 1 ? '' : 's'}`;
+  const deben = activos().filter(j => j.etapa !== 'presupuesto' && j.etapa !== 'pagado');
+  const debenM = deben.reduce((a, j) => a + total(j) - cobrado(j), 0);
+  const hoy = new Date(hoyStr() + 'T00:00:00');
+  const atrasados = activos().filter(j => j.etapa === 'entregado' && j.fechaEntrega && (hoy - new Date(j.fechaEntrega + 'T00:00:00')) / 864e5 >= 3);
+  const pm = d.cob ? Math.round(d.mat / d.cob * 100) : 0;
+  el.innerHTML = `
+    <nav class="meses" aria-label="Mes">${meses.map(k => `<button type="button" class="${k === mesNum ? 'on' : ''}" data-mesn="${k}">${mesNombre(k)}</button>`).join('')}</nav>
+    <section class="hero"><small>Ganancia de ${mesNombre(mesNum)}</small><div class="big num">${gs(d.gan)}</div><div class="vs">${vs}</div></section>
+    <section class="tiles">
+      <div class="tile"><small>Margen promedio</small><b class="num">${d.cob ? Math.round(d.gan / d.cob * 100) + '%' : '—'}</b><span>de cada guaraní cobrado</span></div>
+      <div class="tile"><small>Ganancia por remera</small><b class="num">${d.unid ? gsK(d.ganRem / d.unid) : '—'}</b><span>${d.unid} remera${d.unid === 1 ? '' : 's'} vendida${d.unid === 1 ? '' : 's'}</span></div>
+      <div class="tile"><small>Trabajos cobrados</small><b class="num">${d.js.length}</b><span>${d.js.length ? 'promedio ' + gsK(d.gan / d.js.length) + ' cada uno' : 'en ' + mesNombre(mesNum)}</span></div>
+      <div class="tile"><small>Me deben hoy</small><b class="num">${gsK(debenM)}</b><span>${deben.length ? esc(deben.map(j => j.cliente).join(', ')) : 'Nadie te debe'}</span></div>
+    </section>
+    ${atrasados.map(j => `<section class="alerta"><span class="punto">!</span><span><b>${esc(j.cliente)}</b> te debe ${gs(total(j) - cobrado(j))} desde el ${fechaCorta(j.fechaEntrega)}. <a href="${linkWhatsApp(j)}" target="_blank" rel="noopener">Recordarle por WhatsApp</a></span></section>`).join('')}
+    <section class="card"><h2 class="titulo">Ganancia por mes</h2><p class="bajada">Últimos 6 meses. Tocá una barra para ver ese mes.</p><div class="grafico" id="grafMeses">${graficoMeses(meses)}</div></section>
+    <section class="card"><h2 class="titulo">Lo que cobraste</h2>
+      ${d.cob ? `<p class="bajada">${gs(d.cob)} en ${mesNombre(mesNum)}</p>
+      <div class="split" role="img" aria-label="Materiales ${pm}%, ganancia ${100 - pm}%"><div style="flex:${Math.max(d.mat, 0)};background:var(--mat)"></div><div style="flex:${Math.max(d.gan, 0)};background:var(--accent)"></div></div>
+      <div class="leyenda"><span><i style="background:var(--mat)"></i>Materiales y envío <b class="num">${gs(d.mat)}</b> · ${pm}%</span><span><i style="background:var(--accent)"></i>Tu ganancia <b class="num">${gs(d.gan)}</b> · ${100 - pm}%</span></div>` : '<p class="bajada" style="margin:0">Todavía nada este mes.</p>'}
+    </section>
+    <section class="card"><h2 class="titulo">Mejores clientes</h2><p class="bajada">Por ganancia en ${mesNombre(mesNum)}</p>${ranking(d.cli)}</section>
+    <section class="card"><h2 class="titulo">Por tipo de trabajo</h2><p class="bajada">Qué te deja más ganancia</p>${ranking(d.tipos)}</section>`;
+  el.querySelectorAll('[data-mesg]').forEach(r => {
+    const k = r.dataset.mesg, dm = datosMes(k);
+    r.onmousemove = e => tip(e, `<b>${mesNombre(k)}</b><br>Ganancia ${gs(dm.gan)}<br>Cobrado ${gs(dm.cob)}`);
+    r.onmouseleave = () => tip(null);
+    r.onclick = () => { tip(null); mesNum = k; renderNumeros(); };
+  });
+  const nav = el.querySelector('.meses'); const on = nav.querySelector('.on'); if (on) nav.scrollLeft = on.offsetLeft - 40;
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-mesn]'); if (b) { mesNum = b.dataset.mesn; renderNumeros(); } });
 
 render();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js').catch(() => {});
