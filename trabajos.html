@@ -11,6 +11,9 @@
 <link rel="manifest" href="./manifest-trabajos.json">
 <link rel="apple-touch-icon" href="./trabajos-apple-touch-icon.png">
 <link rel="icon" href="./trabajos-icon-192.png" type="image/png">
+<!-- Ingreso con Google Identity Services: el inicio de sesión pasa en esta misma página y no
+     por sistema-tracy.firebaseapp.com, que Safari (iPhone y Mac) bloquea por ser de otro dominio. -->
+<script src="https://accounts.google.com/gsi/client" async></script>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 
 <!-- Trabajos: app hermana de Steadfast para los pedidos (remeras, webs, diseños).
@@ -19,7 +22,7 @@
      ese documento y arma solo los movimientos de Finanzas (ver pf_aplicarTrabajos). -->
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithCredential, signOut, onAuthStateChanged }
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
   import { getFirestore, doc, setDoc, getDoc, onSnapshot }
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
@@ -32,7 +35,7 @@
     appId: "1:245671404273:web:6aa60f32ac1b0960463f50"
   });
   window.fb = { auth: getAuth(app), db: getFirestore(app), provider: new GoogleAuthProvider(),
-    signInWithPopup, signOut, onAuthStateChanged, doc, setDoc, getDoc, onSnapshot };
+    GoogleAuthProvider, signInWithPopup, signInWithCredential, signOut, onAuthStateChanged, doc, setDoc, getDoc, onSnapshot };
   window.dispatchEvent(new Event('fb-listo'));
 </script>
 
@@ -156,7 +159,8 @@
   <section class="aviso" id="avisoLogin" hidden>
     <b>Entrá con la misma cuenta de Google de Steadfast</b>
     <span>Así tus trabajos se guardan en la nube y los cobros, los materiales y las ganancias aparecen solos en Finanzas.</span>
-    <button class="act" type="button" id="btnEntrar">Entrar con Google</button>
+    <div id="gBtn" style="min-height:44px;display:flex;justify-content:center"></div>
+    <button class="mini" type="button" id="btnEntrar">¿No aparece el botón? Probá por acá</button>
   </section>
 
   <section class="hero" aria-live="polite">
@@ -275,17 +279,36 @@ function iniciarAuth() {
   });
 }
 if (window.fb) iniciarAuth(); else window.addEventListener('fb-listo', iniciarAuth);
+// Botón oficial de Google (Google Identity Services). Devuelve un token que se le pasa a
+// Firebase con signInWithCredential: mismo usuario (uid) que en Steadfast.
+const GOOGLE_CLIENT_ID = '245671404273-3sor61bjnias083ka6iigov5321dpqvp.apps.googleusercontent.com';
+async function conTokenDeGoogle(r) {
+  if (!window.fb) await new Promise(ok => window.addEventListener('fb-listo', ok, { once: true }));
+  try {
+    const cred = window.fb.GoogleAuthProvider.credential(r.credential);
+    await window.fb.signInWithCredential(window.fb.auth, cred);
+  } catch (e) { console.warn(e); toast('No se pudo entrar. Probá de nuevo.'); }
+}
+function prepararBotonGoogle() {
+  if (!window.google || !google.accounts || !google.accounts.id) return false;
+  google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: conTokenDeGoogle, ux_mode: 'popup', itp_support: true, use_fedcm_for_prompt: true });
+  const ancho = Math.min(320, document.getElementById('gBtn').clientWidth || 280);
+  google.accounts.id.renderButton(document.getElementById('gBtn'), { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with', locale: 'es', width: ancho });
+  return true;
+}
+(function esperarGoogle(n) { if (!prepararBotonGoogle() && n < 60) setTimeout(() => esperarGoogle(n + 1), 250); })(0);
+// Respaldo: la ventana de Firebase (funciona en Chrome; en Safari puede fallar).
 async function entrar() {
   try { await window.fb.signInWithPopup(window.fb.auth, window.fb.provider); }
   catch (e) { console.warn(e); toast('No se pudo entrar. Probá de nuevo.'); }
 }
 document.getElementById('btnEntrar').onclick = entrar;
 document.getElementById('btnCuenta').onclick = () => {
-  if (!usuario) return entrar();
+  if (!usuario) { document.getElementById('avisoLogin').scrollIntoView({ behavior: 'smooth' }); if (window.google && google.accounts) google.accounts.id.prompt(); return; }
   abrirHoja(`<div class="sheet-top"><h2>Tu cuenta</h2><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
     <p class="aviso">Conectado como ${esc(usuario.email || usuario.displayName)}. Los cobros, los materiales y las ganancias que pasás al banco se anotan solos en Finanzas de Steadfast cuando la abrís con esta misma cuenta.</p>
     <button class="act" type="button" id="btnSalir">Cerrar sesión</button>`);
-  document.getElementById('btnSalir').onclick = async () => { await window.fb.signOut(window.fb.auth); cerrarHoja(); };
+  document.getElementById('btnSalir').onclick = async () => { try { google.accounts.id.disableAutoSelect(); } catch (e) {} await window.fb.signOut(window.fb.auth); cerrarHoja(); };
 };
 document.addEventListener('visibilitychange', async () => {
   if (document.visibilityState !== 'visible' || !usuario || !primerSnap) return;
