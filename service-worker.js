@@ -12,7 +12,6 @@ const PRECACHE = [
   './apple-touch-icon.png',
   './trabajos.html',
   './manifest-trabajos.json',
-  './trabajos-icon.svg',
   './trabajos-icon-192.png',
   './trabajos-icon-512.png',
   './trabajos-apple-touch-icon.png'

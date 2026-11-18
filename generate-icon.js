@@ -4,14 +4,11 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-// Steadfast (icon.svg) y la app Trabajos (trabajos-icon.svg).
+// Los íconos de la app Trabajos (trabajos-icon-*.png) salen del logo que diseñó Agustín, no de acá.
 const tamanos = [
   ['icon.svg', 'icon-192.png', 192],
   ['icon.svg', 'icon-512.png', 512],
   ['icon.svg', 'apple-touch-icon.png', 180],
-  ['trabajos-icon.svg', 'trabajos-icon-192.png', 192],
-  ['trabajos-icon.svg', 'trabajos-icon-512.png', 512],
-  ['trabajos-icon.svg', 'trabajos-apple-touch-icon.png', 180],
 ];
 
 (async () => {
