@@ -2,7 +2,8 @@ rules_version = '2';
 
 // Reglas de Firestore de Steadfast.
 // Cada persona solo puede leer y escribir su propio documento (usuarios/{uid})
-// y sus respaldos (usuarios/{uid}/backups). Nadie sin sesión puede leer nada.
+// sus respaldos (usuarios/{uid}/backups) y los pedidos de la app Trabajos
+// (usuarios/{uid}/trabajos). Nadie sin sesión puede leer nada.
 // Si usás tu propio proyecto de Firebase, pegalas en: consola → Firestore Database → Reglas → Publicar.
 // Ojo: si tu proyecto ya tiene reglas para otras colecciones, sumá este bloque en vez de reemplazar todo.
 service cloud.firestore {
@@ -11,6 +12,10 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == uid;
 
       match /backups/{backupId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+
+      match /trabajos/{docId} {
         allow read, write: if request.auth != null && request.auth.uid == uid;
       }
     }

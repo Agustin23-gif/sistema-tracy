@@ -1,6 +1,6 @@
 // Cambiar CACHE_NAME solo hace falta si cambia la lista de PRECACHE o la estrategia:
 // el HTML ya no queda "congelado" porque se pide primero a la red (ver más abajo).
-const CACHE_NAME = 'sistema-tracy-v8';
+const CACHE_NAME = 'sistema-tracy-v9';
 
 // Archivos propios que se guardan al instalar, para poder abrir la app sin conexión.
 const PRECACHE = [
@@ -9,7 +9,13 @@ const PRECACHE = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
-  './apple-touch-icon.png'
+  './apple-touch-icon.png',
+  './trabajos.html',
+  './manifest-trabajos.json',
+  './trabajos-icon.svg',
+  './trabajos-icon-192.png',
+  './trabajos-icon-512.png',
+  './trabajos-apple-touch-icon.png'
 ];
 
 // Librerías externas con versión fija: nunca cambian, así que se pueden servir desde el
@@ -96,7 +102,7 @@ self.addEventListener('fetch', event => {
     const esHtml = request.mode === 'navigate' || url.pathname.endsWith('.html') ||
                    url.pathname.endsWith('/');
     // service-worker.js lo maneja el navegador; manifest también conviene fresco.
-    if (esHtml || url.pathname.endsWith('manifest.json')) {
+    if (esHtml || url.pathname.endsWith('.json')) {
       event.respondWith(redPrimero(request));
     } else {
       event.respondWith(cachePrimero(request));

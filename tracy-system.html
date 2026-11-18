@@ -7762,7 +7762,7 @@ function formatFecha(str) {
 // ── FINANZAS (Pulso Financiero) ──
 const PF_STORAGE_KEY = 'pulso_financiero_v1';
 const PF_INGRESO_CATS = ['Sueldo fijo (PC House)','Comisiones (PC House)','Proyectos freelance','Otro ingreso'];
-const PF_GASTO_CATS = ['Vivienda y servicios','Suscripciones y pagos fijos','Comida','Transporte','Herramientas y software','Insumos PC House','Ocio y personal','Ahorro / Inversión','Otro gasto'];
+const PF_GASTO_CATS = ['Vivienda y servicios','Suscripciones y pagos fijos','Comida','Transporte','Herramientas y software','Insumos PC House','Ocio y personal','Materiales de trabajos','Ahorro / Inversión','Ganancias apartadas','Otro gasto'];
 const PF_PAYMENT_METHODS = ['Efectivo / Débito','Tarjeta de crédito'];
 const PF_MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const PF_MESES_ABR = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -7908,6 +7908,7 @@ function pf_renderHeader() {
 const PF_ICONOS = {
   'Vivienda y servicios': '🏠', 'Suscripciones y pagos fijos': '🔁', 'Comida': '🍽️', 'Transporte': '🚌',
   'Herramientas y software': '🛠️', 'Insumos PC House': '🖥️', 'Ocio y personal': '🎟️', 'Ahorro / Inversión': '📈',
+  'Materiales de trabajos': '👕', 'Ganancias apartadas': '🏦',
   'Otro gasto': '•••', 'Sueldo fijo (PC House)': '💼', 'Comisiones (PC House)': '🤝', 'Proyectos freelance': '💻', 'Otro ingreso': '＋'
 };
 const PF_KEY_TARJETA = 'steadfast_usa_tarjeta';
@@ -8239,6 +8240,63 @@ function pf_avisoAhorroInicio() {
   const ver = pf_avisoAhorroPendiente();
   el.hidden = !ver;
   if (ver) el.innerHTML = `<span class="pfx-apartar-ico">${PF_ICONO_AHORRO}</span><span class="t"><b>Se termina ${PF_MESES[new Date().getMonth()].toLowerCase()}</b><span>Apartá tu ahorro del mes</span></span><span class="fl" aria-hidden="true">›</span>`;
+}
+
+// ── Conexión con la app Trabajos (trabajos.html) ──
+// Trabajos guarda sus pedidos en usuarios/{uid}/trabajos/datos. Acá se leen y se arman solos
+// los movimientos de Finanzas, con ids fijos (trab_<id>_...) para no duplicar nunca:
+//   seña y saldo cobrados → ingreso "Proyectos freelance" (entran a la cuenta principal)
+//   materiales y envío    → gasto "Materiales de trabajos" (con la fecha de la seña)
+//   "Ya la pasé al banco" → gasto "Ganancias apartadas" (sale hacia la cuenta de ganancias)
+// Trabajos es la fuente: si se cambia o se borra algo allá, acá se corrige solo.
+let pf_trabajosRemotos = null;
+function pf_movimientosDeTrabajos(trabajos) {
+  const out = [];
+  (trabajos || []).forEach(j => {
+    if (!j || j.eliminado || !j.id || j.etapa === 'presupuesto' || !j.fechaSena) return;
+    const total = (j.items || []).reduce((a, i) => a + (i.c || 0), 0) * (j.precioU || 0);
+    const gastos = (j.gastos || []).filter(g => g.m > 0);
+    const sena = Math.min(j.sena || 0, total);
+    const base = { fixed: false, paid: true, origen: 'trabajos', trabajoId: j.id };
+    const ing = (id, amount, date, note) => out.push({ ...base, id, type: 'ingreso', amount, date, note, category: 'Proyectos freelance', method: null });
+    const gas = (id, amount, date, note, category) => out.push({ ...base, id, type: 'gasto', amount, date, note, category, method: 'Efectivo / Débito' });
+    if (sena > 0) ing(`trab_${j.id}_sena`, sena, j.fechaSena, `${j.cliente} · seña`);
+    if (j.etapa === 'pagado' && total - sena > 0) ing(`trab_${j.id}_saldo`, total - sena, j.fechaPago || j.fechaSena, `${j.cliente} · saldo`);
+    gastos.forEach((g, k) => gas(`trab_${j.id}_g_${g.id || k}`, g.m, j.fechaSena, `${j.cliente} · ${g.d}`, 'Materiales de trabajos'));
+    const ganancia = total - gastos.reduce((a, g) => a + g.m, 0);
+    if (j.etapa === 'pagado' && j.pasado && ganancia > 0)
+      gas(`trab_${j.id}_ganancia`, ganancia, j.pasadoEn || j.fechaPago, `${j.cliente} · a la cuenta de ganancias`, 'Ganancias apartadas');
+  });
+  return out;
+}
+function pf_aplicarTrabajos() {
+  if (!pf_trabajosRemotos || !window.firstSyncDone) return;
+  const deseados = pf_movimientosDeTrabajos(pf_trabajosRemotos);
+  const ids = new Set(deseados.map(t => t.id));
+  const ahora = new Date().toISOString();
+  const campos = ['type', 'amount', 'date', 'note', 'category', 'method'];
+  let cambio = false;
+  deseados.forEach(d => {
+    const t = pf_data.transactions.find(x => x.id === d.id);
+    if (!t) { pf_data.transactions.push({ ...d, updatedAt: ahora }); cambio = true; return; }
+    if (t.eliminado || campos.some(c => t[c] !== d[c])) {
+      Object.assign(t, d, { updatedAt: ahora }); delete t.eliminado; delete t.eliminadoEn; cambio = true;
+    }
+  });
+  pf_data.transactions.forEach(t => {
+    if (t.origen === 'trabajos' && !t.eliminado && !ids.has(t.id)) { marcarEliminado(t); cambio = true; }
+  });
+  if (cambio) { pf_persist(); pf_render(); }
+}
+function pf_escucharTrabajos(uid) {
+  if (!window.firebaseFns) return;
+  const { doc, onSnapshot } = window.firebaseFns;
+  if (window.trabajosUnsubscribe) window.trabajosUnsubscribe();
+  window.trabajosUnsubscribe = onSnapshot(doc(window.firebaseDb, 'usuarios', uid, 'trabajos', 'datos'), snap => {
+    if (!snap.exists()) return;
+    try { pf_trabajosRemotos = JSON.parse(snap.data().trabajos || '[]'); } catch (e) { return; }
+    pf_aplicarTrabajos();
+  }, err => console.warn('Trabajos: no se pudo leer (¿falta la regla de Firestore?)', err));
 }
 
 // ── Por cobrar: trabajos hechos que todavía no te pagaron ──
@@ -11150,6 +11208,7 @@ function attachFirestoreListener(uid) {
     (snap) => {
       console.log('Cargando desde Firestore, datos:', snap.data());
       window.firstSyncDone = true;
+      setTimeout(pf_aplicarTrabajos, 0);
       if (!snap.exists()) { setSyncStatus('ok'); saveToFirestore(); return; }
       // Ignorar el eco del propio guardado local (evita loop de escrituras)
       if (snap.metadata.hasPendingWrites) return;
@@ -11307,6 +11366,8 @@ async function logoutGoogle() {
     window.firestoreUnsubscribe();
     window.firestoreUnsubscribe = null;
   }
+  if (window.trabajosUnsubscribe) { window.trabajosUnsubscribe(); window.trabajosUnsubscribe = null; }
+  pf_trabajosRemotos = null;
   await signOut(window.firebaseAuth);
   actualizarUILogout();
   window.currentUser = null;
@@ -11324,6 +11385,7 @@ function _initAuthListener() {
       setSyncStatus('loading');
       backupPreMigracionHabitosSiHaceFalta(user.uid);
       attachFirestoreListener(user.uid);
+      pf_escucharTrabajos(user.uid);
     } else {
       window.firstSyncDone = false;
       actualizarUILogout();

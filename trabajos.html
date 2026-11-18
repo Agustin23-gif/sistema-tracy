@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Trabajos</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Trabajos">
+<meta name="theme-color" content="#F5F0EB">
+<link rel="manifest" href="./manifest-trabajos.json">
+<link rel="apple-touch-icon" href="./trabajos-apple-touch-icon.png">
+<link rel="icon" href="./trabajos-icon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+<!-- Trabajos: app hermana de Steadfast para los pedidos (remeras, webs, diseños).
+     Usa el mismo proyecto de Firebase y la misma cuenta de Google. Guarda sus datos en
+     usuarios/{uid}/trabajos/datos (nunca en el documento de Steadfast). Steadfast lee
+     ese documento y arma solo los movimientos de Finanzas (ver pf_aplicarTrabajos). -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+  const app = initializeApp({
+    apiKey: "AIzaSyBk3rAYyAIHu9Rna6fOycCEJVjx6fs7cxg",
+    authDomain: "sistema-tracy.firebaseapp.com",
+    projectId: "sistema-tracy",
+    storageBucket: "sistema-tracy.firebasestorage.app",
+    messagingSenderId: "245671404273",
+    appId: "1:245671404273:web:6aa60f32ac1b0960463f50"
+  });
+  window.fb = { auth: getAuth(app), db: getFirestore(app), provider: new GoogleAuthProvider(),
+    signInWithPopup, signOut, onAuthStateChanged, doc, setDoc, getDoc, onSnapshot };
+  window.dispatchEvent(new Event('fb-listo'));
+</script>
+
+<style>
+  :root {
+    --bg: #F5F0EB; --card: #FFFFFF; --text: #1A1A1A; --muted: #7A716A; --border: #E6DED6;
+    --accent: #E8450A; --accent-soft: #FCE9E1; --on-accent: #FFFFFF;
+    --ok: #1F8A4C; --ok-soft: #E3F3EA; --warn: #A86A12; --warn-soft: #FBF0DC;
+    --shade: rgba(20,14,10,.35);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0F1A2E; --card: #1E2D40; --text: #F0EDE6; --muted: #9AA6B6; --border: #2C3D53;
+      --accent: #FF6A33; --accent-soft: #3A2A26;
+      --ok: #4CC987; --ok-soft: #1D3B33; --warn: #E3B04B; --warn-soft: #3A3426;
+      --shade: rgba(0,0,0,.55); color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Geist', system-ui, -apple-system, sans-serif; font-size: 15px; }
+  .num { font-family: 'Geist Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  button { font: inherit; color: inherit; }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .wrap { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;
+    padding: calc(env(safe-area-inset-top, 0px) + 16px) max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 110px) max(16px, env(safe-area-inset-left, 0px)); }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  header h1 { margin: 0; font-size: 26px; letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; }
+  header h1 img { width: 30px; height: 30px; border-radius: 8px; }
+  .cuenta { border: 1px solid var(--border); background: var(--card); border-radius: 99px; padding: 6px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; max-width: 55%; }
+  .cuenta span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cuenta i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+  .cuenta i.ok { background: var(--ok); } .cuenta i.sync { background: var(--warn); }
+
+  .aviso { background: var(--card); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; line-height: 1.4; }
+  .aviso b { font-size: 15px; }
+
+  .hero { background: var(--accent); color: var(--on-accent); border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+  .hero small { font-size: 12px; opacity: .9; text-transform: uppercase; letter-spacing: .06em; }
+  .hero .big { font-size: 32px; font-weight: 700; letter-spacing: -.02em; }
+  .hero .de { font-size: 13px; opacity: .9; margin-top: -6px; }
+  .hero button { align-self: flex-start; background: #fff; color: #B5330A; border: 0; border-radius: 99px; padding: 10px 16px; font-weight: 600; font-size: 14px; cursor: pointer; }
+  .hero button:disabled { opacity: .55; cursor: default; }
+
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat { background: var(--card); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .stat small { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
+  .stat .v { font-size: 19px; font-weight: 600; }
+
+  .seg { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -2px; padding: 2px; }
+  .seg::-webkit-scrollbar { display: none; }
+  .seg button { flex: none; border: 1px solid var(--border); background: var(--card); border-radius: 99px; padding: 7px 12px; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .seg button.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  .list { display: flex; flex-direction: column; gap: 10px; }
+  .vacio { text-align: center; color: var(--muted); padding: 28px 12px; line-height: 1.5; font-size: 14px; }
+  .job { background: var(--card); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .job-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; cursor: pointer; background: none; border: 0; padding: 0; text-align: left; width: 100%; }
+  .job-top b { font-size: 16px; }
+  .job-top p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+  .pill { flex: none; font-size: 11.5px; font-weight: 600; border-radius: 99px; padding: 4px 9px; white-space: nowrap; }
+  .p-presupuesto { background: var(--warn-soft); color: var(--warn); }
+  .p-sena, .p-proceso, .p-entregado { background: var(--accent-soft); color: var(--accent); }
+  .p-pagado { background: var(--ok-soft); color: var(--ok); }
+  .bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .bar i { height: 4px; border-radius: 4px; background: var(--border); }
+  .bar i.on { background: var(--accent); }
+  .bar.done i { background: var(--ok); }
+  .money { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); gap: 8px; flex-wrap: wrap; }
+  .money strong { color: var(--text); }
+  .money strong.g { color: var(--ok); }
+  .detail { border-top: 1px solid var(--border); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+  .row { display: flex; justify-content: space-between; gap: 10px; }
+  .row > span:first-child { color: var(--muted); min-width: 0; }
+  .row > span:last-child { flex: none; }
+  .row.total { font-weight: 600; border-top: 1px dashed var(--border); padding-top: 6px; }
+  .row.gan > span { color: var(--ok) !important; font-weight: 700; }
+  .sub { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-top: 6px; }
+  .nota-w { font-size: 12.5px; color: var(--warn); line-height: 1.4; }
+  .acciones { display: flex; gap: 8px; }
+  .act { flex: 1; border: 0; border-radius: 12px; background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: 14px; padding: 12px; cursor: pointer; }
+  .mini { border: 0; background: none; color: var(--muted); font-size: 13px; padding: 6px 0; cursor: pointer; text-decoration: underline; }
+  .mini-row { display: flex; gap: 16px; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label, .lbl { font-size: 12px; color: var(--muted); }
+  input { font: 500 16px 'Geist', system-ui, sans-serif; background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 10px; width: 100%; min-width: 0; }
+  .line { display: grid; grid-template-columns: 1fr 120px; gap: 8px; }
+  .line3 { display: grid; grid-template-columns: 60px 1fr; gap: 8px; }
+  .line-x { display: grid; grid-template-columns: 1fr 120px 32px; gap: 6px; align-items: center; }
+  .line3x { display: grid; grid-template-columns: 60px 1fr 32px; gap: 6px; align-items: center; }
+  .x { border: 0; background: none; color: var(--muted); font-size: 18px; cursor: pointer; height: 40px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { background: none; border: 1px dashed var(--border); color: var(--muted); border-radius: 99px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+  .chip.on { border-style: solid; border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .pctb { align-self: center; font-size: 13px; color: var(--muted); }
+  .calc { background: var(--card); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+
+  .fab { position: fixed; right: max(18px, calc(env(safe-area-inset-right, 0px) + 18px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 22px); background: var(--accent); color: var(--on-accent); border: 0; border-radius: 99px; padding: 14px 20px; font-weight: 600; font-size: 15px; box-shadow: 0 8px 24px rgba(232,69,10,.35); cursor: pointer; }
+  .shade { position: fixed; inset: 0; background: var(--shade); display: flex; align-items: flex-end; justify-content: center; z-index: 20; }
+  .sheet { background: var(--bg); width: 100%; max-width: 520px; max-height: 92%; overflow: auto; border-radius: 22px 22px 0 0; display: flex; flex-direction: column; gap: 12px;
+    padding: 18px max(16px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 18px) max(16px, env(safe-area-inset-left, 0px)); }
+  .sheet-top { display: flex; justify-content: space-between; align-items: center; }
+  .sheet h2 { margin: 0; font-size: 20px; }
+  .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(env(safe-area-inset-bottom, 0px) + 86px); background: var(--text); color: var(--bg); border-radius: 16px; padding: 10px 14px; font-size: 14px; z-index: 30; display: flex; gap: 12px; align-items: center; width: max-content; max-width: calc(100% - 32px); }
+  .toast button { background: none; border: 0; color: var(--accent); font-weight: 700; cursor: pointer; flex: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .sheet { animation: sube .25s ease; }
+    @keyframes sube { from { transform: translateY(24px); opacity: .5; } }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><img src="./trabajos-icon.svg" alt="">Trabajos</h1>
+    <button class="cuenta" id="btnCuenta" type="button"><i id="syncDot"></i><span id="cuentaTxt">Entrar</span></button>
+  </header>
+
+  <section class="aviso" id="avisoLogin" hidden>
+    <b>Entrá con la misma cuenta de Google de Steadfast</b>
+    <span>Así tus trabajos se guardan en la nube y los cobros, los materiales y las ganancias aparecen solos en Finanzas.</span>
+    <button class="act" type="button" id="btnEntrar">Entrar con Google</button>
+  </section>
+
+  <section class="hero" aria-live="polite">
+    <small>Ganancia para pasar al banco</small>
+    <div class="big num" id="hParaPasar">0 Gs</div>
+    <div class="de" id="hParaPasarDe"></div>
+    <button type="button" id="btnPasar">Ya la pasé al banco</button>
+  </section>
+
+  <section class="duo">
+    <div class="stat"><small>Me deben</small><span class="v num" id="hDeben">0 Gs</span><small id="hDebenQuien"></small></div>
+    <div class="stat"><small id="hMesLbl">Ganancia del mes</small><span class="v num" id="hMes">0 Gs</span><small id="hMesN"></small></div>
+  </section>
+
+  <nav class="seg" id="seg" aria-label="Filtrar trabajos"></nav>
+  <section class="list" id="list"></section>
+</div>
+<button class="fab" id="fab" type="button">+ Nuevo trabajo</button>
+<div id="sheetRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+// ── Datos ──
+const KEY = 'steadfast_trabajos_v1';
+const ETAPAS = [
+  { k: 'presupuesto', n: 'Presupuesto enviado' },
+  { k: 'sena',        n: 'Seña recibida' },
+  { k: 'proceso',     n: 'En proceso' },
+  { k: 'entregado',   n: 'Entregado' },
+  { k: 'pagado',      n: 'Pagado completo' }
+];
+const TIPOS = ['Remeras', 'Página web', 'Diseño', 'Informática', 'Otro'];
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+let datos = { trabajos: [] };
+try { const g = JSON.parse(localStorage.getItem(KEY)); if (g && Array.isArray(g.trabajos)) datos = g; } catch (e) {}
+let filtro = 'activos';
+let abiertos = new Set();
+let usuario = null, primerSnap = false;
+
+const uid = () => 'tb_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const ahoraIso = () => new Date().toISOString();
+function hoyStr() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+const fmt = n => Math.round(n || 0).toLocaleString('es-PY').replace(/,/g, '.');
+const gs = n => fmt(n) + ' Gs';
+const pct = (a, T) => T ? Math.round(a / T * 100) + '%' : '0%';
+const num = v => parseInt(String(v || '').replace(/\D/g, ''), 10) || 0;
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const activos = () => datos.trabajos.filter(j => !j.eliminado);
+const total = j => j.items.reduce((a, i) => a + i.c, 0) * j.precioU;
+const gasto = j => j.gastos.reduce((a, g) => a + g.m, 0);
+const gan = j => total(j) - gasto(j);
+const cobrado = j => j.etapa === 'pagado' ? total(j) : (j.etapa === 'presupuesto' ? 0 : j.sena || 0);
+const idx = k => ETAPAS.findIndex(e => e.k === k);
+const unidades = j => j.items.reduce((a, i) => a + i.c, 0);
+
+function guardar(j) {
+  if (j) j.updatedAt = ahoraIso();
+  try { localStorage.setItem(KEY, JSON.stringify(datos)); } catch (e) {}
+  subir();
+  render();
+}
+
+// ── Firebase: usuarios/{uid}/trabajos/datos, fusión por id con updatedAt ──
+function fusionar(local, remoto) {
+  const m = new Map();
+  (local || []).forEach(x => m.set(x.id, x));
+  (remoto || []).forEach(x => { const l = m.get(x.id); if (!l || (x.updatedAt || '') > (l.updatedAt || '')) m.set(x.id, x); });
+  return [...m.values()].sort((a, b) => (b.creado || '').localeCompare(a.creado || ''));
+}
+function ref() { return window.fb.doc(window.fb.db, 'usuarios', usuario.uid, 'trabajos', 'datos'); }
+function sync(estado) { const d = document.getElementById('syncDot'); d.className = estado; }
+let subiendo = null;
+async function subir() {
+  if (!usuario || !primerSnap) return;
+  clearTimeout(subiendo);
+  subiendo = setTimeout(async () => {
+    sync('sync');
+    try {
+      const snap = await window.fb.getDoc(ref());
+      if (snap.exists()) datos.trabajos = fusionar(datos.trabajos, JSON.parse(snap.data().trabajos || '[]'));
+      await window.fb.setDoc(ref(), { trabajos: JSON.stringify(datos.trabajos), updatedAt: ahoraIso() });
+      localStorage.setItem(KEY, JSON.stringify(datos));
+      sync('ok');
+    } catch (e) {
+      console.warn('No se pudo guardar en la nube', e);
+      sync('');
+      toast('No se pudo guardar en la nube. Queda en este teléfono y se reintenta.');
+    }
+  }, 400);
+}
+let cortarSnap = null;
+function escuchar() {
+  if (cortarSnap) cortarSnap();
+  cortarSnap = window.fb.onSnapshot(ref(), snap => {
+    const primera = !primerSnap;
+    primerSnap = true;
+    if (snap.metadata.hasPendingWrites) return;
+    const remoto = snap.exists() ? JSON.parse(snap.data().trabajos || '[]') : [];
+    const antes = JSON.stringify(datos.trabajos);
+    datos.trabajos = fusionar(datos.trabajos, remoto);
+    try { localStorage.setItem(KEY, JSON.stringify(datos)); } catch (e) {}
+    if (JSON.stringify(datos.trabajos) !== antes) render();
+    sync('ok');
+    // Si acá había trabajos que la nube no tenía (cargados sin sesión), se suben.
+    if (primera && datos.trabajos.length !== remoto.length) subir();
+  }, err => { console.warn(err); sync(''); toast('No hay permiso para guardar los trabajos en la nube todavía.'); });
+}
+function iniciarAuth() {
+  window.fb.onAuthStateChanged(window.fb.auth, u => {
+    usuario = u; primerSnap = false;
+    document.getElementById('avisoLogin').hidden = !!u;
+    document.getElementById('cuentaTxt').textContent = u ? (u.displayName || u.email || 'Conectado').split(' ')[0] : 'Entrar';
+    sync(u ? 'sync' : '');
+    if (u) escuchar(); else if (cortarSnap) { cortarSnap(); cortarSnap = null; }
+  });
+}
+if (window.fb) iniciarAuth(); else window.addEventListener('fb-listo', iniciarAuth);
+async function entrar() {
+  try { await window.fb.signInWithPopup(window.fb.auth, window.fb.provider); }
+  catch (e) { console.warn(e); toast('No se pudo entrar. Probá de nuevo.'); }
+}
+document.getElementById('btnEntrar').onclick = entrar;
+document.getElementById('btnCuenta').onclick = () => {
+  if (!usuario) return entrar();
+  abrirHoja(`<div class="sheet-top"><h2>Tu cuenta</h2><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
+    <p class="aviso">Conectado como ${esc(usuario.email || usuario.displayName)}. Los cobros, los materiales y las ganancias que pasás al banco se anotan solos en Finanzas de Steadfast cuando la abrís con esta misma cuenta.</p>
+    <button class="act" type="button" id="btnSalir">Cerrar sesión</button>`);
+  document.getElementById('btnSalir').onclick = async () => { await window.fb.signOut(window.fb.auth); cerrarHoja(); };
+};
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState !== 'visible' || !usuario || !primerSnap) return;
+  try {
+    const snap = await window.fb.getDoc(ref());
+    if (snap.exists()) { datos.trabajos = fusionar(datos.trabajos, JSON.parse(snap.data().trabajos || '[]')); render(); }
+  } catch (e) {}
+});
+
+// ── Avisos cortos con deshacer ──
+function toast(texto, deshacer) {
+  const r = document.getElementById('toastRoot');
+  r.innerHTML = `<div class="toast" role="status"><span>${esc(texto)}</span>${deshacer ? '<button type="button" id="tDes">Deshacer</button>' : ''}</div>`;
+  if (deshacer) document.getElementById('tDes').onclick = () => { deshacer(); r.innerHTML = ''; };
+  clearTimeout(toast.t); toast.t = setTimeout(() => r.innerHTML = '', deshacer ? 6000 : 3000);
+}
+function conDeshacer(j, cambio, texto) {
+  const copia = JSON.stringify(j);
+  cambio();
+  guardar(j);
+  toast(texto, () => { Object.assign(j, JSON.parse(copia)); guardar(j); });
+}
+
+// ── Pantalla ──
+function render() {
+  const lista = activos();
+  const paraPasar = lista.filter(j => j.etapa === 'pagado' && !j.pasado && gan(j) > 0);
+  const deben = lista.filter(j => j.etapa !== 'presupuesto' && j.etapa !== 'pagado');
+  const mesClave = hoyStr().slice(0, 7);
+  const delMes = lista.filter(j => j.etapa === 'pagado' && (j.fechaPago || '').slice(0, 7) === mesClave);
+
+  const montoPasar = paraPasar.reduce((a, j) => a + gan(j), 0);
+  document.getElementById('hParaPasar').textContent = gs(montoPasar);
+  document.getElementById('hParaPasarDe').textContent = paraPasar.length ? 'De ' + paraPasar.map(j => j.cliente).join(', ') : 'Aparece cuando un cliente te paga todo';
+  const bp = document.getElementById('btnPasar');
+  bp.disabled = !paraPasar.length;
+  bp.textContent = paraPasar.length ? 'Ya la pasé al banco' : 'Nada pendiente de pasar';
+  document.getElementById('hDeben').textContent = gs(deben.reduce((a, j) => a + total(j) - cobrado(j), 0));
+  document.getElementById('hDebenQuien').textContent = deben.length ? deben.map(j => j.cliente).join(', ') : 'Nadie te debe';
+  document.getElementById('hMesLbl').textContent = 'Ganancia de ' + MESES[new Date().getMonth()];
+  document.getElementById('hMes').textContent = gs(delMes.reduce((a, j) => a + gan(j), 0));
+  document.getElementById('hMesN').textContent = `${delMes.length} trabajo${delMes.length === 1 ? '' : 's'} cobrado${delMes.length === 1 ? '' : 's'}`;
+
+  const F = {
+    activos: j => j.etapa !== 'pagado',
+    deben: j => j.etapa !== 'presupuesto' && j.etapa !== 'pagado',
+    presupuesto: j => j.etapa === 'presupuesto',
+    pagado: j => j.etapa === 'pagado'
+  };
+  const L = { activos: 'En curso', deben: 'Me deben', presupuesto: 'Presupuestos', pagado: 'Cobrados' };
+  document.getElementById('seg').innerHTML = Object.keys(L).map(k =>
+    `<button type="button" class="${k === filtro ? 'on' : ''}" data-f="${k}" aria-pressed="${k === filtro}">${L[k]} · ${lista.filter(F[k]).length}</button>`).join('');
+  const vis = lista.filter(F[filtro]);
+  if (filtro === 'pagado') vis.sort((a, b) => (b.fechaPago || '').localeCompare(a.fechaPago || ''));
+  document.getElementById('list').innerHTML = vis.length ? vis.map(tarjeta).join('')
+    : `<div class="vacio">${lista.length ? 'No hay trabajos acá.' : 'Todavía no anotaste ningún trabajo.<br>Tocá <b>+ Nuevo trabajo</b> cuando le pases un presupuesto a un cliente.'}</div>`;
+}
+
+function siguiente(j) {
+  const T = total(j);
+  switch (j.etapa) {
+    case 'presupuesto': return { t: 'Confirmó: recibí la seña', sena: true };
+    case 'sena':        return { t: 'Empecé el trabajo' };
+    case 'proceso':     return { t: 'Lo entregué' };
+    case 'entregado':   return { t: `Cobré el saldo de ${gs(T - (j.sena || 0))}` };
+    default: return null;
+  }
+}
+function avanzar(j) {
+  const T = total(j);
+  if (j.etapa === 'presupuesto') {
+    const inp = document.querySelector(`[data-sena="${j.id}"]`);
+    const v = Math.min(num(inp ? inp.value : T / 2), T);
+    if (!v) { toast('Escribí cuánto te entregó de seña'); return; }
+    conDeshacer(j, () => {
+      j.sena = v; j.fechaSena = hoyStr();
+      if (v >= T) { j.etapa = 'pagado'; j.fechaPago = hoyStr(); } else j.etapa = 'sena';
+    }, `Seña de ${gs(v)} anotada`);
+  } else if (j.etapa === 'sena') conDeshacer(j, () => { j.etapa = 'proceso'; }, 'En proceso');
+  else if (j.etapa === 'proceso') conDeshacer(j, () => { j.etapa = 'entregado'; j.fechaEntrega = hoyStr(); }, 'Entregado');
+  else if (j.etapa === 'entregado') conDeshacer(j, () => { j.etapa = 'pagado'; j.fechaPago = hoyStr(); },
+    `Cobrado. ${gs(gan(j))} de ganancia para pasar al banco`);
+}
+
+function tarjeta(j) {
+  const T = total(j), G = gasto(j), i = idx(j.etapa), s = siguiente(j), n = unidades(j), abierto = abiertos.has(j.id);
+  const resumen = j.items.length > 1 ? `${n} unidades` : (j.items[0] ? (j.items[0].c > 1 ? j.items[0].c + ' × ' : '') + j.items[0].d : '');
+  let derecha;
+  if (j.etapa === 'presupuesto') derecha = '<span>Esperando que confirme</span>';
+  else if (j.etapa !== 'pagado') derecha = `<span>Falta cobrar <strong class="num">${gs(T - cobrado(j))}</strong></span>`;
+  else derecha = `<span>Ganancia <strong class="num g">${gs(T - G)}</strong>${j.pasado ? ' · en el banco' : ''}</span>`;
+  const sena = j.sena || 0;
+  return `<article class="job">
+    <button type="button" class="job-top" data-open="${j.id}" aria-expanded="${abierto}">
+      <div><b>${esc(j.cliente)}</b><p>${esc(j.tipo)} · ${esc(resumen)}</p></div>
+      <span class="pill p-${j.etapa}">${ETAPAS[i].n}</span>
+    </button>
+    <div class="bar ${j.etapa === 'pagado' ? 'done' : ''}" aria-hidden="true">${ETAPAS.map((e, k) => `<i class="${k <= i ? 'on' : ''}"></i>`).join('')}</div>
+    <div class="money"><span>Total <strong class="num">${gs(T)}</strong></span>${derecha}</div>
+    ${abierto ? `<div class="detail">
+      <div class="sub">Qué pidió</div>
+      ${j.items.map(x => `<div class="row"><span>${x.c} × ${esc(x.d)}</span><span class="num">${gs(x.c * j.precioU)}</span></div>`).join('')}
+      <div class="row total"><span>Le cobro (${n} × ${gs(j.precioU)})</span><span class="num">${gs(T)}</span></div>
+      <div class="sub">Lo que gasto</div>
+      ${G ? j.gastos.map(g => `<div class="row"><span>${esc(g.d)}</span><span class="num">− ${gs(g.m)}</span></div>`).join('') : '<div class="row"><span>Sin gastos</span><span></span></div>'}
+      <div class="row total"><span>Gasto total</span><span class="num">− ${gs(G)}</span></div>
+      <div class="row gan total"><span>Mi ganancia</span><span class="num">${gs(T - G)}</span></div>
+      ${j.etapa === 'presupuesto' ? '' : `<div class="sub">Cobros</div>
+        <div class="row"><span>Seña (${pct(sena, T)})</span><span class="num">${gs(sena)} ✓</span></div>
+        <div class="row"><span>Saldo</span><span class="num">${gs(T - sena)} ${j.etapa === 'pagado' ? '✓' : 'pendiente'}</span></div>
+        ${G > sena && j.etapa !== 'pagado' ? `<div class="nota-w">Los materiales (${gs(G)}) superan la seña: ponés ${gs(G - sena)} de tu caja hasta cobrar el saldo.</div>` : ''}`}
+      ${j.pasado ? `<div class="row"><span>Pasada al banco</span><span class="num">${fechaCorta(j.pasadoEn)} ✓</span></div>` : ''}
+      <div class="mini-row">
+        <button type="button" class="mini" data-editar="${j.id}">Editar</button>
+        ${j.etapa !== 'presupuesto' ? `<button type="button" class="mini" data-volver="${j.id}">Volver una etapa</button>` : ''}
+        <button type="button" class="mini" data-borrar="${j.id}">Borrar</button>
+      </div>
+    </div>` : ''}
+    ${s && s.sena ? `<div class="field"><label for="sena${j.id}">Seña que me entregó</label>
+      <div class="line"><input id="sena${j.id}" data-sena="${j.id}" data-total="${T}" inputmode="numeric" value="${fmt(Math.round(T / 2))}"><span class="pctb" id="pct${j.id}">50% del total</span></div>
+      <div class="chips">${[50, 60, 70, 100].map(p => `<button type="button" class="chip" data-pct="${p}" data-for="${j.id}">${p}%</button>`).join('')}</div>
+      ${G > T / 2 ? `<div class="nota-w">Los materiales cuestan ${gs(G)}, más que el 50%. Pedí al menos ${pct(G, T)} para no poner plata de tu caja.</div>` : ''}
+    </div>` : ''}
+    ${s ? `<div class="acciones"><button type="button" class="act" data-next="${j.id}">${s.t}</button></div>` : ''}
+  </article>`;
+}
+function fechaCorta(iso) { if (!iso) return ''; const [y, m, d] = iso.slice(0, 10).split('-'); return `${+d}/${+m}`; }
+
+// ── Toques ──
+const buscar = id => datos.trabajos.find(x => x.id === id);
+document.addEventListener('click', e => {
+  const t = e.target;
+  const f = t.closest('[data-f]'); if (f) { filtro = f.dataset.f; render(); return; }
+  const o = t.closest('[data-open]'); if (o) { const id = o.dataset.open; abiertos.has(id) ? abiertos.delete(id) : abiertos.add(id); render(); return; }
+  const pb = t.closest('[data-pct]');
+  if (pb) { const inp = document.querySelector(`[data-sena="${pb.dataset.for}"]`); inp.value = fmt(inp.dataset.total * pb.dataset.pct / 100); inp.dispatchEvent(new Event('input', { bubbles: true })); return; }
+  const nx = t.closest('[data-next]'); if (nx) { avanzar(buscar(nx.dataset.next)); return; }
+  const ed = t.closest('[data-editar]'); if (ed) { abrirFormulario(buscar(ed.dataset.editar)); return; }
+  const vu = t.closest('[data-volver]');
+  if (vu) { const j = buscar(vu.dataset.volver); const k = idx(j.etapa) - 1;
+    conDeshacer(j, () => { j.etapa = ETAPAS[k].k; if (j.etapa !== 'pagado') { j.fechaPago = null; j.pasado = false; j.pasadoEn = null; } if (k === 0) { j.sena = 0; j.fechaSena = null; } }, 'Volvió a ' + ETAPAS[k].n.toLowerCase());
+    return; }
+  const br = t.closest('[data-borrar]');
+  if (br) { const j = buscar(br.dataset.borrar); conDeshacer(j, () => { j.eliminado = true; }, `Borraste el trabajo de ${j.cliente}`); return; }
+  if (t.closest('[data-cerrar]') || t.id === 'shade') cerrarHoja();
+});
+document.addEventListener('input', e => {
+  const i = e.target.closest('[data-sena]'); if (!i) return;
+  document.getElementById('pct' + i.dataset.sena).textContent = pct(num(i.value), +i.dataset.total) + ' del total';
+});
+document.getElementById('btnPasar').onclick = () => {
+  const p = activos().filter(j => j.etapa === 'pagado' && !j.pasado && gan(j) > 0);
+  if (!p.length) return;
+  const m = p.reduce((a, j) => a + gan(j), 0);
+  const copias = p.map(j => JSON.stringify(j));
+  const hoy = hoyStr();
+  p.forEach(j => { j.pasado = true; j.pasadoEn = hoy; j.updatedAt = ahoraIso(); });
+  guardar();
+  toast(`Anotado: ${gs(m)} a tu cuenta de ganancias`, () => { p.forEach((j, k) => { Object.assign(j, JSON.parse(copias[k])); j.updatedAt = ahoraIso(); }); guardar(); });
+};
+
+// ── Hoja para cargar o editar un trabajo ──
+function abrirHoja(html) {
+  document.getElementById('sheetRoot').innerHTML = `<div class="shade" id="shade"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`;
+}
+function cerrarHoja() { document.getElementById('sheetRoot').innerHTML = ''; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarHoja(); });
+
+function abrirFormulario(j) {
+  const nuevo = !j;
+  const base = j || { tipo: 'Remeras', items: [{ c: 1, d: '' }], precioU: 0, gastos: [{ d: 'Remeras', m: 0 }, { d: 'Impresión DTF', m: 0 }, { d: 'Transportadora', m: 0 }] };
+  const itemRow = x => `<div class="line3x"><input inputmode="numeric" value="${x.c || ''}" aria-label="Cantidad" class="iC" placeholder="1"><input value="${esc(x.d)}" placeholder="Remeras grises G" aria-label="Qué pidió" class="iD"><button type="button" class="x" data-quitar aria-label="Quitar">✕</button></div>`;
+  const gastoRow = g => `<div class="line-x"><input value="${esc(g.d)}" placeholder="Otro gasto" aria-label="Gasto" class="gD"><input inputmode="numeric" placeholder="0" value="${g.m ? fmt(g.m) : ''}" aria-label="Monto" class="gM"><button type="button" class="x" data-quitar aria-label="Quitar">✕</button></div>`;
+  abrirHoja(`<form id="fTrabajo" class="sheet-in" style="display:flex;flex-direction:column;gap:12px">
+    <div class="sheet-top"><h2>${nuevo ? 'Nuevo trabajo' : 'Editar trabajo'}</h2><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
+    <div class="field"><label for="nCliente">Cliente</label><input id="nCliente" value="${esc(base.cliente || '')}" placeholder="Nombre del cliente" required autocomplete="off"></div>
+    <div class="chips" role="group" aria-label="Tipo de trabajo">${TIPOS.map(t => `<button type="button" class="chip ${t === base.tipo ? 'on' : ''}" data-tipo="${t}">${t}</button>`).join('')}</div>
+    <div class="lbl">Qué pidió (cantidad y detalle)</div>
+    <div id="nItems" style="display:flex;flex-direction:column;gap:8px">${base.items.map(itemRow).join('')}</div>
+    <button type="button" class="chip" id="addItem" style="align-self:flex-start">+ Otra línea</button>
+    <div class="field"><label for="nPrecio">Le cobro por unidad (Gs)</label><input id="nPrecio" inputmode="numeric" placeholder="85.000" value="${base.precioU ? fmt(base.precioU) : ''}"></div>
+    <div class="lbl">Lo que gasto (materiales y envío)</div>
+    <div id="nGastos" style="display:flex;flex-direction:column;gap:8px">${base.gastos.map(gastoRow).join('')}</div>
+    <button type="button" class="chip" id="addGasto" style="align-self:flex-start">+ Otro gasto</button>
+    <div class="calc" id="nCalc" aria-live="polite"></div>
+    <button class="act" type="submit">${nuevo ? 'Guardar presupuesto' : 'Guardar cambios'}</button>
+  </form>`);
+  let tipo = base.tipo;
+  const form = document.getElementById('fTrabajo');
+  const leer = () => ({
+    items: [...form.querySelectorAll('.line3x')].map(r => ({ c: num(r.querySelector('.iC').value), d: r.querySelector('.iD').value.trim() })).filter(x => x.c),
+    gastos: [...form.querySelectorAll('.line-x')].map(r => ({ d: r.querySelector('.gD').value.trim() || 'Gasto', m: num(r.querySelector('.gM').value) })).filter(g => g.m),
+    precioU: num(document.getElementById('nPrecio').value)
+  });
+  const calc = () => {
+    const v = leer(), n = v.items.reduce((a, i) => a + i.c, 0), T = n * v.precioU, G = v.gastos.reduce((a, g) => a + g.m, 0);
+    document.getElementById('nCalc').innerHTML = `
+      <div class="row"><span>Le cobro (${n} × ${gs(v.precioU)})</span><span class="num">${gs(T)}</span></div>
+      <div class="row"><span>Gasto total</span><span class="num">− ${gs(G)}</span></div>
+      <div class="row gan total"><span>Mi ganancia</span><span class="num">${gs(T - G)}</span></div>
+      <div class="row"><span>Seña del 50% (la ajustás al confirmar)</span><span class="num">${gs(T / 2)}</span></div>`;
+  };
+  // Formatea los montos con puntos mientras se escriben
+  form.addEventListener('input', e => {
+    if (e.target.matches('#nPrecio, .gM') && e.target.value) { const n = num(e.target.value); e.target.value = n ? fmt(n) : ''; }
+    calc();
+  });
+  form.addEventListener('click', e => {
+    const tp = e.target.closest('[data-tipo]');
+    if (tp) { tipo = tp.dataset.tipo; form.querySelectorAll('[data-tipo]').forEach(b => b.classList.toggle('on', b === tp)); }
+    const q = e.target.closest('[data-quitar]'); if (q) { q.parentElement.remove(); calc(); }
+  });
+  document.getElementById('addItem').onclick = () => { document.getElementById('nItems').insertAdjacentHTML('beforeend', itemRow({ c: 1, d: '' })); calc(); };
+  document.getElementById('addGasto').onclick = () => { document.getElementById('nGastos').insertAdjacentHTML('beforeend', gastoRow({ d: '', m: 0 })); calc(); };
+  form.onsubmit = e => {
+    e.preventDefault();
+    const v = leer();
+    const cliente = document.getElementById('nCliente').value.trim();
+    if (!cliente) { toast('Poné el nombre del cliente'); return; }
+    if (!v.items.length) v.items = [{ c: 1, d: tipo }];
+    v.items.forEach(x => { if (!x.d) x.d = tipo; });
+    if (!v.precioU) { toast('Poné cuánto le cobrás por unidad'); return; }
+    v.gastos.forEach(g => g.id = g.id || uid());
+    if (nuevo) {
+      const j = { id: uid(), cliente, tipo, ...v, etapa: 'presupuesto', sena: 0, pasado: false, creado: ahoraIso() };
+      datos.trabajos.unshift(j);
+      abiertos.add(j.id);
+      filtro = 'activos';
+      cerrarHoja(); guardar(j);
+      toast('Guardado. Cuando confirme, anotá la seña.');
+    } else {
+      // Los gastos conservan su id si siguen siendo la misma línea (mismo orden)
+      v.gastos.forEach((g, k) => { if (j.gastos[k]) g.id = j.gastos[k].id; });
+      Object.assign(j, { cliente, tipo, ...v });
+      if (j.sena > total(j)) j.sena = total(j);
+      cerrarHoja(); guardar(j);
+      toast('Cambios guardados');
+    }
+  };
+  calc();
+  if (nuevo) setTimeout(() => document.getElementById('nCliente').focus(), 50);
+}
+document.getElementById('fab').onclick = () => abrirFormulario(null);
+
+render();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+</script>
+</body>
+</html>
