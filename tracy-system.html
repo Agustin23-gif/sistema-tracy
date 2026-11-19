@@ -3581,6 +3581,39 @@
   body.dark-mode .pfx-apartar-hecho button { color: #D9F5CB; }
   .aviso-ahorro-inicio { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; background: #5FD32F; color: #0E2A05; border: none; border-radius: 18px; padding: 12px 14px; margin-bottom: 16px; font: inherit; cursor: pointer; }
   .aviso-ahorro-inicio[hidden] { display: none; }
+  /* Cuadrar con el banco (lunes) */
+  .pfx-cuadre { background: var(--card); border: 1.5px solid #5FD32F; border-radius: 22px; padding: 16px; display: grid; gap: 12px; margin-bottom: 12px; }
+  .pfx-cuadre-cab { display: flex; gap: 10px; align-items: flex-start; }
+  .pfx-cuadre-cab b { display: block; font-size: 16px; font-weight: 800; line-height: 1.2; }
+  .pfx-cuadre-cab div span { font-size: 13px; line-height: 1.35; color: var(--muted); }
+  .pfx-cuadre-ico { width: 36px; height: 36px; border-radius: 12px; background: #5FD32F; color: #0E2A05; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .pfx-cuadre-ico svg { width: 20px; height: 20px; }
+  .pfx-cuadre-app { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; background: var(--input-bg); border-radius: 14px; padding: 10px 12px; font-size: 13px; }
+  .pfx-cuadre-app b { font-family: 'Geist Mono', monospace; font-size: 17px; font-variant-numeric: tabular-nums; }
+  .pfx-cuadre-preg { font-size: 14px; font-weight: 700; margin-bottom: -4px; }
+  .pfx-cuadre-campo { display: flex; align-items: center; gap: 8px; border: 1.5px solid var(--border); border-radius: 16px; padding: 0 14px; height: 56px; }
+  .pfx-cuadre-campo:focus-within { border-color: #2A9D3A; }
+  .pfx-cuadre-campo span { font-family: 'Geist Mono', monospace; font-size: 20px; font-weight: 700; color: var(--muted); }
+  #sec-finanzas .pfx-cuadre-campo input { flex: 1; min-width: 0; margin: 0; padding: 0; border: none; background: transparent; box-shadow: none; font-family: 'Geist Mono', monospace; font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+  #sec-finanzas .pfx-cuadre-campo input:focus { outline: none; border: none; }
+  #sec-finanzas .pfx-cuadre-neg { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--muted); margin: -4px 0 0; cursor: pointer; }
+  #sec-finanzas .pfx-cuadre-neg input { width: 18px; height: 18px; margin: 0; padding: 0; accent-color: #2A9D3A; }
+  .pfx-cuadre-dif { border-radius: 14px; padding: 10px 12px; display: grid; gap: 2px; }
+  .pfx-cuadre-dif[hidden], .pfx-cuadre-solo[hidden], #sec-finanzas .pfx-cuadre-nota[hidden] { display: none; }
+  .pfx-cuadre-dif b { font-size: 15px; font-weight: 800; }
+  .pfx-cuadre-dif span { font-size: 12.5px; opacity: .85; }
+  .pfx-cuadre-dif.ok { background: #E3F7D8; color: #0E2A05; }
+  .pfx-cuadre-dif.menos { background: rgba(232,69,10,.12); color: var(--gold-dim); }
+  .pfx-cuadre-dif.mas { background: rgba(201,138,6,.14); color: #7A5300; }
+  body.dark-mode .pfx-cuadre-dif.menos { color: #FF9A6B; }
+  body.dark-mode .pfx-cuadre-dif.mas { color: #F0B53A; }
+  body.dark-mode .pfx-cuadre-dif.ok { background: rgba(95,211,47,.16); color: #A8EC85; }
+  .pfx-cuadre-acc { display: flex; gap: 8px; }
+  .pfx-cuadre-acc button { flex: 1; min-height: 46px; border-radius: 15px; border: none; background: var(--input-bg); color: var(--text); font: inherit; font-weight: 700; font-size: 14px; cursor: pointer; padding: 0 12px; }
+  .pfx-cuadre-acc button.ya { flex: 2; background: #5FD32F; color: #0E2A05; font-weight: 800; }
+  .pfx-cuadre-acc button:disabled { opacity: .45; cursor: default; }
+  .pfx-cuadre-solo, .pfx-cuadre-cal { justify-self: start; background: none; border: none; padding: 4px 0; color: var(--muted); font: inherit; font-weight: 600; font-size: 13px; text-decoration: underline; cursor: pointer; }
+  .aviso-cuadre-inicio { background: var(--card); color: var(--text); border: 1.5px solid #5FD32F; }
   .aviso-ahorro-inicio .t { display: grid; }
   .aviso-ahorro-inicio .t b { font-size: 14px; font-weight: 800; }
   .aviso-ahorro-inicio .t span { font-size: 12px; opacity: .85; }
@@ -4316,6 +4349,8 @@
 
       <!-- Aviso de fin de mes para apartar el ahorro (lo pinta pf_avisoAhorroInicio) -->
       <button type="button" class="aviso-ahorro-inicio" id="avisoAhorroInicio" onclick="pf_irAAvisoAhorro()" hidden></button>
+      <!-- Aviso de los lunes para cuadrar Finanzas con el banco (lo pinta pf_cuadreInicio) -->
+      <button type="button" class="aviso-ahorro-inicio aviso-cuadre-inicio" id="avisoCuadreInicio" onclick="pf_irAAvisoAhorro()" hidden></button>
 
       <!-- Alerta racha en riesgo (hidden by default) -->
       <div class="racha-alerta" id="rachaAlerta" style="display:none">
@@ -4388,6 +4423,14 @@
     <div class="ajustes-row">
       <span class="ajustes-row-label"><i data-lucide="credit-card"></i> Uso tarjeta de crédito</span>
       <div class="dark-toggle" id="tarjetaFinanzasToggle" onclick="pf_toggleTarjeta()" role="button" aria-label="Uso tarjeta de crédito"><div class="dark-toggle-thumb"></div></div>
+    </div>
+    <div class="ajustes-row">
+      <span class="ajustes-row-label"><i data-lucide="landmark"></i> Cuadrar con el banco</span>
+      <button class="backup-btn" type="button" onclick="pf_cuadrarAhora()">Cuadrar ahora</button>
+    </div>
+    <div class="ajustes-row">
+      <span class="ajustes-row-label"><i data-lucide="calendar-clock"></i> Recordatorio los lunes 7:00</span>
+      <button class="backup-btn" type="button" onclick="pf_cuadreCalendario()">Agregar al Calendario</button>
     </div>
     <div class="ajustes-row ajustes-row-col">
       <label class="ajustes-row-label" for="asesorLink"><i data-lucide="message-circle"></i> Conversación fija del Asesor</label>
@@ -5312,7 +5355,7 @@ function switchTab(tab) {
   if (typeof portadaTema === 'function') portadaTema();
   const conIntro = introRevisar(tab);
   // Al tocar Finanzas en la barra se abre el teclado verde (se apaga en Ajustes), salvo la primera vez, que va la presentación.
-  if (tab === 'finanzas' && !conIntro && typeof pf_tecActivo === 'function' && pf_tecActivo() && !pf_avisoAhorroPendiente()) pf_abrirTeclado();
+  if (tab === 'finanzas' && !conIntro && typeof pf_tecActivo === 'function' && pf_tecActivo() && !pf_avisoAhorroPendiente() && !pf_cuadrePendiente()) pf_abrirTeclado();
 }
 
 // ── PANEL "MÁS" ──
@@ -5795,6 +5838,7 @@ setInterval(() => {
 
 function renderInicio() {
   if (typeof pf_avisoAhorroInicio === 'function') pf_avisoAhorroInicio();
+  if (typeof pf_cuadreInicio === 'function') pf_cuadreInicio();
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
@@ -7772,7 +7816,7 @@ function formatFecha(str) {
 // ── FINANZAS (Pulso Financiero) ──
 const PF_STORAGE_KEY = 'pulso_financiero_v1';
 const PF_INGRESO_CATS = ['Sueldo fijo (PC House)','Comisiones (PC House)','Proyectos freelance','Otro ingreso'];
-const PF_GASTO_CATS = ['Vivienda y servicios','Suscripciones y pagos fijos','Comida','Transporte','Herramientas y software','Insumos PC House','Ocio y personal','Materiales de trabajos','Ahorro / Inversión','Ganancias apartadas','Otro gasto'];
+const PF_GASTO_CATS = ['Vivienda y servicios','Suscripciones y pagos fijos','Comida','Transporte','Herramientas y software','Insumos PC House','Ocio y personal','Materiales de trabajos','Ahorro / Inversión','Ganancias apartadas','Cargos del banco','Otro gasto'];
 const PF_PAYMENT_METHODS = ['Efectivo / Débito','Tarjeta de crédito'];
 const PF_MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const PF_MESES_ABR = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -7918,7 +7962,7 @@ function pf_renderHeader() {
 const PF_ICONOS = {
   'Vivienda y servicios': '🏠', 'Suscripciones y pagos fijos': '🔁', 'Comida': '🍽️', 'Transporte': '🚌',
   'Herramientas y software': '🛠️', 'Insumos PC House': '🖥️', 'Ocio y personal': '🎟️', 'Ahorro / Inversión': '📈',
-  'Materiales de trabajos': '👕', 'Ganancias apartadas': '🏦',
+  'Materiales de trabajos': '👕', 'Ganancias apartadas': '🏦', 'Cargos del banco': '🧾',
   'Otro gasto': '•••', 'Sueldo fijo (PC House)': '💼', 'Comisiones (PC House)': '🤝', 'Proyectos freelance': '💻', 'Otro ingreso': '＋'
 };
 const PF_KEY_TARJETA = 'steadfast_usa_tarjeta';
@@ -8058,7 +8102,7 @@ function pf_renderMonth() {
       <div class="cal-month-label">${label}</div>
       <button class="cal-nav-btn" data-action="nextMonth">›</button>
     </div>
-    ${esActual ? pf_renderAvisoAhorro(ingresos) + pf_renderQueda(ingresos, gastos, txs) + pf_renderCobrarFila() + pf_renderAsesorFila() : ''}
+    ${esActual ? pf_renderCuadre() + pf_renderAvisoAhorro(ingresos) + pf_renderQueda(ingresos, gastos, txs) + pf_renderCobrarFila() + pf_renderAsesorFila() : ''}
     <div class="pfx-card">
       <div class="pfx-pilas">
         <div class="pfx-pcol"><span class="pfx-et">${pf_corto(ingresos)}</span>${pila(nIn, 'in')}</div>
@@ -8252,6 +8296,197 @@ function pf_avisoAhorroInicio() {
   if (ver) el.innerHTML = `<span class="pfx-apartar-ico">${PF_ICONO_AHORRO}</span><span class="t"><b>Se termina ${PF_MESES[new Date().getMonth()].toLowerCase()}</b><span>Apartá tu ahorro del mes</span></span><span class="fl" aria-hidden="true">›</span>`;
 }
 
+// ── Cuadrar con el banco (cada lunes) ──
+// El banco cobra cargos chicos que nadie anota (intereses por sobregiro, IVA de servicios
+// digitales, comisiones). Una vez por semana se compara el saldo real con el de la app.
+// state.cuadreBanco = { saldo, totalApp, en, dif } (se sincroniza como el nombre):
+//   saldo    = lo que decía el banco la última vez que se cuadró
+//   totalApp = pf_totalApp() en ese momento
+// Saldo esperado hoy = saldo + (pf_totalApp() de hoy − totalApp). Así cualquier movimiento
+// anotado o corregido después, sea de la fecha que sea, entra en la cuenta.
+const PF_KEY_CUADRE_POSPONER = 'steadfast_cuadre_posponer';
+const PF_ICONO_BANCO = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10l9-6 9 6"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 21h18"/></svg>';
+let pf_cuadreForzado = false;   // "Cuadrar ahora" desde Ajustes, aunque no sea lunes
+function pf_totalApp() {
+  return pf_data.transactions.reduce((s, t) => {
+    if (t.eliminado || !t.amount) return s;
+    if (t.type === 'ingreso') return s + t.amount;
+    if (t.method === 'Tarjeta de crédito' && !t.paid) return s;   // sale del banco recién al pagar la tarjeta
+    return s - t.amount;
+  }, 0);
+}
+function pf_saldoEsperado() {
+  const c = state.cuadreBanco;
+  return c ? c.saldo + (pf_totalApp() - c.totalApp) : null;
+}
+function pf_lunesDeEstaSemana(d = new Date()) {
+  const l = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  l.setDate(l.getDate() - (l.getDay() + 6) % 7);
+  return l;
+}
+function pf_cuadrePendiente() {
+  if (pf_cuadreForzado) return true;
+  if (pf_tecLeer(PF_KEY_CUADRE_POSPONER) === pf_todayStr()) return false;
+  const c = state.cuadreBanco;
+  return !c || new Date(c.en) < pf_lunesDeEstaSemana();
+}
+function pf_leerMonto(id) { const el = document.getElementById(id); return el ? parseInt(String(el.value).replace(/\D/g, ''), 10) || 0 : 0; }
+function pf_renderCuadre() {
+  if (!pf_cuadrePendiente()) return '';
+  const c = state.cuadreBanco;
+  const lunes = new Date().getDay() === 1;
+  const neg = `<label class="pfx-cuadre-neg"><input type="checkbox" id="pfxCuadreNeg"> Estoy en negativo (sobregiro)</label>`;
+  const campo = `<div class="pfx-cuadre-campo"><span>₲</span><input id="pfxCuadreSaldo" type="text" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="${c ? 'Saldo que dice tu banco' : 'Saldo de tu cuenta hoy'}"></div>`;
+  if (!c) return `
+    <div class="pfx-cuadre" id="pfxCuadre">
+      <div class="pfx-cuadre-cab"><span class="pfx-cuadre-ico">${PF_ICONO_BANCO}</span><div><b>Cuadrá con tu banco</b><span>Escribí cuánto tenés hoy en tu cuenta. Desde ahí la app lleva la cuenta y cada lunes te pide compararla con el banco.</span></div></div>
+      ${campo}${neg}
+      <div class="pfx-cuadre-acc"><button type="button" class="ya" data-action="cuadreInicial">Guardar saldo</button><button type="button" data-action="cuadrePosponer">Ahora no</button></div>
+      <button type="button" class="pfx-cuadre-cal" data-action="cuadreCalendario">Recordármelo cada lunes 7:00 en el Calendario</button>
+    </div>`;
+  const esp = pf_saldoEsperado();
+  return `
+    <div class="pfx-cuadre" id="pfxCuadre">
+      <div class="pfx-cuadre-cab"><span class="pfx-cuadre-ico">${PF_ICONO_BANCO}</span><div><b>${lunes ? 'Lunes de cuadrar' : 'Cuadrá con tu banco'}</b><span>Abrí tu banco y fijate cuánto tenés. Los cargos chicos que no anotaste aparecen acá.</span></div></div>
+      <div class="pfx-cuadre-app"><span>Según la app tenés</span><b>${esp < 0 ? '−' : ''}${pf_fmtGs(Math.abs(esp))}</b></div>
+      <div class="pfx-cuadre-preg">¿Cuánto dice tu banco?</div>
+      ${campo}${neg}
+      <div class="pfx-cuadre-dif" id="pfxCuadreDif" hidden></div>
+      <input id="pfxCuadreNota" class="pfx-cuadre-nota" type="text" maxlength="60" placeholder="¿Qué fue? (opcional): IVA Apple, intereses…" aria-label="Qué fue la diferencia" hidden>
+      <div class="pfx-cuadre-acc">
+        <button type="button" class="ya" id="pfxCuadreYa" data-action="cuadreAnotar" disabled>Comparar</button>
+        <button type="button" data-action="cuadrePosponer">Ahora no</button>
+      </div>
+      <button type="button" class="pfx-cuadre-solo" id="pfxCuadreSolo" data-action="cuadreSolo" hidden>Fue otra cosa: solo actualizar el saldo</button>
+    </div>`;
+}
+function pf_cuadreSaldoEscrito() {
+  const v = pf_leerMonto('pfxCuadreSaldo');
+  const neg = document.getElementById('pfxCuadreNeg');
+  return neg && neg.checked ? -v : v;
+}
+// Al escribir el saldo se muestra la diferencia sin redibujar (para no perder el foco).
+function pf_cuadreInput() {
+  const inp = document.getElementById('pfxCuadreSaldo');
+  if (!inp) return;
+  const digitos = String(inp.value).replace(/\D/g, '');
+  inp.value = digitos ? parseInt(digitos, 10).toLocaleString('es-PY').replace(/,/g, '.') : '';
+  const ya = document.getElementById('pfxCuadreYa');
+  if (!state.cuadreBanco || !ya) return;
+  const difEl = document.getElementById('pfxCuadreDif'), nota = document.getElementById('pfxCuadreNota'), solo = document.getElementById('pfxCuadreSolo');
+  if (!digitos) { difEl.hidden = true; nota.hidden = true; solo.hidden = true; ya.disabled = true; ya.textContent = 'Comparar'; return; }
+  const dif = pf_cuadreSaldoEscrito() - Math.round(pf_saldoEsperado());
+  ya.disabled = false;
+  difEl.hidden = false;
+  difEl.className = 'pfx-cuadre-dif' + (dif < 0 ? ' menos' : dif > 0 ? ' mas' : ' ok');
+  if (dif === 0) {
+    difEl.innerHTML = '<b>Coincide</b><span>La app y el banco dicen lo mismo.</span>';
+    ya.textContent = 'Listo, coincide'; nota.hidden = true; solo.hidden = true;
+  } else if (dif < 0) {
+    difEl.innerHTML = `<b>El banco tiene ${pf_fmtGs(-dif)} menos</b><span>Son cargos o gastos que no anotaste.</span>`;
+    ya.textContent = 'Anotar como cargo'; nota.hidden = false; solo.hidden = false;
+  } else {
+    difEl.innerHTML = `<b>El banco tiene ${pf_fmtGs(dif)} más</b><span>Puede ser un ingreso que no anotaste o un gasto anotado de más.</span>`;
+    ya.textContent = 'Anotar como ingreso'; nota.hidden = false; solo.hidden = false;
+  }
+}
+function pf_cuadreGuardarAncla(saldo, dif) {
+  const previo = state.cuadreBanco ? { ...state.cuadreBanco } : null;
+  state.cuadreBanco = { saldo, totalApp: pf_totalApp(), en: new Date().toISOString(), dif };
+  saveState();
+  return previo;
+}
+function pf_cuadreDespues() {
+  pf_cuadreForzado = false;
+  pf_tecEscribir(PF_KEY_CUADRE_POSPONER, '');
+  pf_render();
+  pf_cuadreInicio();
+}
+function pf_cuadreInicial() {
+  if (!String((document.getElementById('pfxCuadreSaldo') || {}).value || '').replace(/\D/g, '')) {
+    const inp = document.getElementById('pfxCuadreSaldo'); if (inp) inp.focus(); return;
+  }
+  const saldo = pf_cuadreSaldoEscrito();
+  const previo = pf_cuadreGuardarAncla(saldo, 0);
+  pf_cuadreDespues();
+  pf_toast('Saldo guardado. El lunes te pido cuadrar.', () => { state.cuadreBanco = previo; saveState(); pf_render(); pf_cuadreInicio(); });
+}
+function pf_cuadreAnotar(soloSaldo) {
+  if (!state.cuadreBanco) return;
+  if (!String((document.getElementById('pfxCuadreSaldo') || {}).value || '').replace(/\D/g, '')) return;
+  const real = pf_cuadreSaldoEscrito();
+  const dif = real - Math.round(pf_saldoEsperado());
+  let tx = null;
+  if (dif !== 0 && !soloSaldo) {
+    const nota = ((document.getElementById('pfxCuadreNota') || {}).value || '').trim();
+    tx = {
+      id: pf_uid(), type: dif < 0 ? 'gasto' : 'ingreso', amount: Math.abs(dif),
+      category: dif < 0 ? 'Cargos del banco' : 'Otro ingreso',
+      note: nota || (dif < 0 ? 'Cargos del banco (al cuadrar)' : 'Ajuste con el banco'),
+      date: pf_todayStr(), fixed: false, method: dif < 0 ? 'Efectivo / Débito' : null, paid: true,
+      cuadre: true, updatedAt: new Date().toISOString()
+    };
+    pf_data.transactions.push(tx);
+    pf_persist();
+  }
+  const previo = pf_cuadreGuardarAncla(real, dif);
+  pf_cuadreDespues();
+  const msg = dif === 0 ? 'Cuadrado: coincide con el banco' : tx ? `Anotado: ${pf_fmtGs(Math.abs(dif))} ${dif < 0 ? 'en cargos del banco' : 'de ingreso'}` : 'Saldo actualizado';
+  pf_toast(msg, () => { if (tx) { marcarEliminado(tx); pf_persist(); } state.cuadreBanco = previo; saveState(); pf_render(); pf_cuadreInicio(); });
+}
+function pf_cuadrePosponer() {
+  pf_cuadreForzado = false;
+  pf_tecEscribir(PF_KEY_CUADRE_POSPONER, pf_todayStr());
+  pf_render();
+  pf_cuadreInicio();
+  pf_toast('Te lo recuerdo mañana', () => { pf_tecEscribir(PF_KEY_CUADRE_POSPONER, ''); pf_render(); pf_cuadreInicio(); });
+}
+function pf_cuadrarAhora() {
+  pf_cuadreForzado = true;
+  pf_view = 'month'; pf_cursor = new Date();
+  switchTabProgrammatic('finanzas');
+  if (pf_tecEstaAbierto()) pf_cerrarTeclado(true);
+  window.scrollTo({ top: 0 });
+  setTimeout(() => { const i = document.getElementById('pfxCuadreSaldo'); if (i) i.focus(); }, 300);
+}
+// Evento semanal en el Calendario del iPhone (lunes 7:00, hora local) con aviso.
+function pf_cuadreCalendario() {
+  const l = pf_lunesDeEstaSemana();
+  const hoy = new Date();
+  if (l < new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()) || hoy.getHours() >= 7) l.setDate(l.getDate() + 7);
+  const p = n => String(n).padStart(2, '0');
+  const dia = `${l.getFullYear()}${p(l.getMonth() + 1)}${p(l.getDate())}`;
+  const ahora = new Date();
+  const stamp = `${ahora.getUTCFullYear()}${p(ahora.getUTCMonth() + 1)}${p(ahora.getUTCDate())}T${p(ahora.getUTCHours())}${p(ahora.getUTCMinutes())}00Z`;
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Steadfast//Finanzas//ES', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    'UID:cuadrar-banco-semanal@steadfast',
+    `DTSTAMP:${stamp}`,
+    `DTSTART:${dia}T070000`,
+    `DTEND:${dia}T071000`,
+    'RRULE:FREQ=WEEKLY;BYDAY=MO',
+    'SUMMARY:Cuadrar Finanzas con el banco',
+    'DESCRIPTION:Abrí Steadfast > Finanzas y escribí el saldo real de tu cuenta.',
+    'URL:https://agustin23-gif.github.io/sistema-tracy/',
+    'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:Cuadrar Finanzas con el banco', 'TRIGGER:-PT0M', 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = 'cuadrar-con-el-banco.ics';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+// Aviso corto en Inicio: lleva a Finanzas, donde está la tarjeta completa.
+function pf_cuadreInicio() {
+  const el = document.getElementById('avisoCuadreInicio');
+  if (!el) return;
+  const ver = !pf_cuadreForzado && pf_cuadrePendiente();
+  el.hidden = !ver;
+  if (ver) el.innerHTML = `<span class="pfx-cuadre-ico">${PF_ICONO_BANCO}</span><span class="t"><b>${state.cuadreBanco ? (new Date().getDay() === 1 ? 'Lunes de cuadrar' : 'Cuadrá con tu banco') : 'Cuadrá Finanzas con tu banco'}</b><span>${state.cuadreBanco ? 'Compará la app con tu saldo real' : 'Cargá tu saldo de hoy para empezar'}</span></span><span class="fl" aria-hidden="true">›</span>`;
+}
+
 // ── Conexión con la app Trabajos (trabajos.html) ──
 // Trabajos guarda sus pedidos en usuarios/{uid}/trabajos/datos. Acá se leen y se arman solos
 // los movimientos de Finanzas, con ids fijos (trab_<id>_...) para no duplicar nunca:
@@ -8402,6 +8637,12 @@ function pf_asesorResumen() {
   if (pf_usaTarjeta()) {
     const deuda = pf_pendingCardDebt();
     L.push('', `Tarjeta de crédito: ${deuda ? `debo ${gs(deuda)} en compras sin pagar` : 'sin deuda pendiente'}.`);
+  }
+  if (state.cuadreBanco) {
+    const c = state.cuadreBanco, esp = pf_saldoEsperado();
+    L.push('', `Cuenta del banco: según la app tengo ${esp < 0 ? '-' : ''}${gs(Math.abs(esp))}. La última vez que lo comparé con el banco fue el ${fecha(c.en.slice(0, 10))}${c.dif ? ` y encontré una diferencia de ${c.dif < 0 ? '-' : '+'}${gs(Math.abs(c.dif))}` : ' y coincidía'}.`);
+    const cargos = pf_data.transactions.filter(t => !t.eliminado && t.category === 'Cargos del banco' && t.date.slice(0, 4) === String(hoy.getFullYear()));
+    if (cargos.length) L.push(`Cargos del banco que no había anotado, en lo que va del año: ${gs(cargos.reduce((s, t) => s + t.amount, 0))} (${cargos.map(t => `${fecha(t.date)} ${gs(t.amount)}${t.note && !t.note.startsWith('Cargos del banco') ? ` ${t.note}` : ''}`).join('; ')}).`);
   }
   const pend = pf_cobrosPend();
   if (pend.length) {
@@ -8906,6 +9147,11 @@ function pf_bindEvents() {
     otroPct.addEventListener('input', pf_avisoAhorroOtro);
     otroPct.addEventListener('change', () => pf_render());
   }
+  const cuadre = document.getElementById('pfxCuadreSaldo');
+  if (cuadre) {
+    cuadre.addEventListener('input', pf_cuadreInput);
+    document.getElementById('pfxCuadreNeg').addEventListener('change', pf_cuadreInput);
+  }
   const catSel = document.getElementById('pfCategory');
   if (catSel) { catSel.addEventListener('change', pf_updateAhorroHint); pf_updateAhorroHint(); }
   const methodSel = document.getElementById('pfMethod');
@@ -8937,6 +9183,11 @@ function pf_onAction(e) {
   else if (action === 'avisoCambiar') pf_avisoAhorroCambiar();
   else if (action === 'guia') pf_guiaIniciar(btn.dataset.value);
   else if (action === 'asesor') pf_abrirAsesor();
+  else if (action === 'cuadreInicial') pf_cuadreInicial();
+  else if (action === 'cuadreAnotar') pf_cuadreAnotar(false);
+  else if (action === 'cuadreSolo') pf_cuadreAnotar(true);
+  else if (action === 'cuadrePosponer') pf_cuadrePosponer();
+  else if (action === 'cuadreCalendario') pf_cuadreCalendario();
   else if (action === 'nuevoCobro') pf_abrirTeclado('cobrar');
   else if (action === 'editCobro') pf_editarCobro(btn.dataset.id);
   else if (action === 'cobrado') pf_marcarCobrado(btn.dataset.id);
