@@ -3742,6 +3742,27 @@
   .pfx-cobrar-ico { width: 40px; height: 40px; border-radius: 13px; background: rgba(95,211,47,.18); color: var(--pfx-pos); display: grid; place-items: center; }
   .pfx-cobrar-fila .pfx-t div:first-child { font-size: 15px; }
   .pfx-asesor-ico { width: 40px; height: 40px; border-radius: 13px; background: rgba(232,69,10,.14); color: var(--gold); display: grid; place-items: center; }
+  /* Hoja del Asesor */
+  .asesor-hoja { position: fixed; inset: 0; z-index: 1000; display: none; }
+  .asesor-hoja.open { display: block; }
+  .asesor-hoja-fondo { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+  .asesor-hoja-caja { position: absolute; left: 0; right: 0; bottom: 0; max-height: 88vh; overflow-y: auto; background: var(--card); color: var(--text); border-radius: 24px 24px 0 0; padding: 18px 16px calc(20px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 12px; box-shadow: 0 -10px 40px rgba(0,0,0,.2); }
+  @media (min-width: 640px) { .asesor-hoja-caja { left: 50%; right: auto; width: 480px; transform: translateX(-50%); bottom: 24px; border-radius: 24px; } }
+  .asesor-hoja-cab { display: flex; justify-content: space-between; align-items: center; }
+  .asesor-hoja-cab b { font-size: 18px; font-weight: 800; }
+  .asesor-hoja-x { width: 44px; height: 44px; border: none; background: transparent; color: var(--muted); font-size: 18px; cursor: pointer; border-radius: 12px; }
+  #asesorPaso1, #asesorPaso2 { display: grid; gap: 10px; }
+  #asesorPaso1[hidden], #asesorPaso2[hidden] { display: none; }
+  #asesorPaso1 label { font-size: 14px; font-weight: 700; }
+  #asesorPregunta { width: 100%; box-sizing: border-box; font: inherit; font-size: 16px; line-height: 1.4; color: var(--text); background: var(--input-bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 12px; resize: vertical; }
+  #asesorPregunta:focus { outline: none; border-color: var(--gold); }
+  .asesor-hoja-ver summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .asesor-hoja-ver pre { white-space: pre-wrap; font-family: 'Geist', sans-serif; font-size: 12px; line-height: 1.45; color: var(--muted); background: var(--input-bg); border-radius: 12px; padding: 10px 12px; max-height: 40vh; overflow-y: auto; margin: 8px 0 0; -webkit-user-select: text; user-select: text; }
+  .asesor-hoja-ok { min-height: 50px; border: none; border-radius: 16px; background: var(--gold); color: #fff; font: inherit; font-size: 16px; font-weight: 800; cursor: pointer; }
+  .asesor-hoja-sec { min-height: 44px; border: none; background: transparent; color: var(--muted); font: inherit; font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer; }
+  .asesor-hoja-listo { display: grid; gap: 4px; background: rgba(232,69,10,.1); border-radius: 14px; padding: 12px 14px; }
+  .asesor-hoja-listo b { font-size: 16px; }
+  .asesor-hoja-listo span { font-size: 14px; line-height: 1.4; }
   .ajustes-row-col { flex-direction: column; align-items: stretch; gap: 8px; }
   .ajustes-row-col .asesor-link-input { width: 100%; max-width: none; text-align: left; border-color: var(--border); box-sizing: border-box; }
   .asesor-link-msg { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
@@ -8584,7 +8605,7 @@ function pf_renderAsesorFila() {
   const fija = !!pf_asesorLink();
   return `<button type="button" class="pfx-cobrar-fila pfx-asesor-fila" data-action="asesor">
     <span class="pfx-asesor-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 10.5h6M9 13.5h4"/></svg></span>
-    <span class="pfx-t"><div>Preguntarle a Claude</div><div>${fija ? 'Copia tu resumen y abre tu chat fijo' : 'Copia tu resumen y abre Claude'}</div></span>
+    <span class="pfx-t"><div>Preguntarle a Claude</div><div>${fija ? 'Escribí tu pregunta y abrí tu chat fijo' : 'Escribí tu pregunta y abrí Claude'}</div></span>
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".55" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
   </button>`;
 }
@@ -8709,15 +8730,77 @@ function pf_copiarTexto(texto) {
     const ok = document.execCommand('copy'); ta.remove(); return ok;
   } catch (e) { return false; }
 }
+// Claude no permite cargar texto en una conversación que ya existe (solo en una nueva con ?q=),
+// así que se pregunta acá: la persona escribe su pregunta, se copia resumen + pregunta
+// y en Claude solo tiene que pegar.
 function pf_abrirAsesor() {
-  const texto = pf_asesorResumen();
-  pf_copiarTexto(texto);
+  let h = document.getElementById('asesorHoja');
+  if (!h) {
+    h = document.createElement('div');
+    h.id = 'asesorHoja'; h.className = 'asesor-hoja';
+    h.innerHTML = `<div class="asesor-hoja-fondo" data-cerrar></div>
+      <div class="asesor-hoja-caja" role="dialog" aria-modal="true" aria-labelledby="asesorHojaTit">
+        <div class="asesor-hoja-cab"><b id="asesorHojaTit">Preguntale al Asesor</b><button type="button" class="asesor-hoja-x" data-cerrar aria-label="Cerrar">✕</button></div>
+        <div id="asesorPaso1">
+          <label for="asesorPregunta">¿Qué le querés preguntar?</label>
+          <textarea id="asesorPregunta" rows="3" placeholder="Ej.: me pagaron una seña, ¿qué hago con esa plata?"></textarea>
+          <details class="asesor-hoja-ver"><summary>Ver el resumen que se envía</summary><pre id="asesorResumenVer"></pre></details>
+          <button type="button" class="asesor-hoja-ok" id="asesorCopiar">Copiar y abrir Claude</button>
+        </div>
+        <div id="asesorPaso2" hidden>
+          <div class="asesor-hoja-listo"><b id="asesorListoTit">Copiado ✓</b><span id="asesorListoTxt"></span></div>
+          <button type="button" class="asesor-hoja-ok" id="asesorAbrirOtra">Abrir Claude de nuevo</button>
+          <button type="button" class="asesor-hoja-sec" id="asesorRecopiar">Volver a copiar</button>
+        </div>
+      </div>`;
+    document.body.appendChild(h);
+    h.addEventListener('click', e => { if (e.target.closest('[data-cerrar]')) pf_cerrarAsesor(); });
+    h.addEventListener('keydown', e => { if (e.key === 'Escape') pf_cerrarAsesor(); });
+    document.getElementById('asesorCopiar').onclick = () => pf_asesorEnviar(true);
+    document.getElementById('asesorAbrirOtra').onclick = () => pf_asesorIr();
+    document.getElementById('asesorRecopiar').onclick = () => pf_asesorEnviar(false);
+  }
+  document.getElementById('asesorResumenVer').textContent = pf_asesorResumen();
+  document.getElementById('asesorPaso1').hidden = false;
+  document.getElementById('asesorPaso2').hidden = true;
+  h.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('asesorPregunta').focus(), 50);
+}
+function pf_cerrarAsesor() {
+  const h = document.getElementById('asesorHoja');
+  if (h) h.classList.remove('open');
+  document.body.style.overflow = '';
+}
+let pf_asesorTexto = '';
+function pf_asesorIr() {
   const fija = pf_asesorLink();
-  // En una conversación nueva el texto también va en el link (?q=), así aparece ya escrito.
-  const url = fija || ('https://claude.ai/new?q=' + encodeURIComponent(texto));
-  const w = window.open(url, '_blank', 'noopener');
-  if (!w) location.href = url;
-  pf_toast(fija ? 'Resumen copiado: pegalo y preguntá' : 'Resumen copiado. Chat fijo: Ajustes');
+  const url = fija || ('https://claude.ai/new?q=' + encodeURIComponent(pf_asesorTexto));
+  const a = document.createElement('a');
+  a.href = url; a.target = '_blank'; a.rel = 'noopener';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function pf_asesorEnviar(abrir) {
+  const preg = (document.getElementById('asesorPregunta').value || '').trim();
+  pf_asesorTexto = pf_asesorResumen().replace(/Mi pregunta:\n*$/, 'Mi pregunta: ' + (preg || ''));
+  const fija = pf_asesorLink();
+  const marcar = ok => {
+    document.getElementById('asesorListoTit').textContent = ok ? 'Copiado ✓' : 'No se pudo copiar';
+    document.getElementById('asesorListoTxt').textContent = !ok
+      ? 'Abrí "Ver el resumen que se envía", mantenelo apretado y copialo a mano.'
+      : fija ? 'En Claude tocá el cuadro de mensaje, mantené apretado y elegí Pegar. Después mandalo.'
+             : 'Si en Claude no aparece escrito, tocá el cuadro de mensaje, mantené apretado y elegí Pegar.';
+    if (!ok) { document.getElementById('asesorPaso1').hidden = false; document.querySelector('#asesorHoja details').open = true; }
+  };
+  let ok = true;
+  try {
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(pf_asesorTexto).then(() => marcar(true), () => marcar(pf_copiarTexto(pf_asesorTexto)));
+    else ok = pf_copiarTexto(pf_asesorTexto);
+  } catch (e) { ok = pf_copiarTexto(pf_asesorTexto); }
+  document.getElementById('asesorPaso1').hidden = true;
+  document.getElementById('asesorPaso2').hidden = false;
+  marcar(ok);
+  if (abrir) pf_asesorIr();
 }
 function pf_guardarAsesorLink(inp) {
   const v = (inp.value || '').trim();
