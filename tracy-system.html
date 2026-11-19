@@ -8469,7 +8469,7 @@ function pf_guardarAsesorLink(inp) {
   const v = (inp.value || '').trim();
   const msg = document.getElementById('asesorLinkMsg');
   if (v && !PF_ASESOR_LINK_OK.test(v)) {
-    if (msg) { msg.textContent = 'Ese link no es de una conversación de Claude. Copialo desde Claude con Compartir o desde la barra de direcciones.'; msg.className = 'asesor-link-msg error'; }
+    if (msg) { msg.textContent = 'Ese link no es de una conversación de Claude. Copialo de la barra de direcciones: empieza con https://claude.ai/chat/ (no uses Compartir).'; msg.className = 'asesor-link-msg error'; }
     return;
   }
   if (v === (state.asesorLink || '')) return;
