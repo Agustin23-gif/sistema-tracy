@@ -3445,6 +3445,64 @@
     .pf-quick-amount-input, .pf-quick-note-input { font-size: max(16px, 1em); }
   }
 
+
+  /* ── FINANZAS: editor de categorías (hoja desde abajo, encima del teclado verde) ── */
+  .pf-cat { position: fixed; inset: 0; z-index: 1100; visibility: hidden; font-family: 'Geist', sans-serif; }
+  .pf-cat, .pf-cat * { box-sizing: border-box; }
+  .pf-cat.open { visibility: visible; }
+  .pf-cat-fondo { position: absolute; inset: 0; background: rgba(0,0,0,.38); opacity: 0; transition: opacity .25s; }
+  .pf-cat.open .pf-cat-fondo { opacity: 1; }
+  .pf-cat-hoja {
+    position: absolute; left: 50%; bottom: 0; width: 100%; max-width: 480px; max-height: 88vh; max-height: 88dvh;
+    transform: translate(-50%, 100%); transition: transform .34s cubic-bezier(.2,.8,.2,1);
+    background: var(--surface); color: var(--text); border-radius: 22px 22px 0 0;
+    display: flex; flex-direction: column;
+    padding: 14px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+  .pf-cat.open .pf-cat-hoja { transform: translate(-50%, 0); }
+  .pf-cat-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 2px 10px; }
+  .pf-cat-top b { font-size: 18px; font-weight: 700; }
+  .pf-cat-x { width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--input-bg); color: inherit; font-size: 15px; cursor: pointer; }
+  .pf-cat-seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--input-bg); border-radius: 99px; padding: 3px; flex: none; }
+  .pf-cat-seg button { border: 0; background: transparent; color: inherit; font: inherit; font-weight: 600; font-size: 14px; padding: 9px; border-radius: 99px; cursor: pointer; }
+  .pf-cat-seg button.on { background: #0B0B0B; color: #fff; }
+  body.dark-mode .pf-cat-seg button.on { background: #5FD32F; color: #0C1F05; }
+  .pf-cat-lista { overflow-y: auto; -webkit-overflow-scrolling: touch; margin: 10px -16px 0; padding: 0 16px 4px; overscroll-behavior: contain; }
+  .pf-cat-item { border-bottom: 1px solid var(--border); }
+  .pf-cat-row { width: 100%; display: flex; align-items: center; gap: 12px; padding: 11px 2px; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+  .pf-cat-ico { width: 38px; height: 38px; flex: none; border-radius: 12px; background: var(--input-bg); display: grid; place-items: center; font-size: 18px; }
+  .pf-cat-ico.grande { width: 46px; height: 46px; font-size: 22px; }
+  .pf-cat-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+  .pf-cat-txt b { font-weight: 600; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pf-cat-txt small { font-size: 12px; color: var(--muted); }
+  .pf-cat-flecha { color: var(--muted); font-size: 20px; transition: transform .2s; }
+  .pf-cat-item.abierta .pf-cat-flecha { transform: rotate(90deg); }
+  .pf-cat-form { padding: 2px 2px 14px; display: flex; flex-direction: column; gap: 10px; }
+  .pf-cat-fila { display: flex; align-items: center; gap: 10px; }
+  .pf-cat-input { flex: 1; min-width: 0; width: 100%; font: inherit; font-size: 16px; color: var(--text); background: var(--input-bg); border: 1.5px solid transparent; border-radius: 12px; padding: 11px 12px; outline: none; }
+  .pf-cat-input:focus { border-color: #2E9B6B; }
+  .pf-cat-input:disabled { opacity: .7; }
+  .pf-cat-input.sacudir { animation: pfTecSacudir .35s; border-color: var(--danger); }
+  .pf-cat-nota { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+  .pf-cat-emojis { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -18px; padding: 2px 18px; }
+  .pf-cat-emojis::-webkit-scrollbar { display: none; }
+  .pf-cat-emojis button { flex: none; width: 38px; height: 38px; border-radius: 11px; border: 1.5px solid transparent; background: var(--input-bg); font-size: 18px; cursor: pointer; }
+  .pf-cat-emojis button.on { border-color: #2E9B6B; background: rgba(46,155,107,.12); }
+  .pf-cat-acciones { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .pf-cat-btn { border: 0; background: #0B0B0B; color: #fff; font: inherit; font-weight: 600; font-size: 14px; padding: 11px 18px; border-radius: 99px; cursor: pointer; }
+  body.dark-mode .pf-cat-btn { background: #5FD32F; color: #0C1F05; }
+  .pf-cat-btn.claro, body.dark-mode .pf-cat-btn.claro { background: var(--input-bg); color: var(--text); }
+  .pf-cat-btn.peligro, body.dark-mode .pf-cat-btn.peligro { background: transparent; color: var(--danger); padding-left: 4px; }
+  .pf-cat-btn.ancho { width: 100%; }
+  .pf-cat-pregunta { font-size: 14px; line-height: 1.45; }
+  .pf-cat-label { font-size: 12px; color: var(--muted); margin-bottom: -6px; }
+  .pf-cat-nueva { width: 100%; margin-top: 12px; padding: 13px; border-radius: 14px; border: 1.5px dashed var(--border); background: transparent; color: #2E9B6B; font: inherit; font-weight: 600; font-size: 15px; cursor: pointer; }
+  body.dark-mode .pf-cat-nueva { border-color: rgba(255,255,255,.18); color: #5FD32F; }
+  .pf-cat-nueva-tit { font-weight: 600; font-size: 14px; padding: 14px 2px 8px; }
+  html.pf-cat-abierta .pfx-toast { z-index: 1200; bottom: auto; top: calc(14px + env(safe-area-inset-top, 0px)); width: max-content; max-width: calc(100vw - 32px); white-space: normal; border-radius: 18px; line-height: 1.35; }
+  html.pf-cat-abierta .pfx-toast button { flex: none; }
+  .pf-tec-cats button.pf-tec-cat-editar { border-style: dashed; opacity: .8; }
+
   /* ── FINANZAS: teclado verde para anotar rápido (pantalla completa) ── */
   .pf-tec {
     position: fixed; inset: 0; z-index: 1000;
@@ -4446,6 +4504,10 @@
       <div class="dark-toggle" id="tarjetaFinanzasToggle" onclick="pf_toggleTarjeta()" role="button" aria-label="Uso tarjeta de crédito"><div class="dark-toggle-thumb"></div></div>
     </div>
     <div class="ajustes-row">
+      <span class="ajustes-row-label"><i data-lucide="tags"></i> Categorías de gastos e ingresos</span>
+      <button class="backup-btn" type="button" onclick="pf_catAbrir('gasto')">Editar</button>
+    </div>
+    <div class="ajustes-row">
       <span class="ajustes-row-label"><i data-lucide="landmark"></i> Cuadrar con el banco</span>
       <button class="backup-btn" type="button" onclick="pf_cuadrarAhora()">Cuadrar ahora</button>
     </div>
@@ -4975,6 +5037,22 @@
 <div class="sec-intro" id="secIntro" role="dialog" aria-modal="true" aria-label="Para qué sirve esta sección" aria-hidden="true"></div>
 
 <!-- ══ FINANZAS: TECLADO VERDE PARA ANOTAR RÁPIDO ══ -->
+<!-- ══ FINANZAS: editor de categorías ══ -->
+<div class="pf-cat" id="pfCat" aria-hidden="true">
+  <div class="pf-cat-fondo" data-cerrar="1"></div>
+  <div class="pf-cat-hoja" role="dialog" aria-modal="true" aria-label="Categorías">
+    <div class="pf-cat-top">
+      <b>Categorías</b>
+      <button type="button" class="pf-cat-x" data-cerrar="1" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="pf-cat-seg" id="pfCatSeg">
+      <button type="button" data-tipo="gasto">Gastos</button>
+      <button type="button" data-tipo="ingreso">Ingresos</button>
+    </div>
+    <div class="pf-cat-lista" id="pfCatLista"></div>
+  </div>
+</div>
+
 <div class="pf-tec" id="pfTec" role="dialog" aria-modal="true" aria-label="Anotar movimiento" aria-hidden="true">
   <div class="pf-tec-in">
     <div class="pf-tec-top">
@@ -7784,7 +7862,7 @@ function importarBackup(e) {
       const parsed = JSON.parse(ev.target.result);
       if (parsed.app === 'Pulso Financiero' && Array.isArray(parsed.transactions)) {
         // Export suelto del prototipo standalone de Pulso Financiero
-        pf_data = { transactions: parsed.transactions || [], fixedPayments: parsed.fixedPayments || [], porCobrar: parsed.porCobrar || [] };
+        pf_data = { transactions: parsed.transactions || [], fixedPayments: parsed.fixedPayments || [], porCobrar: parsed.porCobrar || [], categorias: pf_data.categorias || [] };
         asegurarIdsYTimestamps(pf_data.transactions, 'tx');
         asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
         pf_persist();
@@ -7794,7 +7872,7 @@ function importarBackup(e) {
       } else {
         if (!parsed.metas || !parsed.habitos || !parsed.habitoChecks) throw new Error('invalid');
         if (parsed.pulsoFinanciero) {
-          pf_data = { transactions: parsed.pulsoFinanciero.transactions || [], fixedPayments: parsed.pulsoFinanciero.fixedPayments || [], porCobrar: parsed.pulsoFinanciero.porCobrar || [] };
+          pf_data = { transactions: parsed.pulsoFinanciero.transactions || [], fixedPayments: parsed.pulsoFinanciero.fixedPayments || [], porCobrar: parsed.pulsoFinanciero.porCobrar || [], categorias: parsed.pulsoFinanciero.categorias || pf_data.categorias || [] };
           asegurarIdsYTimestamps(pf_data.transactions, 'tx');
           asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
           pf_persist();
@@ -7855,11 +7933,88 @@ function pf_loadData() {
     const raw = localStorage.getItem(PF_STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      pf_data = { transactions: parsed.transactions || [], fixedPayments: parsed.fixedPayments || [], porCobrar: parsed.porCobrar || [] };
+      pf_data = { transactions: parsed.transactions || [], fixedPayments: parsed.fixedPayments || [], porCobrar: parsed.porCobrar || [], categorias: parsed.categorias || [] };
     }
   } catch (e) {
-    pf_data = { transactions: [], fixedPayments: [], porCobrar: [] };
+    pf_data = { transactions: [], fixedPayments: [], porCobrar: [], categorias: [] };
   }
+  pf_asegurarCategorias();
+}
+
+// ── Categorías editables (gastos e ingresos) ──
+// Viven en pf_data.categorias (viajan con pulsoData a Firestore) y se fusionan por id
+// como los movimientos. Los movimientos guardan el NOMBRE de la categoría, así que:
+//  - renombrar cambia el nombre en los movimientos y pagos fijos, y guarda el nombre
+//    viejo en `antes` para que un movimiento viejo que llegue tarde de otro dispositivo
+//    también se pase al nombre nuevo (pf_aplicarRenombres, después de cada sync);
+//  - borrar es borrado suave; los movimientos se pasan a otra categoría (que hereda el
+//    nombre en `antes`) o se quedan con su nombre, y se siguen viendo igual.
+// Las de PF_CATS_FIJAS las usan otras funciones por su nombre: no se renombran ni borran.
+const PF_CATS_FIJAS = {
+  'Ahorro / Inversión': 'La usa el aviso de ahorro',
+  'Materiales de trabajos': 'La usa Control de Trabajos',
+  'Ganancias apartadas': 'La usa Control de Trabajos',
+  'Cargos del banco': 'La usa Cuadrar con el banco',
+  'Otro gasto': 'Queda siempre como comodín',
+  'Proyectos freelance': 'La usan Por cobrar y Control de Trabajos',
+  'Otro ingreso': 'La usa Cuadrar con el banco'
+};
+const PF_CAT_BASE_TS = '2000-01-01T00:00:00.000Z';   // cualquier cambio real le gana
+function pf_catSlug(s) {
+  return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+}
+function pf_catBase(tipo, nombre, i) {
+  // id determinístico: dos dispositivos que arrancan solos crean las mismas y no se duplican.
+  return { id: `cat_${tipo === 'gasto' ? 'g' : 'i'}_${pf_catSlug(nombre)}`, tipo, nombre, icono: PF_ICONOS[nombre] || '•', orden: i, antes: [], updatedAt: PF_CAT_BASE_TS };
+}
+function pf_asegurarCategorias() {
+  if (!Array.isArray(pf_data.categorias)) pf_data.categorias = [];
+  const ids = new Set(pf_data.categorias.map(c => c.id));
+  const nombres = new Set(pf_data.categorias.map(c => c.tipo + '|' + c.nombre));
+  const sumar = (tipo, lista, soloFijas) => lista.forEach((n, i) => {
+    if (soloFijas && !PF_CATS_FIJAS[n]) return;
+    const c = pf_catBase(tipo, n, i);
+    if (!ids.has(c.id) && !nombres.has(tipo + '|' + n)) pf_data.categorias.push(c);
+  });
+  const vacio = !pf_data.categorias.length;
+  // La primera vez se cargan las de siempre; después solo se asegura que estén las fijas.
+  sumar('gasto', PF_GASTO_CATS, !vacio);
+  sumar('ingreso', PF_INGRESO_CATS, !vacio);
+}
+function pf_catEsOtro(n) { return n === 'Otro gasto' || n === 'Otro ingreso'; }
+function pf_catsActivas(tipo) {
+  return pf_data.categorias.filter(c => !c.eliminado && c.tipo === tipo)
+    .sort((a, b) => (pf_catEsOtro(a.nombre) - pf_catEsOtro(b.nombre)) || ((a.orden || 0) - (b.orden || 0)));
+}
+// Nombres de las categorías activas, en orden ("Otro …" al final).
+function pf_catsDe(tipo) {
+  pf_asegurarCategorias();
+  return pf_catsActivas(tipo).map(c => c.nombre);
+}
+function pf_catBuscar(nombre, tipo) {
+  const l = pf_data.categorias || [];
+  return l.find(c => c.nombre === nombre && !c.eliminado && (!tipo || c.tipo === tipo))
+    || l.find(c => c.nombre === nombre && (!tipo || c.tipo === tipo));
+}
+// Pasa al nombre actual los movimientos y pagos fijos que todavía tienen un nombre viejo.
+function pf_aplicarRenombres() {
+  const mapa = { gasto: {}, ingreso: {} };
+  (pf_data.categorias || []).forEach(c => {
+    if (c.eliminado || !mapa[c.tipo]) return;
+    (c.antes || []).forEach(v => { if (v !== c.nombre) mapa[c.tipo][v] = c.nombre; });
+  });
+  // Un nombre que hoy usa una categoría activa no se mueve a otra.
+  (pf_data.categorias || []).forEach(c => { if (!c.eliminado && mapa[c.tipo]) delete mapa[c.tipo][c.nombre]; });
+  const ahora = new Date().toISOString();
+  let n = 0;
+  const fijar = (it, tipo) => {
+    if (!it || it.eliminado || String(it.id || '').startsWith('trab_')) return;
+    const nuevo = mapa[tipo] && mapa[tipo][it.category];
+    if (nuevo) { it.category = nuevo; it.updatedAt = ahora; n++; }
+  };
+  (pf_data.transactions || []).forEach(t => fijar(t, t.type));
+  (pf_data.fixedPayments || []).forEach(f => fijar(f, 'gasto'));
+  return n;
 }
 
 function pf_persist() {
@@ -7996,7 +8151,7 @@ let pf_fijoAbierto = null;
 let pf_formFijo = false;
 let pf_editFijo = null;     // id del pago fijo que se está editando
 
-function pf_icono(cat) { return PF_ICONOS[cat] || '•'; }
+function pf_icono(cat) { const c = pf_catBuscar(cat); return (c && c.icono) || PF_ICONOS[cat] || '•'; }
 function pf_corto(n) {
   n = Math.abs(n);
   if (n >= 1e6) return (Math.round(n / 1e5) / 10).toLocaleString('es-PY') + ' M';
@@ -9023,7 +9178,7 @@ function pf_renderFixedPanel() {
       </div>` : ''}`;
   }).join('');
   const ed = pf_editFijo ? list.find(f => f.id === pf_editFijo) : null;
-  const val = ed || { name: '', amount: '', dueDay: '', method: PF_PAYMENT_METHODS[0], category: 'Suscripciones y pagos fijos' };
+  const val = ed || { name: '', amount: '', dueDay: '', method: PF_PAYMENT_METHODS[0], category: pf_catsDe('gasto').includes('Suscripciones y pagos fijos') ? 'Suscripciones y pagos fijos' : pf_catsDe('gasto')[0] };
   const form = (pf_formFijo || ed) ? `
     <div class="pfx-form">
       ${ed ? `<h3 class="pfx-h" style="margin-top:4px">Editar pago fijo</h3>` : ''}
@@ -9032,7 +9187,7 @@ function pf_renderFixedPanel() {
         <div><label>Monto (₲)</label><input type="number" id="pfFpAmount" placeholder="35000" min="0" step="1000" inputmode="numeric" value="${val.amount}"></div>
         <div><label>Día de vencimiento</label><input type="number" id="pfFpDueDay" placeholder="15" min="1" max="31" inputmode="numeric" value="${val.dueDay}"></div>
         <div${pf_usaTarjeta() ? '' : ' style="display:none"'}><label>Medio de pago</label><select id="pfFpMethod">${PF_PAYMENT_METHODS.map(m => `<option value="${m}" ${m === val.method ? 'selected' : ''}>${m}</option>`).join('')}</select></div>
-        <div><label>Categoría</label><select id="pfFpCategory">${PF_GASTO_CATS.map(c => `<option value="${c}" ${c === val.category ? 'selected' : ''}>${c}</option>`).join('')}</select></div>
+        <div><label>Categoría</label><select id="pfFpCategory">${pf_catsConActual('gasto', val.category).map(c => `<option value="${escHtml(c)}" ${c === val.category ? 'selected' : ''}>${escHtml(c)}</option>`).join('')}</select></div>
       </div>
       ${ed ? '<div style="font-size:12px;color:var(--muted)">Los pagos que ya marcaste quedan con el monto de ese momento.</div>' : ''}
       <div class="pfx-dos"><button type="button" class="pfx-btn claro" data-action="toggleFormFijo">Cancelar</button><button type="button" class="pfx-btn" data-action="addFixed">${ed ? 'Guardar cambios' : 'Guardar pago fijo'}</button></div>
@@ -9459,6 +9614,247 @@ function pf_formatDate(s) {
   return d.getDate() + ' ' + PF_MESES_ABR[d.getMonth()];
 }
 
+// ── FINANZAS: editor de categorías (hoja que se abre desde el teclado o desde Ajustes) ──
+const PF_CAT_EMOJIS = ['🛒','🍔','☕','🏠','💡','📱','🚗','⛽','🚌','💊','🎓','👕','🎁','🐶','✈️','🎮','🎟️','💈','🛠️','💻','💼','🤝','📈','💰'];
+let pf_catUI = { tipo: 'gasto', abierta: null, borrando: null, icono: '' };
+
+// Las activas y, si el valor actual es de una categoría borrada, también esa (para no perderla al editar).
+function pf_catsConActual(tipo, actual) {
+  const l = pf_catsDe(tipo);
+  return actual && !l.includes(actual) ? l.concat(actual) : l;
+}
+function pf_catUsos(c) {
+  const tx = (pf_data.transactions || []).filter(t => !t.eliminado && t.type === c.tipo && t.category === c.nombre);
+  const fp = c.tipo === 'gasto' ? (pf_data.fixedPayments || []).filter(f => !f.eliminado && f.category === c.nombre) : [];
+  return { tx, fp, n: tx.length + fp.length };
+}
+function pf_catAbrir(tipo) {
+  pf_asegurarCategorias();
+  pf_catUI = { tipo: tipo === 'ingreso' ? 'ingreso' : 'gasto', abierta: null, borrando: null, icono: '' };
+  const el = document.getElementById('pfCat');
+  pf_catPintar();
+  el.classList.add('open');
+  el.setAttribute('aria-hidden', 'false');
+  document.documentElement.classList.add('pf-cat-abierta');
+}
+function pf_catCerrar() {
+  const el = document.getElementById('pfCat');
+  if (!el || !el.classList.contains('open')) return;
+  const a = document.activeElement; if (a && el.contains(a)) a.blur();
+  el.classList.remove('open');
+  el.setAttribute('aria-hidden', 'true');
+  document.documentElement.classList.remove('pf-cat-abierta');
+  pf_catRefrescarApp();
+}
+// Después de un cambio: el teclado, el resumen y las preferencias guardadas siguen al día.
+function pf_catRefrescarApp() {
+  ['gasto', 'ingreso'].forEach(t => { if (!pf_catsDe(t).includes(pf_tec.cat[t]) && !pf_tec.editId) pf_tec.cat[t] = pf_catsDe(t)[0]; });
+  if (pf_tecEstaAbierto()) { pf_tecPintarCats(); }
+  pf_renderSiVisible();
+}
+function pf_catSetTipo(tipo) { pf_catUI.tipo = tipo; pf_catUI.abierta = null; pf_catUI.borrando = null; pf_catPintar(); }
+function pf_catEditar(id) {
+  pf_catUI.abierta = pf_catUI.abierta === id ? null : id;
+  pf_catUI.borrando = null;
+  const c = pf_data.categorias.find(x => x.id === id);
+  pf_catUI.icono = id === 'nueva' ? '🏷️' : (c && c.icono) || '•';
+  pf_catPintar();
+  const inp = document.getElementById('pfCatNombre');
+  if (inp && id === 'nueva') setTimeout(() => inp.focus(), 60);
+}
+function pf_catElegirIcono(e) { pf_catUI.icono = e; const b = document.getElementById('pfCatIcoActual'); if (b) b.textContent = e; document.querySelectorAll('#pfCatEmojis button').forEach(x => x.classList.toggle('on', x.textContent === e)); }
+
+function pf_catFormHtml(c) {
+  const fija = c && PF_CATS_FIJAS[c.nombre];
+  const emojis = PF_CAT_EMOJIS.includes(pf_catUI.icono) ? PF_CAT_EMOJIS : [pf_catUI.icono].concat(PF_CAT_EMOJIS);
+  return `
+    <div class="pf-cat-form">
+      <div class="pf-cat-fila">
+        <span class="pf-cat-ico grande" id="pfCatIcoActual">${escHtml(pf_catUI.icono)}</span>
+        <input id="pfCatNombre" class="pf-cat-input" type="text" maxlength="32" placeholder="Nombre de la categoría" value="${c ? escHtml(c.nombre) : ''}" ${fija ? 'disabled' : ''} enterkeyhint="done" autocomplete="off">
+      </div>
+      ${fija ? `<div class="pf-cat-nota">🔒 ${escHtml(fija)}, por eso el nombre queda fijo. Podés cambiarle el ícono.</div>` : ''}
+      <div class="pf-cat-emojis" id="pfCatEmojis">${emojis.map(e => `<button type="button" class="${e === pf_catUI.icono ? 'on' : ''}" data-emoji="${escHtml(e)}">${escHtml(e)}</button>`).join('')}</div>
+      <div class="pf-cat-acciones">
+        ${c && !fija ? `<button type="button" class="pf-cat-btn peligro" data-borrar="${c.id}">Eliminar</button>` : '<span></span>'}
+        <button type="button" class="pf-cat-btn" data-guardar="${c ? c.id : 'nueva'}">${c ? 'Guardar' : 'Agregar'}</button>
+      </div>
+    </div>`;
+}
+function pf_catBorrarHtml(c) {
+  const u = pf_catUsos(c);
+  const otras = pf_catsDe(c.tipo).filter(n => n !== c.nombre);
+  const pref = c.tipo === 'gasto' ? 'Otro gasto' : 'Otro ingreso';
+  const partes = [];
+  if (u.tx.length) partes.push(`${u.tx.length} ${u.tx.length === 1 ? 'movimiento' : 'movimientos'}`);
+  if (u.fp.length) partes.push(`${u.fp.length} ${u.fp.length === 1 ? 'pago fijo' : 'pagos fijos'}`);
+  return `
+    <div class="pf-cat-form">
+      <div class="pf-cat-pregunta">Tenés ${partes.join(' y ')} con <b>${escHtml(c.nombre)}</b>. ¿Qué hacemos con ${u.n === 1 ? 'él' : 'ellos'}?</div>
+      <label class="pf-cat-label" for="pfCatDestino">${u.n === 1 ? 'Pasarlo' : 'Pasarlos'} a</label>
+      <select id="pfCatDestino" class="pf-cat-input">${otras.map(n => `<option value="${escHtml(n)}" ${n === pref ? 'selected' : ''}>${escHtml(n)}</option>`).join('')}</select>
+      <button type="button" class="pf-cat-btn ancho" data-confirmar="${c.id}" data-modo="pasar">${u.n === 1 ? 'Pasarlo' : 'Pasarlos'} y eliminar</button>
+      <button type="button" class="pf-cat-btn claro ancho" data-confirmar="${c.id}" data-modo="dejar">${u.n === 1 ? 'Dejarlo' : 'Dejarlos'} con su nombre y eliminar</button>
+      <button type="button" class="pf-cat-btn claro ancho" data-cancelar="1">Cancelar</button>
+    </div>`;
+}
+function pf_catPintar() {
+  const tipo = pf_catUI.tipo;
+  document.querySelectorAll('#pfCatSeg button').forEach(b => { const on = b.dataset.tipo === tipo; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+  const filas = pf_catsActivas(tipo).map(c => {
+    const u = pf_catUsos(c);
+    const fija = PF_CATS_FIJAS[c.nombre];
+    const sub = u.n ? `${u.n} ${u.n === 1 ? 'uso' : 'usos'}` : 'Sin usar';
+    const abierta = pf_catUI.abierta === c.id;
+    return `
+      <div class="pf-cat-item${abierta ? ' abierta' : ''}">
+        <button type="button" class="pf-cat-row" data-editar="${c.id}" aria-expanded="${abierta}">
+          <span class="pf-cat-ico">${escHtml(c.icono || pf_icono(c.nombre))}</span>
+          <span class="pf-cat-txt"><b>${escHtml(c.nombre)}</b><small>${sub}${fija ? ' · 🔒' : ''}</small></span>
+          <span class="pf-cat-flecha" aria-hidden="true">›</span>
+        </button>
+        ${abierta ? (pf_catUI.borrando === c.id ? pf_catBorrarHtml(c) : pf_catFormHtml(c)) : ''}
+      </div>`;
+  }).join('');
+  const nueva = pf_catUI.abierta === 'nueva'
+    ? `<div class="pf-cat-item abierta"><div class="pf-cat-nueva-tit">Nueva categoría de ${tipo === 'gasto' ? 'gasto' : 'ingreso'}</div>${pf_catFormHtml(null)}</div>`
+    : `<button type="button" class="pf-cat-nueva" data-editar="nueva">+ Nueva categoría</button>`;
+  document.getElementById('pfCatLista').innerHTML = filas + nueva;
+}
+
+function pf_catNombreLibre(tipo, nombre, menosId) {
+  const k = nombre.toLowerCase();
+  return !pf_catsActivas(tipo).some(c => c.id !== menosId && c.nombre.toLowerCase() === k);
+}
+function pf_catAvisar(msg) {
+  const inp = document.getElementById('pfCatNombre');
+  if (inp) { inp.classList.remove('sacudir'); void inp.offsetWidth; inp.classList.add('sacudir'); inp.focus(); }
+  pf_toast(msg);
+}
+// Un nombre que vuelve a usarse deja de ser "nombre viejo" de otra categoría.
+function pf_catLiberarNombre(tipo, nombre, menosId) {
+  pf_data.categorias.forEach(c => {
+    if (c.tipo === tipo && c.id !== menosId && (c.antes || []).includes(nombre)) {
+      c.antes = c.antes.filter(v => v !== nombre); c.updatedAt = new Date().toISOString();
+    }
+  });
+}
+function pf_catGuardar(id) {
+  const tipo = pf_catUI.tipo;
+  const inp = document.getElementById('pfCatNombre');
+  const nombre = (inp ? inp.value : '').replace(/\s+/g, ' ').trim();
+  const icono = pf_catUI.icono || '•';
+  const ahora = new Date().toISOString();
+  if (id === 'nueva') {
+    if (!nombre) return pf_catAvisar('Escribí un nombre');
+    if (!pf_catNombreLibre(tipo, nombre)) return pf_catAvisar('Ya tenés una categoría con ese nombre');
+    // Si había una borrada con el mismo nombre, vuelve (con su id) en vez de duplicarse.
+    let c = pf_data.categorias.find(x => x.eliminado && x.tipo === tipo && x.nombre.toLowerCase() === nombre.toLowerCase());
+    const orden = Math.max(0, ...pf_catsActivas(tipo).map(x => x.orden || 0)) + 1;
+    if (c) { c.eliminado = false; delete c.eliminadoEn; Object.assign(c, { nombre, icono, orden, updatedAt: ahora }); }
+    else { c = { id: 'cat_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), tipo, nombre, icono, orden, antes: [], updatedAt: ahora }; pf_data.categorias.push(c); }
+    pf_catLiberarNombre(tipo, nombre, c.id);
+    pf_persist();
+    pf_catUI.abierta = null; pf_catPintar(); pf_catRefrescarApp();
+    pf_toast(`Categoría "${nombre}" agregada`, () => { marcarEliminado(c); pf_persist(); pf_catPintar(); pf_catRefrescarApp(); });
+    return;
+  }
+  const c = pf_data.categorias.find(x => x.id === id);
+  if (!c) return;
+  const fija = PF_CATS_FIJAS[c.nombre];
+  const viejo = c.nombre, iconoViejo = c.icono;
+  const renombra = !fija && nombre && nombre !== viejo;
+  if (!fija && !nombre) return pf_catAvisar('Escribí un nombre');
+  if (renombra && !pf_catNombreLibre(tipo, nombre, c.id)) return pf_catAvisar('Ya tenés una categoría con ese nombre');
+  if (!renombra && icono === iconoViejo) { pf_catUI.abierta = null; pf_catPintar(); return; }
+  c.icono = icono;
+  let movidos = 0;
+  if (renombra) {
+    c.antes = (c.antes || []).filter(v => v !== nombre).concat(viejo);
+    c.nombre = nombre;
+    pf_catLiberarNombre(tipo, nombre, c.id);
+    movidos = pf_aplicarRenombres();
+    if (pf_tec.cat[tipo] === viejo) pf_tec.cat[tipo] = nombre;
+    try {
+      const pref = JSON.parse(pf_tecLeer(PF_TEC_KEY_CAT) || '{}');
+      if (pref[tipo] === viejo) { pref[tipo] = nombre; pf_tecEscribir(PF_TEC_KEY_CAT, JSON.stringify(pref)); }
+    } catch (e) {}
+  }
+  c.updatedAt = ahora;
+  pf_persist();
+  pf_catUI.abierta = null; pf_catPintar(); pf_catRefrescarApp();
+  if (renombra) {
+    pf_toast(movidos ? `Listo: ${movidos} ${movidos === 1 ? 'movimiento ahora es' : 'movimientos ahora son'} "${nombre}"` : `Renombrada a "${nombre}"`, () => {
+      // Deshacer = volver a renombrar al nombre de antes.
+      c.nombre = viejo; c.icono = iconoViejo;
+      c.antes = (c.antes || []).filter(v => v !== viejo).concat(nombre);
+      c.updatedAt = new Date().toISOString();
+      pf_aplicarRenombres();
+      c.antes = c.antes.filter(v => v !== nombre);
+      if (pf_tec.cat[tipo] === nombre) pf_tec.cat[tipo] = viejo;
+      pf_persist(); pf_catPintar(); pf_catRefrescarApp();
+    });
+  } else pf_toast('Ícono cambiado');
+}
+function pf_catBorrar(id) {
+  const c = pf_data.categorias.find(x => x.id === id);
+  if (!c || PF_CATS_FIJAS[c.nombre]) return;
+  if (pf_catUsos(c).n) { pf_catUI.borrando = id; pf_catPintar(); return; }
+  pf_catConfirmarBorrar(id, 'dejar');
+}
+function pf_catConfirmarBorrar(id, modo) {
+  const c = pf_data.categorias.find(x => x.id === id);
+  if (!c || PF_CATS_FIJAS[c.nombre]) return;
+  const ahora = new Date().toISOString();
+  const u = pf_catUsos(c);
+  let destino = null;
+  if (modo === 'pasar' && u.n) {
+    const sel = document.getElementById('pfCatDestino');
+    destino = pf_catBuscar(sel ? sel.value : '', c.tipo);
+    if (!destino || destino.eliminado) return;
+    u.tx.concat(u.fp).forEach(it => { it.category = destino.nombre; it.updatedAt = ahora; });
+    // Lo que llegue tarde de otro dispositivo con el nombre borrado también se pasa.
+    destino.antes = (destino.antes || []).filter(v => v !== c.nombre).concat(c.nombre);
+    destino.updatedAt = ahora;
+  }
+  marcarEliminado(c);
+  ['gasto', 'ingreso'].forEach(t => { if (pf_tec.cat[t] === c.nombre && !pf_tec.editId) pf_tec.cat[t] = pf_catsDe(t)[0]; });
+  pf_persist();
+  pf_catUI.abierta = null; pf_catUI.borrando = null; pf_catPintar(); pf_catRefrescarApp();
+  const msg = destino ? `"${c.nombre}" eliminada. ${u.n} ${u.n === 1 ? 'pasó' : 'pasaron'} a "${destino.nombre}"` : `"${c.nombre}" eliminada`;
+  pf_toast(msg, () => {
+    const t2 = new Date().toISOString();
+    c.eliminado = false; delete c.eliminadoEn; c.updatedAt = t2;
+    if (destino) {
+      destino.antes = (destino.antes || []).filter(v => v !== c.nombre); destino.updatedAt = t2;
+      u.tx.concat(u.fp).forEach(it => { it.category = c.nombre; it.updatedAt = t2; });
+    }
+    pf_persist(); pf_catPintar(); pf_catRefrescarApp();
+  });
+}
+
+(function pf_catIniciar() {
+  const el = document.getElementById('pfCat');
+  if (!el) return;
+  el.addEventListener('click', e => {
+    const t = e.target;
+    const q = s => t.closest(s);
+    if (q('[data-cerrar]')) return pf_catCerrar();
+    let b;
+    if ((b = q('#pfCatSeg [data-tipo]'))) return pf_catSetTipo(b.dataset.tipo);
+    if ((b = q('[data-emoji]'))) return pf_catElegirIcono(b.dataset.emoji);
+    if ((b = q('[data-guardar]'))) return pf_catGuardar(b.dataset.guardar);
+    if ((b = q('[data-borrar]'))) return pf_catBorrar(b.dataset.borrar);
+    if ((b = q('[data-confirmar]'))) return pf_catConfirmarBorrar(b.dataset.confirmar, b.dataset.modo);
+    if (q('[data-cancelar]')) { pf_catUI.borrando = null; return pf_catPintar(); }
+    if ((b = q('[data-editar]'))) return pf_catEditar(b.dataset.editar);
+  });
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { e.stopPropagation(); pf_catCerrar(); }
+    if (e.key === 'Enter' && e.target.id === 'pfCatNombre') { e.preventDefault(); pf_catGuardar(pf_catUI.abierta); }
+  });
+})();
+
 // ── FINANZAS: registro rápido (bottom sheet) ──
 // Usa las mismas categorías que el formulario completo (PF_GASTO_CATS / PF_INGRESO_CATS)
 // para que "Gastos por categoría" no se fragmente entre los dos puntos de carga.
@@ -9488,7 +9884,7 @@ function pf_cerrarPanelRapido() {
 
 function pf_quickSetTipo(tipo) {
   pf_quickTipo = tipo;
-  pf_quickCategoria = (tipo === 'gasto' ? PF_GASTO_CATS : PF_INGRESO_CATS)[0];
+  pf_quickCategoria = pf_catsDe(tipo)[0];
   pf_quickRenderUI();
 }
 
@@ -9498,9 +9894,9 @@ function pf_quickSelectCat(cat) {
 }
 
 function pf_quickRenderCats() {
-  const cats = pf_quickTipo === 'gasto' ? PF_GASTO_CATS : PF_INGRESO_CATS;
+  const cats = pf_catsDe(pf_quickTipo);
   document.getElementById('pfQuickCats').innerHTML = cats.map(c =>
-    `<button class="pf-quick-cat-pill ${pf_quickTipo}${c === pf_quickCategoria ? ' active' : ''}" onclick="pf_quickSelectCat('${c}')">${c}</button>`
+    `<button class="pf-quick-cat-pill ${pf_quickTipo}${c === pf_quickCategoria ? ' active' : ''}" data-cat="${escHtml(c)}" onclick="pf_quickSelectCat(this.dataset.cat)">${escHtml(c)}</button>`
   ).join('');
 }
 
@@ -9626,9 +10022,11 @@ function pf_abrirTeclado(tipoInicial) {
   if (!pf_tecMetodos().some(x => x.id === pf_tec.metodo)) pf_tec.metodo = 'efectivo';
   try {
     const c = JSON.parse(pf_tecLeer(PF_TEC_KEY_CAT) || '{}');
-    if (PF_GASTO_CATS.includes(c.gasto)) pf_tec.cat.gasto = c.gasto;
-    if (PF_INGRESO_CATS.includes(c.ingreso)) pf_tec.cat.ingreso = c.ingreso;
+    if (pf_catsDe('gasto').includes(c.gasto)) pf_tec.cat.gasto = c.gasto;
+    if (pf_catsDe('ingreso').includes(c.ingreso)) pf_tec.cat.ingreso = c.ingreso;
   } catch (e) {}
+  // Si la categoría que estaba elegida se borró o cambió de nombre, se toma la primera.
+  ['gasto', 'ingreso'].forEach(t => { if (!pf_catsDe(t).includes(pf_tec.cat[t])) pf_tec.cat[t] = pf_catsDe(t)[0]; });
   pf_tec.tipo = tipoInicial === 'cobrar' ? 'cobrar' : 'gasto';
   pf_tecPintar();
   el.classList.add('open');
@@ -9698,12 +10096,13 @@ function pf_tecPintarMetodo() {
 }
 
 function pf_tecPintarCats() {
-  const cats = pf_tec.tipo === 'gasto' ? PF_GASTO_CATS : PF_INGRESO_CATS;
   const actual = pf_tec.cat[pf_tec.tipo];
+  // Al corregir un movimiento con una categoría borrada, se muestra igual para no cambiarla sin querer.
+  const cats = pf_catsConActual(pf_tec.tipo, actual);
   const cont = document.getElementById('pfTecCats');
   cont.innerHTML = cats.map(c =>
     `<button type="button" class="${c === actual ? 'on' : ''}" aria-pressed="${c === actual}" data-cat="${escHtml(c)}">${escHtml(c)}</button>`
-  ).join('');
+  ).join('') + '<button type="button" class="pf-tec-cat-editar" data-editar="1" aria-label="Editar categorías">✎ Editar</button>';
 }
 
 function pf_tecPintarHoy() {
@@ -9969,11 +10368,12 @@ function pf_tecDeshacer() {
   ).join('');
   pad.addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b) pf_tecTecla(b.dataset.k); });
   document.getElementById('pfTecCats').addEventListener('click', e => {
+    if (e.target.closest('[data-editar]')) { pf_catAbrir(pf_tec.tipo === 'ingreso' ? 'ingreso' : 'gasto'); return; }
     const b = e.target.closest('[data-cat]'); if (b) pf_tecSetCat(b.dataset.cat);
   });
   // En la Mac: números, Borrar, Enter para anotar y Esc para ir al resumen.
   document.addEventListener('keydown', e => {
-    if (!pf_tecEstaAbierto() || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!pf_tecEstaAbierto() || e.metaKey || e.ctrlKey || e.altKey || document.documentElement.classList.contains('pf-cat-abierta')) return;
     if (e.target && (e.target.id === 'pfTecNota' || e.target.id === 'pfTecCliente')) { if (e.key === 'Enter') { e.preventDefault(); pf_tecGuardar(); } return; }
     if (e.target && e.target.matches && e.target.matches('input, select, textarea')) return;
     if (/^[0-9]$/.test(e.key)) { pf_tecTecla(e.key); e.preventDefault(); }
@@ -11527,6 +11927,8 @@ async function saveToFirestore() {
       pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
       pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
       pf_data.porCobrar     = mergeCollectionById(pf_data.porCobrar, remotePf.porCobrar);
+      pf_data.categorias    = mergeCollectionById(pf_data.categorias, remotePf.categorias);
+      pf_asegurarCategorias(); pf_aplicarRenombres();
     }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     localStorage.setItem(PF_STORAGE_KEY, JSON.stringify(pf_data));
@@ -11685,6 +12087,7 @@ async function restaurarBackup(backupId) {
   if (data.pulsoData) {
     pf_data = JSON.parse(data.pulsoData);
     pf_data.porCobrar = pf_data.porCobrar || [];
+    pf_asegurarCategorias();
     asegurarIdsYTimestamps(pf_data.transactions, 'tx');
     asegurarIdsYTimestamps(pf_data.fixedPayments, 'fp');
     asegurarIdsYTimestamps(pf_data.porCobrar, 'pc');
@@ -11746,6 +12149,8 @@ function attachFirestoreListener(uid) {
       pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
       pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
       pf_data.porCobrar     = mergeCollectionById(pf_data.porCobrar, remotePf.porCobrar);
+      pf_data.categorias    = mergeCollectionById(pf_data.categorias, remotePf.categorias);
+      pf_asegurarCategorias(); pf_aplicarRenombres();
 
       // Guarda de sanidad del lado de lectura: esto ya NO puede pisar hábitos locales
       // (el merge por id de arriba es aditivo, nunca destructivo), así que acá queda
@@ -11931,6 +12336,8 @@ document.addEventListener('visibilitychange', async () => {
     pf_data.transactions  = mergeCollectionById(pf_data.transactions, remotePf.transactions);
     pf_data.fixedPayments = mergeCollectionById(pf_data.fixedPayments, remotePf.fixedPayments);
     pf_data.porCobrar     = mergeCollectionById(pf_data.porCobrar, remotePf.porCobrar);
+    pf_data.categorias    = mergeCollectionById(pf_data.categorias, remotePf.categorias);
+    pf_asegurarCategorias(); pf_aplicarRenombres();
 
     // Misma guarda de sanidad del lado de lectura que en attachFirestoreListener: ya es
     // solo un aviso, el merge por id de arriba es el que realmente protege los hábitos.
