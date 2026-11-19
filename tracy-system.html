@@ -8410,21 +8410,34 @@ function pf_asesorResumen() {
   }
 
   const trabajos = (pf_trabajosRemotos || []).filter(j => j && !j.eliminado && j.id);
+  if (!pf_trabajosRemotos) L.push('', 'Control de Trabajos: no pude leer el panel de pedidos (¿entré con mi cuenta de Google?). Si te pregunto por clientes, pedime los datos.');
   if (trabajos.length) {
     const total = j => (j.items || []).reduce((a, i) => a + (i.c || 0), 0) * (j.precioU || 0);
     const mat = j => (j.gastos || []).reduce((a, g) => a + (g.m || 0), 0);
-    const etapas = { presupuesto: 'presupuesto enviado', sena: 'seña recibida', proceso: 'en proceso', entregado: 'entregado, falta el saldo', pagado: 'pagado completo' };
+    const etapas = { presupuesto: 'presupuesto enviado', sena: 'seña recibida', proceso: 'en proceso', entregado: 'entregado', pagado: 'pagado completo' };
     const mesClave = pf_mesClave(hoy);
     const enCurso = trabajos.filter(j => j.etapa !== 'pagado');
     const sinPasar = trabajos.filter(j => j.etapa === 'pagado' && !j.pasado && total(j) - mat(j) > 0);
     const delMes = trabajos.filter(j => j.etapa === 'pagado' && (j.fechaPago || '').slice(0, 7) === mesClave);
     L.push('', 'Control de Trabajos:');
-    if (enCurso.length) {
-      L.push('Trabajos en curso:');
-      enCurso.forEach(j => {
-        const T = total(j), cobrado = j.etapa === 'presupuesto' ? 0 : Math.min(j.sena || 0, T);
-        L.push(`- ${j.cliente}${j.tipo ? ` (${j.tipo})` : ''}: ${etapas[j.etapa] || j.etapa}. Total ${gs(T)}, cobrado ${gs(cobrado)}, materiales ${gs(mat(j))}, ganancia esperada ${gs(T - mat(j))}`);
+    const deben = enCurso.filter(j => j.etapa !== 'presupuesto');
+    const presup = enCurso.filter(j => j.etapa === 'presupuesto');
+    const detalle = j => {
+      const n = (j.items || []).reduce((a, i) => a + (i.c || 0), 0);
+      const items = (j.items || []).filter(i => i.c).map(i => `${i.c} ${i.d || ''}`.trim()).join(', ');
+      return `${items || n + ' unidades'} a ${gs(j.precioU)} c/u`;
+    };
+    if (deben.length) {
+      const totalDeben = deben.reduce((s, j) => s + total(j) - Math.min(j.sena || 0, total(j)), 0);
+      L.push(`Pedidos confirmados que todavía me deben (total a cobrar: ${gs(totalDeben)}):`);
+      deben.forEach(j => {
+        const T = total(j), sena = Math.min(j.sena || 0, T);
+        L.push(`- ${j.cliente}${j.tipo ? ` (${j.tipo})` : ''}: ${etapas[j.etapa] || j.etapa}${j.etapa === 'entregado' && j.fechaEntrega ? ` el ${fecha(j.fechaEntrega)}` : ''}. ${detalle(j)}. Total ${gs(T)}, seña cobrada ${gs(sena)} (${T ? Math.round(sena / T * 100) : 0}%${j.fechaSena ? `, el ${fecha(j.fechaSena)}` : ''}), FALTA COBRAR ${gs(T - sena)}. Materiales ${gs(mat(j))}, ganancia esperada ${gs(T - mat(j))}`);
       });
+    }
+    if (presup.length) {
+      L.push('Presupuestos enviados, esperando que el cliente confirme (no cobré nada):');
+      presup.forEach(j => L.push(`- ${j.cliente}${j.tipo ? ` (${j.tipo})` : ''}: ${detalle(j)}. Total ${gs(total(j))}, materiales ${gs(mat(j))}, ganancia posible ${gs(total(j) - mat(j))}`));
     }
     if (sinPasar.length) {
       L.push('Ganancias cobradas que todavía no pasé a la cuenta de ganancias:');
