@@ -3708,6 +3708,11 @@
   .pfx-cobrar-fila { display: grid; grid-template-columns: 40px minmax(0,1fr) auto; gap: 12px; align-items: center; width: 100%; text-align: left; background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 12px 16px; margin-bottom: 12px; color: inherit; font-family: inherit; cursor: pointer; }
   .pfx-cobrar-ico { width: 40px; height: 40px; border-radius: 13px; background: rgba(95,211,47,.18); color: var(--pfx-pos); display: grid; place-items: center; }
   .pfx-cobrar-fila .pfx-t div:first-child { font-size: 15px; }
+  .pfx-asesor-ico { width: 40px; height: 40px; border-radius: 13px; background: rgba(232,69,10,.14); color: var(--gold); display: grid; place-items: center; }
+  .ajustes-row-col { flex-direction: column; align-items: stretch; gap: 8px; }
+  .ajustes-row-col .asesor-link-input { width: 100%; max-width: none; text-align: left; border-color: var(--border); box-sizing: border-box; }
+  .asesor-link-msg { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+  .asesor-link-msg.error { color: var(--danger); }
   /* ── Por cobrar ── */
   .pfx-cob-top { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
   .pfx-cob-top h2 { flex: 1; margin: 0; font-size: 20px; font-weight: 800; }
@@ -4383,6 +4388,11 @@
     <div class="ajustes-row">
       <span class="ajustes-row-label"><i data-lucide="credit-card"></i> Uso tarjeta de crédito</span>
       <div class="dark-toggle" id="tarjetaFinanzasToggle" onclick="pf_toggleTarjeta()" role="button" aria-label="Uso tarjeta de crédito"><div class="dark-toggle-thumb"></div></div>
+    </div>
+    <div class="ajustes-row ajustes-row-col">
+      <label class="ajustes-row-label" for="asesorLink"><i data-lucide="message-circle"></i> Conversación fija del Asesor</label>
+      <input id="asesorLink" class="ajustes-input asesor-link-input" type="url" inputmode="url" placeholder="Pegá el link de tu chat de Claude (opcional)" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" onchange="pf_guardarAsesorLink(this)" onkeydown="if(event.key==='Enter')this.blur()">
+      <div class="asesor-link-msg" id="asesorLinkMsg">Vacío: "Preguntarle a Claude" abre una conversación nueva cada vez.</div>
     </div>
     <div class="ajustes-row">
       <span class="ajustes-row-label"><i data-lucide="eraser"></i> Empezar Finanzas de cero</span>
@@ -5290,7 +5300,7 @@ function renderSeccion(tab) {
   if (tab === 'progreso')   renderProgreso();
   if (tab === 'premios')    renderPremios();
   if (tab === 'reloj')      renderReloj();
-  if (tab === 'ajustes')    { const aj = document.getElementById('ajustesNombre'); if (aj) aj.value = state.nombre || ''; }
+  if (tab === 'ajustes')    { const aj = document.getElementById('ajustesNombre'); if (aj) aj.value = state.nombre || ''; const al = document.getElementById('asesorLink'); if (al && al !== document.activeElement) al.value = state.asesorLink || ''; }
   actualizarBadgeVision();
 }
 
@@ -8048,7 +8058,7 @@ function pf_renderMonth() {
       <div class="cal-month-label">${label}</div>
       <button class="cal-nav-btn" data-action="nextMonth">›</button>
     </div>
-    ${esActual ? pf_renderAvisoAhorro(ingresos) + pf_renderQueda(ingresos, gastos, txs) + pf_renderCobrarFila() : ''}
+    ${esActual ? pf_renderAvisoAhorro(ingresos) + pf_renderQueda(ingresos, gastos, txs) + pf_renderCobrarFila() + pf_renderAsesorFila() : ''}
     <div class="pfx-card">
       <div class="pfx-pilas">
         <div class="pfx-pcol"><span class="pfx-et">${pf_corto(ingresos)}</span>${pila(nIn, 'in')}</div>
@@ -8325,6 +8335,150 @@ function pf_renderCobrarFila() {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".55" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
   </button>`;
 }
+// ── Asesor (versión gratis): arma un resumen de Finanzas y Trabajos para preguntarle a Claude ──
+// No hay clave de API ni servidor: el resumen se copia al portapapeles y se abre Claude.ai,
+// en una conversación nueva o en la conversación fija que la persona guardó en Ajustes
+// (state.asesorLink, se sincroniza como el nombre). Los datos nunca salen de la app salvo
+// cuando la persona los pega en su propia cuenta de Claude.
+const PF_ASESOR_LINK_OK = /^https:\/\/claude\.ai\/(chat|project)\/[A-Za-z0-9_-]+\/?$/;
+function pf_asesorLink() {
+  const l = (state.asesorLink || '').trim();
+  return PF_ASESOR_LINK_OK.test(l) ? l : '';
+}
+function pf_renderAsesorFila() {
+  const fija = !!pf_asesorLink();
+  return `<button type="button" class="pfx-cobrar-fila pfx-asesor-fila" data-action="asesor">
+    <span class="pfx-asesor-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M9 10.5h6M9 13.5h4"/></svg></span>
+    <span class="pfx-t"><div>Preguntarle a Claude</div><div>${fija ? 'Copia tu resumen y abre tu chat fijo' : 'Copia tu resumen y abre Claude'}</div></span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".55" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+  </button>`;
+}
+function pf_asesorResumen() {
+  const hoy = new Date();
+  const gs = n => Math.round(n || 0).toLocaleString('es-PY').replace(/,/g, '.') + ' Gs';
+  const fecha = s => { if (!s) return 'sin fecha'; const [y, m, d] = s.split('-'); return `${+d}/${+m}/${y}`; };
+  const diasMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+  const txs = pf_monthTx(hoy).filter(t => !(t.settledByArrears && !t.amount));
+  const { ingresos, gastos, balance } = pf_monthStats(txs);
+  const L = [];
+  const nombre = obtenerNombreUsuario();
+
+  L.push(`Sos mi asesor financiero personal${nombre ? `. Me llamo ${nombre}` : ''}. Trabajo por mi cuenta y llevo mis finanzas en mi app Steadfast. Abajo va el resumen de hoy.`);
+  L.push('');
+  L.push('Cómo leer mis datos:');
+  L.push('- Todo está en guaraníes (Gs).');
+  L.push('- "Ganancias apartadas" es la ganancia de un trabajo que paso a otra cuenta del banco. La app lo anota como salida, pero no es plata gastada: está guardada.');
+  L.push('- "Ahorro / Inversión" es lo que paso a mi cuenta de ahorro.');
+  L.push('- "Por cobrar" todavía no entró: no lo cuentes como plata disponible.');
+  L.push('- Los cobros y materiales de mis trabajos (remeras, webs, etc.) vienen de mi panel Control de Trabajos.');
+  L.push('');
+  L.push('Cómo quiero que me respondas: corto, claro y con montos concretos. Decime qué movimiento hacer y por qué. Si te falta un dato, preguntame antes de suponer. Si algo es de impuestos o una inversión grande, avisame que lo consulte con un contador.');
+  L.push('');
+  L.push(`=== ${PF_MESES[hoy.getMonth()].toUpperCase()} ${hoy.getFullYear()} (hoy ${hoy.getDate()}/${hoy.getMonth() + 1}, faltan ${diasMes - hoy.getDate()} días para fin de mes) ===`);
+  L.push(`Entró: ${gs(ingresos)} | Salió: ${gs(gastos)} | Balance: ${balance < 0 ? '-' : ''}${gs(Math.abs(balance))}`);
+  if (ingresos) {
+    const q = pf_calcQueda(ingresos, gastos, txs);
+    L.push(`"Te queda para gastar" según la app: ${q.queda < 0 ? '-' : ''}${gs(Math.abs(q.queda))} (ya descuenta ${gs(q.fijosPend)} de pagos fijos pendientes y ${gs(q.ahorro)} de ahorro por apartar al ${q.pct}%)${q.queda > 0 ? `, unos ${gs(q.porDia)} por día` : ''}.`);
+  }
+  const porCat = tipo => {
+    const m = {};
+    txs.filter(t => t.type === tipo).forEach(t => { m[t.category] = (m[t.category] || 0) + t.amount; });
+    return Object.entries(m).sort((a, b) => b[1] - a[1]);
+  };
+  const ing = porCat('ingreso'), gas = porCat('gasto');
+  if (ing.length) { L.push('', 'Ingresos del mes por categoría:'); ing.forEach(([c, v]) => L.push(`- ${c}: ${gs(v)}`)); }
+  if (gas.length) { L.push('', 'Salidas del mes por categoría:'); gas.forEach(([c, v]) => L.push(`- ${c}: ${gs(v)}`)); }
+
+  const fijos = activos(pf_data.fixedPayments).sort((a, b) => a.dueDay - b.dueDay);
+  if (fijos.length) {
+    L.push('', 'Pagos fijos:');
+    fijos.forEach(fp => {
+      const st = pf_fixedStatus(fp, hoy);
+      const atr = pf_fixedOverdueMonths(fp, hoy);
+      const estado = st.status === 'paid' ? 'pagado este mes' : st.status === 'overdue' ? 'vencido, sin pagar' : 'pendiente';
+      L.push(`- ${fp.name}: ${gs(fp.amount)}, vence el día ${fp.dueDay}, ${estado}${atr.length ? `. Además debo ${atr.length} ${atr.length > 1 ? 'meses anteriores' : 'mes anterior'} (${gs(atr.reduce((s, o) => s + o.amount, 0))})` : ''}`);
+    });
+  }
+  if (pf_usaTarjeta()) {
+    const deuda = pf_pendingCardDebt();
+    L.push('', `Tarjeta de crédito: ${deuda ? `debo ${gs(deuda)} en compras sin pagar` : 'sin deuda pendiente'}.`);
+  }
+  const pend = pf_cobrosPend();
+  if (pend.length) {
+    L.push('', `Por cobrar (todavía no entró), total ${gs(pend.reduce((s, c) => s + c.monto, 0))}:`);
+    pend.forEach(c => L.push(`- ${c.cliente}: ${gs(c.monto)}, ${pf_cobroEstado(c).atrasado ? `estaba para el ${fecha(c.fecha)} (atrasado)` : `para el ${fecha(c.fecha)}`}${c.nota ? ` (${c.nota})` : ''}`));
+  }
+
+  const trabajos = (pf_trabajosRemotos || []).filter(j => j && !j.eliminado && j.id);
+  if (trabajos.length) {
+    const total = j => (j.items || []).reduce((a, i) => a + (i.c || 0), 0) * (j.precioU || 0);
+    const mat = j => (j.gastos || []).reduce((a, g) => a + (g.m || 0), 0);
+    const etapas = { presupuesto: 'presupuesto enviado', sena: 'seña recibida', proceso: 'en proceso', entregado: 'entregado, falta el saldo', pagado: 'pagado completo' };
+    const mesClave = pf_mesClave(hoy);
+    const enCurso = trabajos.filter(j => j.etapa !== 'pagado');
+    const sinPasar = trabajos.filter(j => j.etapa === 'pagado' && !j.pasado && total(j) - mat(j) > 0);
+    const delMes = trabajos.filter(j => j.etapa === 'pagado' && (j.fechaPago || '').slice(0, 7) === mesClave);
+    L.push('', 'Control de Trabajos:');
+    if (enCurso.length) {
+      L.push('Trabajos en curso:');
+      enCurso.forEach(j => {
+        const T = total(j), cobrado = j.etapa === 'presupuesto' ? 0 : Math.min(j.sena || 0, T);
+        L.push(`- ${j.cliente}${j.tipo ? ` (${j.tipo})` : ''}: ${etapas[j.etapa] || j.etapa}. Total ${gs(T)}, cobrado ${gs(cobrado)}, materiales ${gs(mat(j))}, ganancia esperada ${gs(T - mat(j))}`);
+      });
+    }
+    if (sinPasar.length) {
+      L.push('Ganancias cobradas que todavía no pasé a la cuenta de ganancias:');
+      sinPasar.forEach(j => L.push(`- ${j.cliente}: ${gs(total(j) - mat(j))}`));
+    }
+    if (delMes.length) L.push(`Ganancia de trabajos cobrados este mes: ${gs(delMes.reduce((s, j) => s + total(j) - mat(j), 0))} (${delMes.length} ${delMes.length === 1 ? 'trabajo' : 'trabajos'}).`);
+  }
+
+  const previos = [];
+  for (let k = 3; k >= 1; k--) {
+    const d = new Date(hoy.getFullYear(), hoy.getMonth() - k, 1);
+    const s = pf_monthStats(pf_monthTx(d));
+    if (s.ingresos || s.gastos) previos.push(`- ${PF_MESES[d.getMonth()]}: entró ${gs(s.ingresos)}, salió ${gs(s.gastos)}`);
+  }
+  if (previos.length) L.push('', 'Meses anteriores:', ...previos);
+
+  L.push('', 'Mi pregunta:', '');
+  return L.join('\n');
+}
+function pf_copiarTexto(texto) {
+  // Copia sin esperar la promesa: así la pestaña de Claude se abre dentro del mismo toque
+  // (Safari bloquea window.open si llega después de un await).
+  try { if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(texto).catch(() => {}); return true; } } catch (e) {}
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = texto; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand('copy'); ta.remove(); return ok;
+  } catch (e) { return false; }
+}
+function pf_abrirAsesor() {
+  const texto = pf_asesorResumen();
+  pf_copiarTexto(texto);
+  const fija = pf_asesorLink();
+  // En una conversación nueva el texto también va en el link (?q=), así aparece ya escrito.
+  const url = fija || ('https://claude.ai/new?q=' + encodeURIComponent(texto));
+  const w = window.open(url, '_blank', 'noopener');
+  if (!w) location.href = url;
+  pf_toast(fija ? 'Resumen copiado: pegalo y preguntá' : 'Resumen copiado. Chat fijo: Ajustes');
+}
+function pf_guardarAsesorLink(inp) {
+  const v = (inp.value || '').trim();
+  const msg = document.getElementById('asesorLinkMsg');
+  if (v && !PF_ASESOR_LINK_OK.test(v)) {
+    if (msg) { msg.textContent = 'Ese link no es de una conversación de Claude. Copialo desde Claude con Compartir o desde la barra de direcciones.'; msg.className = 'asesor-link-msg error'; }
+    return;
+  }
+  if (v === (state.asesorLink || '')) return;
+  state.asesorLink = v;
+  saveState();
+  if (msg) { msg.textContent = v ? 'Listo: el botón te va a llevar siempre a esa conversación.' : 'Sin link: cada vez se abre una conversación nueva.'; msg.className = 'asesor-link-msg'; }
+  pf_renderSiVisible();
+}
+
 function pf_renderCobrar() {
   const pend = pf_cobrosPend();
   const total = pend.reduce((s, c) => s + c.monto, 0);
@@ -8769,6 +8923,7 @@ function pf_onAction(e) {
   else if (action === 'avisoSaltar') pf_avisoAhorroSaltar();
   else if (action === 'avisoCambiar') pf_avisoAhorroCambiar();
   else if (action === 'guia') pf_guiaIniciar(btn.dataset.value);
+  else if (action === 'asesor') pf_abrirAsesor();
   else if (action === 'nuevoCobro') pf_abrirTeclado('cobrar');
   else if (action === 'editCobro') pf_editarCobro(btn.dataset.id);
   else if (action === 'cobrado') pf_marcarCobrado(btn.dataset.id);
